@@ -1,1 +1,1 @@
-// catalog.controller module scaffold; implementation pending.
+// Catalog controller placeholder.

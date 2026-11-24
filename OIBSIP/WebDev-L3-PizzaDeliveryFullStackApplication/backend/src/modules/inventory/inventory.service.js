@@ -1,1 +1,1 @@
-// inventory.service module scaffold; implementation pending.
+// Inventory reservation and stock adjustment service placeholder.

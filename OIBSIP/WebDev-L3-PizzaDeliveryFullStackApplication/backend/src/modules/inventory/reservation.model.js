@@ -1,1 +1,1 @@
-// reservation.model module scaffold; implementation pending.
+// Reservation model placeholder.

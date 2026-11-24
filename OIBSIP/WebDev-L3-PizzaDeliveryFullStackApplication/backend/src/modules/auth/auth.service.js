@@ -1,1 +1,1 @@
-// auth.service module scaffold; implementation pending.
+// Authentication service placeholder.

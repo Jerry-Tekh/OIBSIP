@@ -1,1 +1,1 @@
-// auth.controller module scaffold; implementation pending.
+// Authentication controller placeholder.

@@ -1,1 +1,1 @@
-// inventory.model module scaffold; implementation pending.
+// Inventory model placeholder.

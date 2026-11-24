@@ -1,1 +1,1 @@
-// recipe.model module scaffold; implementation pending.
+// Recipe model placeholder.

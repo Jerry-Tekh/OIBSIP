@@ -1,1 +1,1 @@
-// session.model module scaffold; implementation pending.
+// Session model placeholder.

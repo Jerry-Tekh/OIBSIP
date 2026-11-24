@@ -1,1 +1,1 @@
-// catalog.service module scaffold; implementation pending.
+// Catalog service placeholder.

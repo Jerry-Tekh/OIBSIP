@@ -1,0 +1,1 @@
+// Transactional outbox model placeholder.

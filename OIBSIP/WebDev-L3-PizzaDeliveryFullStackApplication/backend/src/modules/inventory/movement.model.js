@@ -1,1 +1,1 @@
-// movement.model module scaffold; implementation pending.
+// Inventory movement audit model placeholder.

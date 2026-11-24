@@ -1,1 +1,1 @@
-// inventory.controller module scaffold; implementation pending.
+// Inventory controller placeholder.

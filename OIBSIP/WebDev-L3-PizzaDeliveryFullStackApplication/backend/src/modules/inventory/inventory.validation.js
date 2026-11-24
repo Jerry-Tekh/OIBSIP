@@ -1,1 +1,1 @@
-// inventory.validation module scaffold; implementation pending.
+// Inventory validation placeholder.

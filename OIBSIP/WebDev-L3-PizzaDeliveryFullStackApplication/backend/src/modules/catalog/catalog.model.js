@@ -1,1 +1,1 @@
-// catalog.model module scaffold; implementation pending.
+// Catalog models placeholder.

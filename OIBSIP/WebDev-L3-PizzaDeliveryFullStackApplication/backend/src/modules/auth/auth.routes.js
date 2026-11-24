@@ -1,1 +1,1 @@
-// auth.routes module scaffold; implementation pending.
+// Authentication routes placeholder.

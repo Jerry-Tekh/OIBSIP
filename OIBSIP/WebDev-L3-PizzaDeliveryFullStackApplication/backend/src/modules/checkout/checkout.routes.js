@@ -1,1 +1,1 @@
-// checkout.routes module scaffold; implementation pending.
+// Checkout routes placeholder.

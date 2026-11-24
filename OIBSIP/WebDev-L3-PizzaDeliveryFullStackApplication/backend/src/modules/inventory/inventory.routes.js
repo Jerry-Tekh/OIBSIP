@@ -1,1 +1,1 @@
-// inventory.routes module scaffold; implementation pending.
+// Inventory routes placeholder.
