@@ -24,7 +24,7 @@ const schema = z.object({
   EMAIL_FROM: z.string().optional().default(""),
 
   ADMIN_NAME: z.string().optional().default(""),
-  ADMIN_EMAIL: z.string().email().optional().or(z.literal("")),
+  ADMIN_EMAIL: z.string().email().optional().or(z.literal("")).default(""),
   ADMIN_PASSWORD: z.string().optional().default("")
 }).superRefine((values, context) => {
   const smtpValues = [values.SMTP_HOST, values.SMTP_USER, values.SMTP_PASSWORD, values.EMAIL_FROM];
