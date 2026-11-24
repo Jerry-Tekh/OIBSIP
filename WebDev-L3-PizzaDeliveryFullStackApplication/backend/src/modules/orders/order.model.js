@@ -1,0 +1,1 @@
+// Order snapshot model placeholder.
