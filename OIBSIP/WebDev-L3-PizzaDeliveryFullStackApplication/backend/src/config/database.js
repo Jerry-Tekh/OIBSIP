@@ -1,1 +1,14 @@
-// MongoDB connection setup; transaction-capable deployment required.
+import mongoose from "mongoose";
+import { env } from "./env.js";
+import { logger } from "../utils/logger.js";
+
+export async function connectDatabase() {
+  mongoose.set("strictQuery", true);
+  await mongoose.connect(env.MONGODB_URI, { serverSelectionTimeoutMS: 10000 });
+  logger.info({ database: mongoose.connection.name }, "Connected to MongoDB");
+  mongoose.connection.on("disconnected", () => logger.warn("MongoDB disconnected"));
+  mongoose.connection.on("error", (err) => logger.error({ err }, "MongoDB connection error"));
+}
+export async function disconnectDatabase() {
+  await mongoose.disconnect();
+}
