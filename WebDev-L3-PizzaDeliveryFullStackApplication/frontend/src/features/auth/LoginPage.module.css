@@ -198,3 +198,8 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
+
+/* No decorative directional arrows on authentication actions or links. */
+.button-arrow { display:none!important; }
+.back-link span { display:none!important; }
+.submit-button { justify-content:center; }
