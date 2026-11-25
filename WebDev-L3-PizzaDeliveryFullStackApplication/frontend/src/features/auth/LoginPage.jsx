@@ -100,7 +100,7 @@ export default function LoginPage() {
             <span className={styles["brand-mark"]}>P</span>
             <span>pizza<span className={styles["brand-dot"]}>.</span>house</span>
           </a>
-          <a className={styles["back-link"]} href="/">Back to home <span aria-hidden="true">↗</span></a>
+          <a className={styles["back-link"]} href="/">Back to home</a>
         </header>
 
         <div className={styles["form-wrap"]}>
@@ -177,7 +177,6 @@ export default function LoginPage() {
 
                 <button className={styles["submit-button"]} type="submit" disabled={submitting}>
                   <span>{submitting ? "Signing you in..." : "Sign in"}</span>
-                  <span className={styles["button-arrow"]} aria-hidden="true">↗</span>
                 </button>
               </form>
 
