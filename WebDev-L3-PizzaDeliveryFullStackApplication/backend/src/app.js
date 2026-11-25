@@ -7,7 +7,7 @@ import pinoHttp from "pino-http";
 
 import { env } from "./config/env.js";
 import { logger } from "./utils/logger.js";
-import authRouter from "./routes/auth.routes.js";
+import authRouter from "./modules/auth/auth.routes.js";
 import healthRouter from "./routes/health.routes.js";
 import { notFoundHandler } from "./middleware/notFound.js";
 import { errorHandler } from "./middleware/errorHandler.js";
@@ -29,7 +29,6 @@ app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: false, limit: "10kb" }));
 app.use(cookieParser());
 
-// Apply a general API limit before more restrictive authentication route limits.
 app.use("/api", rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 300,
