@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import request from "supertest";
 
 import app from "../src/app.js";
-import { registerSchema } from "../src/validators/auth.validators.js";
-import { splitRefreshToken, hashToken } from "../src/utils/authTokens.js";
+import { registerSchema } from "../src/modules/auth/auth.validation.js";
+import { splitRefreshToken, hashToken } from "../src/modules/auth/auth.tokens.js";
 
 describe("Authentication security boundaries", () => {
   it("does not accept a role from public registration input", () => {
@@ -15,21 +15,21 @@ describe("Authentication security boundaries", () => {
         role: "admin"
       }
     });
-
     expect(result.success).toBe(true);
     expect(result.data.body.role).toBeUndefined();
   });
 
   it("rejects weak registration passwords", () => {
     const result = registerSchema.safeParse({
-      body: {
-        name: "Test Customer",
-        email: "customer@example.com",
-        password: "password"
-      }
+      body: { name: "Test Customer", email: "customer@example.com", password: "password" }
     });
-
     expect(result.success).toBe(false);
+  });
+
+  it("mounts authentication endpoints from the auth module", async () => {
+    const response = await request(app).post("/api/auth/register").send({});
+    expect(response.status).toBe(400);
+    expect(response.body.success).toBe(false);
   });
 
   it("rejects protected requests without an access token", async () => {
@@ -38,10 +38,18 @@ describe("Authentication security boundaries", () => {
     expect(response.body.success).toBe(false);
   });
 
+  it("rejects refresh requests without the configured frontend origin", async () => {
+    const response = await request(app)
+      .post("/api/auth/refresh")
+      .set("Origin", "https://attacker.example")
+      .set("X-Refresh-Request", "1")
+      .set("Cookie", "pizza_refresh=invalid.session");
+    expect(response.status).toBe(403);
+  });
+
   it("splits refresh tokens into a session identifier and secret", () => {
     expect(splitRefreshToken("session-id.secret-value")).toEqual({
-      sessionId: "session-id",
-      secret: "secret-value"
+      sessionId: "session-id", secret: "secret-value"
     });
     expect(splitRefreshToken("invalid-token")).toBeNull();
     expect(splitRefreshToken(null)).toBeNull();

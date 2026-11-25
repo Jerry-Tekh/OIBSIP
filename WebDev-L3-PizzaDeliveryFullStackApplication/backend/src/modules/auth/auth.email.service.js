@@ -1,13 +1,9 @@
-import { env } from "../config/env.js";
-import { sendEmail } from "../config/mailer.js";
+import { env } from "../../config/env.js";
+import { sendEmail } from "../../config/mailer.js";
 
 function escapeHtml(value) {
   return value.replace(/[&<>"']/g, character => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
   })[character]);
 }
 

@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import jwt from "jsonwebtoken";
-import { env } from "../config/env.js";
+import { env } from "../../config/env.js";
 
 export function createOpaqueToken() {
   return crypto.randomBytes(48).toString("hex");
@@ -11,15 +11,15 @@ export function hashToken(token) {
 }
 
 export function createAccessToken(user, sessionId) {
-  return jwt.sign(
-    {
-      sub: user._id.toString(),
-      sid: sessionId.toString(),
-      role: user.role
-    },
-    env.ACCESS_TOKEN_SECRET,
-    { expiresIn: env.ACCESS_TOKEN_TTL, issuer: "pizza-delivery-api", audience: "pizza-delivery-client" }
-  );
+  return jwt.sign({
+    sub: user._id.toString(),
+    sid: sessionId.toString(),
+    role: user.role
+  }, env.ACCESS_TOKEN_SECRET, {
+    expiresIn: env.ACCESS_TOKEN_TTL,
+    issuer: "pizza-delivery-api",
+    audience: "pizza-delivery-client"
+  });
 }
 
 export function verifyAccessToken(token) {
@@ -31,10 +31,8 @@ export function verifyAccessToken(token) {
 
 export function splitRefreshToken(token) {
   if (typeof token !== "string") return null;
-
   const separator = token.indexOf(".");
   if (separator < 1 || separator === token.length - 1) return null;
-
   return {
     sessionId: token.slice(0, separator),
     secret: token.slice(separator + 1)

@@ -1,8 +1,8 @@
-import { verifyAccessToken } from "../utils/authTokens.js";
-import User from "../models/User.js";
-import Session from "../models/Session.js";
-import { ApiError } from "../utils/ApiError.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
+import { verifyAccessToken } from "./auth.tokens.js";
+import User from "./user.model.js";
+import Session from "./session.model.js";
+import { ApiError } from "../../utils/ApiError.js";
+import { asyncHandler } from "../../utils/asyncHandler.js";
 
 export const authenticate = asyncHandler(async (req, res, next) => {
   const authorization = req.get("authorization") || "";
@@ -28,9 +28,8 @@ export const authenticate = asyncHandler(async (req, res, next) => {
 
   if (!session) throw new ApiError(401, "Your session is no longer active.");
 
-  // Read current user data so role changes and account changes take effect immediately.
+  // Fetch the current account so role and verification changes take effect immediately.
   const user = await User.findById(claims.sub);
-
   if (!user || !user.isEmailVerified) {
     throw new ApiError(401, "This account is not available.");
   }
@@ -39,3 +38,12 @@ export const authenticate = asyncHandler(async (req, res, next) => {
   req.sessionId = session._id.toString();
   next();
 });
+
+export function authorize(...allowedRoles) {
+  return (req, res, next) => {
+    if (!req.user || !allowedRoles.includes(req.user.role)) {
+      return next(new ApiError(403, "You do not have permission to perform this action."));
+    }
+    next();
+  };
+}
