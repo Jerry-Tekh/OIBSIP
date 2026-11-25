@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import { env } from "../src/config/env.js";
-import User from "../src/models/User.js";
+import User from "../src/modules/auth/user.model.js";
 import { connectDatabase, disconnectDatabase } from "../src/config/database.js";
 import { logger } from "../src/utils/logger.js";
 
@@ -13,11 +13,9 @@ async function createAdmin() {
   if (!name || !email || !password) {
     throw new Error("Set ADMIN_NAME, ADMIN_EMAIL, and ADMIN_PASSWORD in backend/.env before running this command.");
   }
-
   if (password.length < 12) throw new Error("ADMIN_PASSWORD must contain at least 12 characters.");
 
   await connectDatabase();
-
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     if (existingUser.role === "admin") {
@@ -28,14 +26,7 @@ async function createAdmin() {
   }
 
   const passwordHash = await bcrypt.hash(password, 12);
-  await User.create({
-    name,
-    email,
-    passwordHash,
-    role: "admin",
-    isEmailVerified: true
-  });
-
+  await User.create({ name, email, passwordHash, role: "admin", isEmailVerified: true });
   logger.info({ email }, "Administrator account created");
 }
 
