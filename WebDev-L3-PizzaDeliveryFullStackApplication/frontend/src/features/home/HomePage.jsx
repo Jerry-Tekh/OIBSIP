@@ -15,6 +15,7 @@ const steps = [
 export default function HomePage() {
   return (
     <main className={styles.page}>
+      <div className={styles.announcement}><span>THE GOOD STUFF STARTS WITH GOOD DOUGH</span><span>FRESHLY MADE. NEVER RUSHED.</span></div>
       <header className={styles.header}>
         <a className={styles.logo} href="/" aria-label="Crust & Co home"><span className={styles.logoMark}>C</span> crust<span>&</span>co.</a>
         <nav className={styles.nav} aria-label="Main navigation">
@@ -22,20 +23,21 @@ export default function HomePage() {
         </nav>
         <div className={styles.headerActions}>
           <a className={styles.signIn} href="/signin">Sign in</a>
-          <a className={styles.signUp} href="/signup">Create account</a>
+          <a className={styles.signUp} href="/signup">Start an order</a>
         </div>
       </header>
 
       <section className={styles.hero}>
         <div className={styles.heroCopy}>
           <span className={styles.kicker}><i /> GOOD DOUGH. NO SHORTCUTS.</span>
-          <h1>Some days<br/>just call for<br/><em>really good</em><br/>pizza.</h1>
-          <p>Slow-made dough, bright ingredients and a proper hot oven. The little things make the whole slice.</p>
+          <span className={styles.heroOverline}>A LITTLE MORE JOY IN EVERY SLICE</span>
+          <h1>Pizza worth<br/>slowing <em>down</em><br/>for.</h1>
+          <p>Long-fermented dough. Beautifully balanced toppings. A blistering-hot oven. We make the kind of pizza that turns an ordinary evening into the best part of your day.</p>
           <div className={styles.heroActions}>
-            <a className={styles.primaryButton} href="/signup">Order something lovely</a>
-            <a className={styles.textButton} href="#menu">Take a look at the menu</a>
+            <a className={styles.primaryButton} href="/signup">Explore the menu</a>
+            <a className={styles.textButton} href="#story">Our way of making pizza</a>
           </div>
-          <div className={styles.heroNote}><span className={styles.noteStars}>★★★★★</span><span>Made fresh when you order. Always.</span></div>
+          <div className={styles.heroNote}><span className={styles.noteStars}>✳</span><span>Small-batch dough <i/> Fresh ingredients <i/> Big-hearted flavour</span></div>
         </div>
         <div className={styles.heroAtmosphere} aria-hidden="true">
           <span className={styles.heroGlow} />
@@ -44,14 +46,17 @@ export default function HomePage() {
         </div>
       </section>
 
+      <div className={styles.marquee} aria-label="Good dough, good ingredients, great pizza"><span>GOOD DOUGH</span><i>✳</i><span>GOOD INGREDIENTS</span><i>✳</i><span>GREAT PIZZA</span><i>✳</i><span>GOOD DOUGH</span><i>✳</i><span>GOOD INGREDIENTS</span></div>
+
       <section className={styles.promise} id="story">
-        <div><span className={styles.sectionKicker}>A BETTER KIND OF PIZZA NIGHT</span><h2>Not fast food.<br/><em>Good food,</em> made well.</h2></div>
+        <div className={styles.promiseVisual}><span className={styles.promiseImageLabel}>THE CRAFT IS IN THE DETAILS</span><span className={styles.promiseBigType}>CRAFT<br/><em>OVER</em><br/>HASTE.</span></div>
+        <div className={styles.promiseCopy}><span className={styles.sectionKicker}>A BETTER KIND OF PIZZA NIGHT</span><h2>Not fast food.<br/><em>Good food,</em> made well.</h2><span className={styles.promiseRule}/></div>
         <p>We believe a great pizza starts long before it meets the oven. It starts with dough that gets the time it needs, ingredients we’re proud to put our name to, and people who care about getting the details right.</p>
         <span className={styles.promiseMark}>C<span>&</span>C</span>
       </section>
 
       <section className={styles.menuSection} id="menu">
-        <div className={styles.sectionHeading}><div><span className={styles.sectionKicker}>A FEW HOUSE FAVOURITES</span><h2>Meet your <em>next slice.</em></h2></div><a href="/signup" className={styles.menuLink}>Explore the menu</a></div>
+        <div className={styles.sectionHeading}><div><span className={styles.sectionKicker}>STRAIGHT FROM OUR KITCHEN</span><h2>The <em>house favourites.</em></h2><p>Made with care. Remembered by the last bite.</p></div><a href="/signup" className={styles.menuLink}>View all pizzas</a></div>
         <div className={styles.menuGrid}>
           {menu.map((item) => <article className={styles.menuCard} key={item.name}>
             <a className={styles.menuImage} href="/signup" aria-label={`Order ${item.name}`}><img src={item.image} alt={item.name}/></a>
