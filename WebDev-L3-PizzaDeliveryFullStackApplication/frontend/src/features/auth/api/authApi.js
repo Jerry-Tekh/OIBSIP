@@ -33,3 +33,7 @@ export async function signIn({ email, password }) {
 export function signUp({ name, email, password }) {
   return authRequest("register", { name, email, password }, "We couldn't create your account. Please try again.");
 }
+
+export function verifyEmail(token) {
+  return authRequest("verify-email", { token }, "We could not verify your email address. Please try again.");
+}
