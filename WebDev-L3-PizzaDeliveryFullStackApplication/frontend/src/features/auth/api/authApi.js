@@ -6,23 +6,30 @@ export function getAccessToken() {
   return accessToken;
 }
 
-export async function signIn({ email, password }) {
-  const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+async function authRequest(path, body, fallbackMessage) {
+  const response = await fetch(`${API_BASE_URL}/api/auth/${path}`, {
     method: "POST",
     credentials: "include",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
+    body: JSON.stringify(body)
   });
 
   const payload = await response.json().catch(() => ({}));
-
   if (!response.ok || payload.success !== true) {
-    const error = new Error(payload.message || "We couldn't sign you in. Please try again.");
+    const error = new Error(payload.message || fallbackMessage);
     error.status = response.status;
     error.details = payload.details;
     throw error;
   }
-
-  accessToken = payload.data?.accessToken ?? null;
   return payload.data;
+}
+
+export async function signIn({ email, password }) {
+  const data = await authRequest("login", { email, password }, "We couldn't sign you in. Please try again.");
+  accessToken = data?.accessToken ?? null;
+  return data;
+}
+
+export function signUp({ name, email, password }) {
+  return authRequest("register", { name, email, password }, "We couldn't create your account. Please try again.");
 }
