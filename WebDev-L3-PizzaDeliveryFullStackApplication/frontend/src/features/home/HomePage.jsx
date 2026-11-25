@@ -58,7 +58,7 @@ export default function HomePage() {
       <section className={styles.menuSection} id="menu">
         <div className={styles.sectionHeading}><div><span className={styles.sectionKicker}>A FEW HOUSE FAVOURITES</span><h2>Meet your <em>next slice.</em></h2></div><a href="/signup" className={styles.menuLink}>Explore the menu <span>↗</span></a></div>
         <div className={styles.menuGrid}>
-          {menu.map((item, index) => <article className={styles.menuCard} key={item.name}>
+          {menu.map((item) => <article className={styles.menuCard} key={item.name}>
             <a className={styles.menuImage} href="/signup" aria-label={`Order ${item.name}`}><img src={item.image} alt={item.name}/></a>
             <div className={styles.cardMeta}><span>{item.tag}</span><span>{item.price}</span></div>
             <h3>{item.name}</h3><p>{item.detail}</p>
