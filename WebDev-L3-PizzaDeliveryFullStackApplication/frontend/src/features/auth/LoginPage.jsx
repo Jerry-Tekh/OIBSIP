@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { signIn } from "./api/authApi.js";
-import "./LoginPage.css";
+import styles from "./LoginPage.module.css";
 
 const EMAIL_MAX = 254;
 const PASSWORD_MAX = 128;
@@ -62,65 +62,65 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="login-shell">
-      <section className="login-visual" aria-label="Freshly baked pizza">
-        <div className="visual-topline">
-          <a className="brand brand-light" href="/" aria-label="Pizza House home">
-            <span className="brand-mark">P</span>
-            <span>pizza<span className="brand-dot">.</span>house</span>
+    <main className={styles["login-shell"]}>
+      <section className={styles["login-visual"]} aria-label="Freshly baked pizza">
+        <div className={styles["visual-topline"]}>
+          <a className={styles["brand"] + ' ' + styles["brand-light"]} href="/" aria-label="Pizza House home">
+            <span className={styles["brand-mark"]}>P</span>
+            <span>pizza<span className={styles["brand-dot"]}>.</span>house</span>
           </a>
-          <span className="visual-note">FRESH FROM OUR OVEN</span>
+          <span className={styles["visual-note"]}>FRESH FROM OUR OVEN</span>
         </div>
 
-        <div className="visual-copy">
-          <span className="eyebrow"><span /> GOOD FOOD, GOOD MOOD</span>
+        <div className={styles["visual-copy"]}>
+          <span className={styles["eyebrow"]}><span /> GOOD FOOD, GOOD MOOD</span>
           <h1>A little slice<br />of <em>happiness.</em></h1>
           <p>Hand-stretched dough, honest ingredients, and the kind of pizza worth slowing down for.</p>
         </div>
 
-        <div className="pizza-photo-wrap">
+        <div className={styles["pizza-photo-wrap"]}>
           <img
-            className="pizza-photo"
+            className={styles["pizza-photo"]}
             src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1500&q=88"
             alt="Freshly baked pizza topped with basil, cheese and tomatoes"
             fetchPriority="high"
           />
-          <div className="photo-sticker"><span>100%</span><small>made with<br />goodness</small></div>
+          <div className={styles["photo-sticker"]}><span>100%</span><small>made with<br />goodness</small></div>
         </div>
 
-        <div className="visual-footer">
+        <div className={styles["visual-footer"]}>
           <span>MADE FRESH. DELIVERED WITH LOVE.</span>
-          <span className="footer-spark">✳</span>
+          <span className={styles["footer-spark"]}>✳</span>
         </div>
       </section>
 
-      <section className="login-panel">
-        <header className="panel-header">
-          <a className="brand brand-dark" href="/" aria-label="Pizza House home">
-            <span className="brand-mark">P</span>
-            <span>pizza<span className="brand-dot">.</span>house</span>
+      <section className={styles["login-panel"]}>
+        <header className={styles["panel-header"]}>
+          <a className={styles["brand"] + ' ' + styles["brand-dark"]} href="/" aria-label="Pizza House home">
+            <span className={styles["brand-mark"]}>P</span>
+            <span>pizza<span className={styles["brand-dot"]}>.</span>house</span>
           </a>
-          <a className="back-link" href="/">Back to home <span aria-hidden="true">↗</span></a>
+          <a className={styles["back-link"]} href="/">Back to home <span aria-hidden="true">↗</span></a>
         </header>
 
-        <div className="form-wrap">
+        <div className={styles["form-wrap"]}>
           {signedInUser ? (
-            <div className="success-state" role="status">
-              <div className="success-icon">✓</div>
-              <span className="eyebrow">YOU'RE SIGNED IN</span>
+            <div className={styles["success-state"]} role="status">
+              <div className={styles["success-icon"]}>✓</div>
+              <span className={styles["eyebrow"]}>YOU'RE SIGNED IN</span>
               <h2>Welcome back{signedInUser.name ? `, ${signedInUser.name.split(" ")[0]}` : ""}.</h2>
               <p>Your next favourite meal is just around the corner.</p>
             </div>
           ) : (
             <>
-              <div className="form-intro">
-                <span className="eyebrow">YOUR TABLE IS WAITING</span>
+              <div className={styles["form-intro"]}>
+                <span className={styles["eyebrow"]}>YOUR TABLE IS WAITING</span>
                 <h2>Good to have<br />you <em>back.</em></h2>
                 <p>Sign in to pick up where your cravings left off.</p>
               </div>
 
-              <form className="login-form" onSubmit={handleSubmit} noValidate>
-                <div className="field-group">
+              <form className={styles["login-form"]} onSubmit={handleSubmit} noValidate>
+                <div className={styles["field-group"]}>
                   <label htmlFor="email">Email address</label>
                   <input
                     id="email"
@@ -137,15 +137,15 @@ export default function LoginPage() {
                     aria-describedby={errors.email ? "email-error" : undefined}
                     required
                   />
-                  {errors.email && <span className="field-error" id="email-error">{errors.email}</span>}
+                  {errors.email && <span className={styles["field-error"]} id="email-error">{errors.email}</span>}
                 </div>
 
-                <div className="field-group">
-                  <div className="label-row">
+                <div className={styles["field-group"]}>
+                  <div className={styles["label-row"]}>
                     <label htmlFor="password">Password</label>
-                    <a className="forgot-link" href="/forgot-password">Forgot password?</a>
+                    <a className={styles["forgot-link"]} href="/forgot-password">Forgot password?</a>
                   </div>
-                  <div className={`password-control ${errors.password ? "has-error" : ""}`}>
+                  <div className={`${styles["password-control"]} ${errors.password ? styles["has-error"] : ""}`}>
                     <input
                       id="password"
                       name="password"
@@ -161,7 +161,7 @@ export default function LoginPage() {
                       required
                     />
                     <button
-                      className="visibility-toggle"
+                      className={styles["visibility-toggle"]}
                       type="button"
                       onClick={() => setShowPassword(value => !value)}
                       aria-label={showPassword ? "Hide password" : "Show password"}
@@ -170,26 +170,26 @@ export default function LoginPage() {
                       {showPassword ? "Hide" : "Show"}
                     </button>
                   </div>
-                  {errors.password && <span className="field-error" id="password-error">{errors.password}</span>}
+                  {errors.password && <span className={styles["field-error"]} id="password-error">{errors.password}</span>}
                 </div>
 
-                {serverError && <div className="form-alert" role="alert">{serverError}</div>}
+                {serverError && <div className={styles["form-alert"]} role="alert">{serverError}</div>}
 
-                <button className="submit-button" type="submit" disabled={submitting}>
+                <button className={styles["submit-button"]} type="submit" disabled={submitting}>
                   <span>{submitting ? "Signing you in..." : "Sign in"}</span>
-                  <span className="button-arrow" aria-hidden="true">↗</span>
+                  <span className={styles["button-arrow"]} aria-hidden="true">↗</span>
                 </button>
               </form>
 
-              <div className="form-footnote">
-                <span className="footnote-icon">✳</span>
+              <div className={styles["form-footnote"]}>
+                <span className={styles["footnote-icon"]}>✳</span>
                 <p>Your details stay private and secure. We only use them to make your experience better.</p>
               </div>
             </>
           )}
         </div>
 
-        <footer className="panel-footer">
+        <footer className={styles["panel-footer"]}>
           <span>© {new Date().getFullYear()} Pizza House</span>
           <span>GOOD FOOD. BETTER MOMENTS.</span>
         </footer>
