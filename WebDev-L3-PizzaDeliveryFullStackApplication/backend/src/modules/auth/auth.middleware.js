@@ -23,7 +23,7 @@ export const authenticate = asyncHandler(async (req, res, next) => {
     _id: claims.sid,
     userId: claims.sub,
     revokedAt: null,
-    expiresAt: { $gt: new Date() }
+    expiresAt: { $gt: new Date() },
   });
 
   if (!session) throw new ApiError(401, "Your session is no longer active.");
@@ -42,7 +42,9 @@ export const authenticate = asyncHandler(async (req, res, next) => {
 export function authorize(...allowedRoles) {
   return (req, res, next) => {
     if (!req.user || !allowedRoles.includes(req.user.role)) {
-      return next(new ApiError(403, "You do not have permission to perform this action."));
+      return next(
+        new ApiError(403, "You do not have permission to perform this action."),
+      );
     }
     next();
   };

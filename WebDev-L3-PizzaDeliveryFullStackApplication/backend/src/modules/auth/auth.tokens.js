@@ -11,21 +11,25 @@ export function hashToken(token) {
 }
 
 export function createAccessToken(user, sessionId) {
-  return jwt.sign({
-    sub: user._id.toString(),
-    sid: sessionId.toString(),
-    role: user.role
-  }, env.ACCESS_TOKEN_SECRET, {
-    expiresIn: env.ACCESS_TOKEN_TTL,
-    issuer: "pizza-delivery-api",
-    audience: "pizza-delivery-client"
-  });
+  return jwt.sign(
+    {
+      sub: user._id.toString(),
+      sid: sessionId.toString(),
+      role: user.role,
+    },
+    env.ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: env.ACCESS_TOKEN_TTL,
+      issuer: "pizza-delivery-api",
+      audience: "pizza-delivery-client",
+    },
+  );
 }
 
 export function verifyAccessToken(token) {
   return jwt.verify(token, env.ACCESS_TOKEN_SECRET, {
     issuer: "pizza-delivery-api",
-    audience: "pizza-delivery-client"
+    audience: "pizza-delivery-client",
   });
 }
 
@@ -35,6 +39,6 @@ export function splitRefreshToken(token) {
   if (separator < 1 || separator === token.length - 1) return null;
   return {
     sessionId: token.slice(0, separator),
-    secret: token.slice(separator + 1)
+    secret: token.slice(separator + 1),
   };
 }

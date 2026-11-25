@@ -11,7 +11,7 @@ function refreshCookieOptions(expiresAt) {
     secure: env.NODE_ENV === "production",
     sameSite: env.AUTH_COOKIE_SAME_SITE,
     path: "/api/auth",
-    expires: expiresAt
+    expires: expiresAt,
   };
 }
 
@@ -20,7 +20,7 @@ function clearRefreshCookie(res) {
     httpOnly: true,
     secure: env.NODE_ENV === "production",
     sameSite: env.AUTH_COOKIE_SAME_SITE,
-    path: "/api/auth"
+    path: "/api/auth",
   });
 }
 
@@ -29,7 +29,10 @@ function setRefreshCookie(res, token, expiresAt) {
 }
 
 function requireRefreshRequest(req) {
-  if (req.get("origin") !== env.CLIENT_ORIGIN || req.get("x-refresh-request") !== "1") {
+  if (
+    req.get("origin") !== env.CLIENT_ORIGIN ||
+    req.get("x-refresh-request") !== "1"
+  ) {
     throw new ApiError(403, "This refresh request was not accepted.");
   }
 }
@@ -45,7 +48,9 @@ export const verifyEmail = asyncHandler(async (req, res) => {
 });
 
 export const resendVerification = asyncHandler(async (req, res) => {
-  const result = await authService.resendVerificationEmail(req.validated.body.email);
+  const result = await authService.resendVerificationEmail(
+    req.validated.body.email,
+  );
   res.status(200).json({ success: true, data: result });
 });
 
@@ -54,15 +59,20 @@ export const login = asyncHandler(async (req, res) => {
   setRefreshCookie(res, result.refreshToken, result.refreshTokenExpiresAt);
   res.status(200).json({
     success: true,
-    data: { user: result.user, accessToken: result.accessToken }
+    data: { user: result.user, accessToken: result.accessToken },
   });
 });
 
 export const refresh = asyncHandler(async (req, res) => {
   requireRefreshRequest(req);
-  const result = await authService.refreshSession(req.cookies[REFRESH_COOKIE_NAME], req);
+  const result = await authService.refreshSession(
+    req.cookies[REFRESH_COOKIE_NAME],
+    req,
+  );
   setRefreshCookie(res, result.refreshToken, result.refreshTokenExpiresAt);
-  res.status(200).json({ success: true, data: { accessToken: result.accessToken } });
+  res
+    .status(200)
+    .json({ success: true, data: { accessToken: result.accessToken } });
 });
 
 export const logout = asyncHandler(async (req, res) => {
@@ -74,32 +84,45 @@ export const logout = asyncHandler(async (req, res) => {
 export const logoutAll = asyncHandler(async (req, res) => {
   await authService.revokeAllSessions(req.user._id);
   clearRefreshCookie(res);
-  res.status(200).json({ success: true, message: "All sessions have been signed out." });
+  res
+    .status(200)
+    .json({ success: true, message: "All sessions have been signed out." });
 });
 
 export const requestPasswordReset = asyncHandler(async (req, res) => {
-  const result = await authService.requestPasswordReset(req.validated.body.email);
+  const result = await authService.requestPasswordReset(
+    req.validated.body.email,
+  );
   res.status(200).json({ success: true, data: result });
 });
 
 export const resetPassword = asyncHandler(async (req, res) => {
-  const result = await authService.resetPassword(req.validated.body.token, req.validated.body.newPassword);
+  const result = await authService.resetPassword(
+    req.validated.body.token,
+    req.validated.body.newPassword,
+  );
   res.status(200).json({ success: true, data: result });
 });
 
 export const currentUser = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
-    data: { user: authService.publicUser(req.user), sessionId: req.sessionId }
+    data: { user: authService.publicUser(req.user), sessionId: req.sessionId },
   });
 });
 
 export const listSessions = asyncHandler(async (req, res) => {
-  const sessions = await authService.getActiveSessions(req.user._id, req.sessionId);
+  const sessions = await authService.getActiveSessions(
+    req.user._id,
+    req.sessionId,
+  );
   res.status(200).json({ success: true, data: { sessions } });
 });
 
 export const revokeSession = asyncHandler(async (req, res) => {
-  await authService.revokeOneSession(req.user._id, req.validated.params.sessionId);
+  await authService.revokeOneSession(
+    req.user._id,
+    req.validated.params.sessionId,
+  );
   res.status(200).json({ success: true, message: "Session revoked." });
 });
