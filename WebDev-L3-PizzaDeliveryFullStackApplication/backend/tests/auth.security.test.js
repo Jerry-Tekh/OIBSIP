@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import request from "supertest";
 
 import app from "../src/app.js";
-import { registerSchema } from "../src/validators/auth.validators.js";
-import { splitRefreshToken, hashToken } from "../src/utils/authTokens.js";
+import { registerSchema } from "../src/modules/auth/auth.validation.js";
+import { splitRefreshToken, hashToken } from "../src/modules/auth/auth.tokens.js";
 
 describe("Authentication security boundaries", () => {
   it("does not accept a role from public registration input", () => {
@@ -15,20 +15,14 @@ describe("Authentication security boundaries", () => {
         role: "admin"
       }
     });
-
     expect(result.success).toBe(true);
     expect(result.data.body.role).toBeUndefined();
   });
 
   it("rejects weak registration passwords", () => {
     const result = registerSchema.safeParse({
-      body: {
-        name: "Test Customer",
-        email: "customer@example.com",
-        password: "password"
-      }
+      body: { name: "Test Customer", email: "customer@example.com", password: "password" }
     });
-
     expect(result.success).toBe(false);
   });
 
@@ -40,8 +34,7 @@ describe("Authentication security boundaries", () => {
 
   it("splits refresh tokens into a session identifier and secret", () => {
     expect(splitRefreshToken("session-id.secret-value")).toEqual({
-      sessionId: "session-id",
-      secret: "secret-value"
+      sessionId: "session-id", secret: "secret-value"
     });
     expect(splitRefreshToken("invalid-token")).toBeNull();
     expect(splitRefreshToken(null)).toBeNull();
