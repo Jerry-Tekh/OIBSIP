@@ -1,0 +1,38 @@
+import app from "./app.js";
+import { env } from "./config/env.js";
+import { connectDatabase, disconnectDatabase } from "./config/database.js";
+import { logger } from "./utils/logger.js";
+let server;
+let shuttingDown = false;
+
+async function shutdown(signal) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  logger.info({ signal }, "Graceful shutdown");
+  if (server)
+    server.close(async () => {
+      try {
+        await disconnectDatabase();
+        process.exit(0);
+      } catch (err) {
+        logger.error({ err }, "Shutdown error");
+        process.exit(1);
+      }
+    });
+  else process.exit(0);
+}
+
+try {
+  await connectDatabase();
+  server = app.listen(env.PORT, () =>
+    logger.info(
+      { port: env.PORT, mode: env.NODE_ENV },
+      "HTTP server listening",
+    ),
+  );
+} catch (err) {
+  logger.fatal({ err }, "Startup failed; server will not start");
+  process.exit(1);
+}
+process.on("SIGINT", () => shutdown("SIGINT"));
+process.on("SIGTERM", () => shutdown("SIGTERM"));
