@@ -32,21 +32,16 @@ export default function HomePage() {
           <h1>Some days<br/>just call for<br/><em>really good</em><br/>pizza.</h1>
           <p>Slow-made dough, bright ingredients and a proper hot oven. The little things make the whole slice.</p>
           <div className={styles.heroActions}>
-            <a className={styles.primaryButton} href="/signup">Order something lovely <span>↗</span></a>
+            <a className={styles.primaryButton} href="/signup">Order something lovely</a>
             <a className={styles.textButton} href="#menu">Take a look at the menu</a>
           </div>
           <div className={styles.heroNote}><span className={styles.noteStars}>★★★★★</span><span>Made fresh when you order. Always.</span></div>
         </div>
-        <div className={styles.heroArt}>
-          <div className={styles.sunDisc} />
-          <div className={styles.heroImageFrame}>
-            <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1500&q=90" alt="Freshly baked pizza with basil, melted cheese and tomato" fetchPriority="high"/>
-          </div>
-          <div className={styles.roundStamp}><span>FRESH</span><b>✳</b><span>FROM OUR OVEN</span></div>
-          <div className={styles.floatingNote}><span className={styles.floatingIcon}>✦</span><span><b>Made with patience</b><small>Slow dough · bold flavour</small></span></div>
-          <span className={styles.artCaption}>A GOOD THING, ROUND.</span>
+        <div className={styles.heroAtmosphere} aria-hidden="true">
+          <span className={styles.heroGlow} />
+          <span className={styles.heroEyebrow}>HAND-STRETCHED · OVEN-FINISHED · MADE WITH CARE</span>
+          <span className={styles.heroSeal}>MADE FRESH<br/>JUST FOR YOU</span>
         </div>
-        <div className={styles.heroBottom}><span>HAND-STRETCHED · OVEN-FINISHED · MADE WITH CARE</span></div>
       </section>
 
       <section className={styles.promise} id="story">
@@ -56,7 +51,7 @@ export default function HomePage() {
       </section>
 
       <section className={styles.menuSection} id="menu">
-        <div className={styles.sectionHeading}><div><span className={styles.sectionKicker}>A FEW HOUSE FAVOURITES</span><h2>Meet your <em>next slice.</em></h2></div><a href="/signup" className={styles.menuLink}>Explore the menu <span>↗</span></a></div>
+        <div className={styles.sectionHeading}><div><span className={styles.sectionKicker}>A FEW HOUSE FAVOURITES</span><h2>Meet your <em>next slice.</em></h2></div><a href="/signup" className={styles.menuLink}>Explore the menu</a></div>
         <div className={styles.menuGrid}>
           {menu.map((item) => <article className={styles.menuCard} key={item.name}>
             <a className={styles.menuImage} href="/signup" aria-label={`Order ${item.name}`}><img src={item.image} alt={item.name}/></a>
@@ -68,13 +63,13 @@ export default function HomePage() {
       </section>
 
       <section className={styles.process} id="delivery">
-        <div className={styles.processIntro}><span className={styles.sectionKicker}>FROM OUR KITCHEN TO YOUR DOOR</span><h2>Three little steps<br/>to a <em>good evening.</em></h2><a href="/signup" className={styles.lightButton}>Let’s get ordering <span>↗</span></a></div>
+        <div className={styles.processIntro}><span className={styles.sectionKicker}>FROM OUR KITCHEN TO YOUR DOOR</span><h2>Three little steps<br/>to a <em>good evening.</em></h2><a href="/signup" className={styles.lightButton}>Let’s get ordering</a></div>
         <div className={styles.steps}>{steps.map(([number,title,description])=><article className={styles.step} key={number}><span>{number}</span><div><h3>{title}</h3><p>{description}</p></div></article>)}</div>
       </section>
 
       <section className={styles.lastCall}>
         <div className={styles.lastCallImage}><img src="https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=1200&q=85" alt="Pizza fresh from the oven"/></div>
-        <div><span className={styles.sectionKicker}>YOUR NEXT GOOD MEAL IS CLOSE</span><h2>Make tonight<br/>a <em>pizza night.</em></h2><p>Set up your account, find your usual or try something new. We’ll take it from there.</p><a className={styles.primaryButton} href="/signup">Create your account <span>↗</span></a><small>Already one of us? <a href="/signin">Sign in here.</a></small></div>
+        <div><span className={styles.sectionKicker}>YOUR NEXT GOOD MEAL IS CLOSE</span><h2>Make tonight<br/>a <em>pizza night.</em></h2><p>Set up your account, find your usual or try something new. We’ll take it from there.</p><a className={styles.primaryButton} href="/signup">Create your account</a><small>Already one of us? <a href="/signin">Sign in here.</a></small></div>
       </section>
 
       <footer className={styles.footer}>
