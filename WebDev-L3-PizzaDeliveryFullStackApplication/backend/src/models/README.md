@@ -1,1 +1,0 @@
-Canonical Mongoose model definitions.

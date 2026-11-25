@@ -1,1 +1,0 @@
-// Email transport abstraction placeholder.

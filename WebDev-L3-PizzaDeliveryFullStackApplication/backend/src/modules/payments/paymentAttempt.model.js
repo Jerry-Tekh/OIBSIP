@@ -1,1 +1,0 @@
-// Payment attempts model placeholder.

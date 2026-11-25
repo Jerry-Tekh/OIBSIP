@@ -1,1 +1,0 @@
-// Socket event constants placeholder.
