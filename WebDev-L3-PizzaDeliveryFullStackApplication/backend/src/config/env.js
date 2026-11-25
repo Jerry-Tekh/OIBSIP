@@ -16,26 +16,23 @@ const schema = z.object({
   REFRESH_TOKEN_DAYS: z.coerce.number().int().min(1).max(90).default(30),
   AUTH_COOKIE_SAME_SITE: z.enum(["lax", "strict", "none"]).default("lax"),
 
-  SMTP_HOST: z.string().optional().default(""),
-  SMTP_PORT: z.coerce.number().int().min(1).max(65535).default(587),
-  SMTP_SECURE: z.enum(["true", "false"]).default("false").transform(value => value === "true"),
-  SMTP_USER: z.string().optional().default(""),
-  SMTP_PASSWORD: z.string().optional().default(""),
-  EMAIL_FROM: z.string().optional().default(""),
+  BREVO_API_KEY: z.string().optional().default(""),
+  EMAIL_FROM_EMAIL: z.string().email().optional().or(z.literal("")).default(""),
+  EMAIL_FROM_NAME: z.string().optional().default("Pizza Delivery"),
 
   ADMIN_NAME: z.string().optional().default(""),
   ADMIN_EMAIL: z.string().email().optional().or(z.literal("")).default(""),
   ADMIN_PASSWORD: z.string().optional().default("")
 }).superRefine((values, context) => {
-  const smtpValues = [values.SMTP_HOST, values.SMTP_USER, values.SMTP_PASSWORD, values.EMAIL_FROM];
-  const configuredCount = smtpValues.filter(Boolean).length;
+  const emailValues = [values.BREVO_API_KEY, values.EMAIL_FROM_EMAIL];
+  const configuredCount = emailValues.filter(Boolean).length;
 
-  // Email delivery is optional for booting the API, but SMTP must be complete when used.
-  if (configuredCount > 0 && configuredCount !== smtpValues.length) {
+  // Email delivery is optional during API startup, but Brevo configuration must be complete when used.
+  if (configuredCount > 0 && configuredCount !== emailValues.length) {
     context.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "Configure SMTP_HOST, SMTP_USER, SMTP_PASSWORD, and EMAIL_FROM together",
-      path: ["SMTP_HOST"]
+      message: "Configure BREVO_API_KEY and EMAIL_FROM_EMAIL together",
+      path: ["BREVO_API_KEY"]
     });
   }
 
