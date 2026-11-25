@@ -26,10 +26,25 @@ describe("Authentication security boundaries", () => {
     expect(result.success).toBe(false);
   });
 
+  it("mounts authentication endpoints from the auth module", async () => {
+    const response = await request(app).post("/api/auth/register").send({});
+    expect(response.status).toBe(400);
+    expect(response.body.success).toBe(false);
+  });
+
   it("rejects protected requests without an access token", async () => {
     const response = await request(app).get("/api/auth/me");
     expect(response.status).toBe(401);
     expect(response.body.success).toBe(false);
+  });
+
+  it("rejects refresh requests without the configured frontend origin", async () => {
+    const response = await request(app)
+      .post("/api/auth/refresh")
+      .set("Origin", "https://attacker.example")
+      .set("X-Refresh-Request", "1")
+      .set("Cookie", "pizza_refresh=invalid.session");
+    expect(response.status).toBe(403);
   });
 
   it("splits refresh tokens into a session identifier and secret", () => {
