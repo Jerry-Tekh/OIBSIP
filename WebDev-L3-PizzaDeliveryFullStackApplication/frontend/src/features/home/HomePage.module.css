@@ -318,3 +318,37 @@
   .heroArt { min-height:320px; }
   .heroImageFrame { width:min(100%,390px); }
 }
+
+
+/* Remove the oversized hero footprint and keep actions typographically clean. */
+.hero {
+  min-height:0;
+  padding-top:28px;
+  padding-bottom:54px;
+}
+.heroArt { min-height:350px; }
+.heroImageFrame { width:min(100%,430px); }
+.heroBottom { bottom:16px; }
+.signUp { gap:0; }
+.primaryButton { gap:0; justify-content:center; }
+.textButton span,.menuLink span,.lightButton span { display:none; }
+.step { grid-template-columns:38px minmax(0,1fr); }
+.step>b { display:none; }
+
+@media(max-width:1050px) {
+  .hero { min-height:0; padding-top:24px; padding-bottom:48px; }
+  .heroArt { min-height:310px; }
+  .heroImageFrame { width:min(100%,370px); }
+}
+@media(max-width:900px) and (min-width:761px) {
+  .hero { gap:16px; padding-top:20px; padding-bottom:46px; }
+  .heroArt { min-height:280px; }
+  .hero h1 { font-size:clamp(43px,5.4vw,58px); }
+}
+@media(max-width:760px) {
+  .hero { padding-top:40px; padding-bottom:62px; }
+  .heroArt { min-height:0; }
+}
+@media(max-width:480px) {
+  .hero { padding-top:34px; padding-bottom:56px; }
+}
