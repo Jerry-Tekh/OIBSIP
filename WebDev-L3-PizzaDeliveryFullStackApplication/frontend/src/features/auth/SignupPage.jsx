@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import { signUp } from "./api/authApi.js";
 import styles from "./SignupPage.module.css";
@@ -41,16 +42,16 @@ export default function SignupPage() {
 
   return <main className={styles.shell}>
     <section className={styles.story}>
-      <a className={styles.logo} href="/"><span>C</span> crust&co.</a>
+      <Link className={styles.logo} to="/"><span>C</span> crust&co.</Link>
       <div className={styles.storyCopy}><span className={styles.kicker}>A SEAT AT OUR TABLE</span><h1>Good things<br/>are <em>better</em><br/>shared.</h1><p>Create an account for a smoother order, saved details and a little less waiting between you and your pizza.</p></div>
       <div className={styles.storyImage}><img src="https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=1100&q=85" alt="A freshly baked pizza ready to share"/></div>
       <span className={styles.storyFoot}>MADE FRESH. SHARED GENEROUSLY.</span>
     </section>
     <section className={styles.formSide}>
-      <header><a href="/" className={styles.back}>Back to home</a><span>Already have an account? <a href="/signin">Sign in</a></span></header>
+      <header><Link to="/" className={styles.back}>Back to home</Link><span>Already have an account? <Link to="/signin">Sign in</Link></span></header>
       <div className={styles.formWrap}>
         <span className={styles.kicker}>LET'S GET THE GOOD STUFF STARTED</span><h2>Your account.<br/><em>Your kind of pizza.</em></h2><p className={styles.intro}>A few details and you're nearly there.</p>
-        {message ? <div className={styles.success} role="status"><b>You're on the list.</b><p>{message}</p><a href="/signin">Go to sign in</a></div> : <form onSubmit={submit} noValidate>
+        {message ? <div className={styles.success} role="status"><b>You're on the list.</b><p>{message}</p><Link to="/signin">Go to sign in</Link></div> : <form onSubmit={submit} noValidate>
           <div className={styles.field}><label htmlFor="name">Your name</label><input id="name" name="name" autoComplete="name" maxLength={80} placeholder="What should we call you?" value={values.name} onChange={update} aria-invalid={Boolean(errors.name)}/>{errors.name&&<small>{errors.name}</small>}</div>
           <div className={styles.field}><label htmlFor="email">Email address</label><input id="email" name="email" type="email" autoComplete="email" inputMode="email" maxLength={254} placeholder="you@example.com" value={values.email} onChange={update} aria-invalid={Boolean(errors.email)}/>{errors.email&&<small>{errors.email}</small>}</div>
           <div className={styles.field}><label htmlFor="password">Create a password</label><div className={styles.password}><input id="password" name="password" type={showPassword?"text":"password"} autoComplete="new-password" maxLength={128} placeholder="Make it a good one" value={values.password} onChange={update} aria-invalid={Boolean(errors.password)}/><button type="button" onClick={()=>setShowPassword(v=>!v)} aria-pressed={showPassword}>{showPassword?"Hide":"Show"}</button></div>{errors.password&&<small>{errors.password}</small>}<span className={styles.hint}>At least 12 characters, including upper- and lowercase letters, a number and a symbol.</span></div>
