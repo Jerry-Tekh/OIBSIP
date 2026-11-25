@@ -44,10 +44,9 @@ export default function HomePage() {
           </div>
           <div className={styles.roundStamp}><span>FRESH</span><b>✳</b><span>FROM OUR OVEN</span></div>
           <div className={styles.floatingNote}><span className={styles.floatingIcon}>✦</span><span><b>Made with patience</b><small>Slow dough · bold flavour</small></span></div>
-          <div className={styles.imageIndex}>01 <i/> 03</div>
           <span className={styles.artCaption}>A GOOD THING, ROUND.</span>
         </div>
-        <div className={styles.heroBottom}><span>HAND-STRETCHED · OVEN-FINISHED · MADE WITH CARE</span><span>01 / 03</span></div>
+        <div className={styles.heroBottom}><span>HAND-STRETCHED · OVEN-FINISHED · MADE WITH CARE</span></div>
       </section>
 
       <section className={styles.promise} id="story">
@@ -60,7 +59,7 @@ export default function HomePage() {
         <div className={styles.sectionHeading}><div><span className={styles.sectionKicker}>A FEW HOUSE FAVOURITES</span><h2>Meet your <em>next slice.</em></h2></div><a href="/signup" className={styles.menuLink}>Explore the menu <span>↗</span></a></div>
         <div className={styles.menuGrid}>
           {menu.map((item, index) => <article className={styles.menuCard} key={item.name}>
-            <a className={styles.menuImage} href="/signup" aria-label={`Order ${item.name}`}><img src={item.image} alt={item.name}/><span className={styles.cardNumber}>0{index+1}</span></a>
+            <a className={styles.menuImage} href="/signup" aria-label={`Order ${item.name}`}><img src={item.image} alt={item.name}/></a>
             <div className={styles.cardMeta}><span>{item.tag}</span><span>{item.price}</span></div>
             <h3>{item.name}</h3><p>{item.detail}</p>
           </article>)}
