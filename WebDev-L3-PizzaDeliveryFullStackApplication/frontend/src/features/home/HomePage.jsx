@@ -22,7 +22,7 @@ export default function HomePage() {
         </nav>
         <div className={styles.headerActions}>
           <a className={styles.signIn} href="/signin">Sign in</a>
-          <a className={styles.signUp} href="/signup">Create account <span>↗</span></a>
+          <a className={styles.signUp} href="/signup">Create account</a>
         </div>
       </header>
 
@@ -33,7 +33,7 @@ export default function HomePage() {
           <p>Slow-made dough, bright ingredients and a proper hot oven. The little things make the whole slice.</p>
           <div className={styles.heroActions}>
             <a className={styles.primaryButton} href="/signup">Order something lovely <span>↗</span></a>
-            <a className={styles.textButton} href="#menu">Take a look at the menu <span>↓</span></a>
+            <a className={styles.textButton} href="#menu">Take a look at the menu</a>
           </div>
           <div className={styles.heroNote}><span className={styles.noteStars}>★★★★★</span><span>Made fresh when you order. Always.</span></div>
         </div>
@@ -69,7 +69,7 @@ export default function HomePage() {
 
       <section className={styles.process} id="delivery">
         <div className={styles.processIntro}><span className={styles.sectionKicker}>FROM OUR KITCHEN TO YOUR DOOR</span><h2>Three little steps<br/>to a <em>good evening.</em></h2><a href="/signup" className={styles.lightButton}>Let’s get ordering <span>↗</span></a></div>
-        <div className={styles.steps}>{steps.map(([number,title,description])=><article className={styles.step} key={number}><span>{number}</span><div><h3>{title}</h3><p>{description}</p></div><b>↗</b></article>)}</div>
+        <div className={styles.steps}>{steps.map(([number,title,description])=><article className={styles.step} key={number}><span>{number}</span><div><h3>{title}</h3><p>{description}</p></div></article>)}</div>
       </section>
 
       <section className={styles.lastCall}>
