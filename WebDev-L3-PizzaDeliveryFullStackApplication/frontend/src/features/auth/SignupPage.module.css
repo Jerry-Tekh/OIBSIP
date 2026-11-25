@@ -97,3 +97,7 @@
   .formWrap form { gap:11px; }
 }
 @media(prefers-reduced-motion:reduce) { .shell * { transition:none!important; animation:none!important; } }
+
+/* No decorative directional arrows on authentication actions or links. */
+.submit span { display:none!important; }
+.submit { justify-content:center; }
