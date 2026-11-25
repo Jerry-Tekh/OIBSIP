@@ -262,3 +262,24 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
+
+/* Larger, more comfortable reading sizes across the login form */
+.login-shell { font-family:"Poppins",sans-serif; }
+.visual-note,.visual-footer,.panel-footer span:last-child { font-size:10px; }
+.eyebrow { font-size:11px; }
+.visual-copy p { font-size:16px; }
+.back-link { font-size:13px; }
+.form-intro p,.success-state p { font-size:15px; }
+.field-group label { font-size:14px; }
+.field-group input { font-size:15px; }
+.forgot-link,.visibility-toggle { font-size:13px; }
+.field-error,.form-alert { font-size:13px; }
+.form-footnote p { font-size:12px; }
+.panel-footer { font-size:12px; }
+@media(max-width:720px) {
+  .visual-copy p { font-size:14px; }
+  .form-intro p,.success-state p { font-size:14px; }
+  .field-group label { font-size:13px; }
+  .field-group input { font-size:14px; }
+  .form-footnote p { font-size:11px; }
+}
