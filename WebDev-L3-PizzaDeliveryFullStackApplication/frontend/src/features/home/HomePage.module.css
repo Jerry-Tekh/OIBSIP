@@ -32,30 +32,30 @@
 .signUp { display:inline-flex; align-items:center; justify-content:center; min-height:48px; padding:0 23px; border-radius:3px; background:var(--orange); color:white!important; font-size:12px; font-weight:700; letter-spacing:.2px; box-shadow:0 7px 17px #ef4b2328; transition:transform .2s,background .2s,box-shadow .2s; }
 .signUp:hover { transform:translateY(-2px); background:var(--orange-dark); box-shadow:0 11px 22px #ef4b2338; }
 
-.hero { position:relative; display:flex; align-items:center; min-height:clamp(570px,67vw,740px); padding:clamp(70px,8vw,120px) clamp(26px,9vw,140px); isolation:isolate; overflow:hidden; color:#fff9f1; background:#251b15; }
+.hero { position:relative; display:flex; align-items:center; min-height:clamp(500px,42vw,590px); padding:54px clamp(26px,8vw,120px) 62px; isolation:isolate; overflow:hidden; color:#fff9f1; background:#251b15; }
 .hero:before { position:absolute; z-index:-3; content:""; inset:0; background-image:url("https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=2400&q=92"); background-size:cover; background-position:center 52%; transform:scale(1.025); animation:heroEnter 1.2s ease-out both; }
-.hero:after { position:absolute; z-index:-2; content:""; inset:0; background:linear-gradient(90deg,rgba(28,19,14,.94) 0%,rgba(32,22,16,.85) 34%,rgba(32,22,16,.46) 67%,rgba(32,22,16,.12) 100%),linear-gradient(0deg,rgba(24,16,12,.52),transparent 42%); }
+.hero:after { position:absolute; z-index:-2; content:""; inset:0; background:radial-gradient(ellipse at 78% 48%,rgba(239,75,35,.13),transparent 34%),linear-gradient(90deg,rgba(28,19,14,.96) 0%,rgba(32,22,16,.87) 37%,rgba(32,22,16,.48) 70%,rgba(32,22,16,.18) 100%),linear-gradient(0deg,rgba(24,16,12,.58),transparent 48%); }
 .heroCopy { position:relative; z-index:2; width:min(100%,690px); }
 .kicker,.sectionKicker { display:inline-flex; align-items:center; gap:10px; color:var(--orange); font-size:10px; font-weight:700; letter-spacing:1.8px; }
 .hero .kicker { color:#ffc09f; }
 .kicker i { width:7px; height:7px; border-radius:50%; background:#ff8158; box-shadow:0 0 0 5px #ff81582b; }
-.heroOverline { display:block; margin-top:22px; color:#ffd0b9; font-size:10px; font-weight:700; letter-spacing:2.3px; }
+.heroOverline { display:block; margin-top:14px; color:#ffd0b9; font-size:10px; font-weight:700; letter-spacing:2.3px; }
 .hero h1,.promise h2,.sectionHeading h2,.process h2,.lastCall h2 { font-family:"Playfair Display",Georgia,serif; font-weight:700; letter-spacing:-2.7px; line-height:.98; }
-.hero h1 { max-width:760px; margin:20px 0 24px; font-size:clamp(68px,8.4vw,116px); text-wrap:balance; }
+.hero h1 { max-width:700px; margin:13px 0 17px; font-size:clamp(58px,6.8vw,92px); text-wrap:balance; }
 .hero h1 em { color:#ff865f; font-style:italic; }
-.heroCopy>p { max-width:535px; margin:0; color:rgba(255,249,241,.84); font-size:clamp(16px,1.35vw,19px); line-height:1.85; }
-.heroActions { display:flex; align-items:center; flex-wrap:wrap; gap:18px 30px; margin-top:34px; }
+.heroCopy>p { max-width:510px; margin:0; color:rgba(255,249,241,.86); font-size:clamp(15px,1.15vw,17px); line-height:1.7; }
+.heroActions { display:flex; align-items:center; flex-wrap:wrap; gap:16px 26px; margin-top:25px; }
 .primaryButton { display:inline-flex; align-items:center; justify-content:center; min-height:56px; padding:0 27px; border:1px solid var(--orange); border-radius:3px; background:var(--orange); color:white!important; font-size:12px; font-weight:700; letter-spacing:.35px; box-shadow:0 12px 25px #d846273b; transition:transform .2s,background .2s,box-shadow .2s; }
 .primaryButton:hover { transform:translateY(-3px); background:var(--orange-dark); box-shadow:0 17px 32px #d846274a; }
 .textButton { padding:13px 0; border-bottom:1px solid #ffffff80; color:#fff9f1; font-size:12px; font-weight:700; }
 .textButton:hover { color:#ffb99b; border-color:#ffb99b; }
-.heroNote { display:flex; align-items:center; flex-wrap:wrap; gap:11px; margin-top:36px; color:rgba(255,249,241,.76); font-size:12px; }
+.heroNote { display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin-top:23px; color:rgba(255,249,241,.8); font-size:11px; }
 .heroNote i { width:3px; height:3px; border-radius:50%; background:#ff9a74; }
 .noteStars { color:#ff9a74; font-size:18px; }
 .heroAtmosphere { position:absolute; z-index:-1; inset:0; pointer-events:none; overflow:hidden; }
 .heroGlow { position:absolute; right:-7%; top:-48%; width:min(72vw,960px); aspect-ratio:1; border:1px solid #ffffff35; border-radius:50%; box-shadow:0 0 0 32px #ffffff08,0 0 0 82px #ffffff07,0 0 0 145px #ffffff05; }
 .heroEyebrow { position:absolute; right:clamp(26px,7vw,110px); bottom:32px; color:#ffffffa8; font-size:9px; font-weight:700; letter-spacing:2px; }
-.heroSeal { position:absolute; right:clamp(32px,9vw,140px); bottom:clamp(90px,12vh,150px); display:grid; place-items:center; width:116px; height:116px; border:1px solid #ffffff8c; border-radius:50%; background:#24191255; color:#fff9f1; backdrop-filter:blur(9px); font-size:9px; font-weight:700; line-height:1.8; letter-spacing:1.4px; text-align:center; transform:rotate(9deg); }
+.heroSeal { position:absolute; right:clamp(32px,8vw,120px); bottom:clamp(58px,8vh,92px); display:grid; place-items:center; width:116px; height:116px; border:1px solid #ffffff8c; border-radius:50%; background:#24191255; color:#fff9f1; backdrop-filter:blur(9px); font-size:9px; font-weight:700; line-height:1.8; letter-spacing:1.4px; text-align:center; transform:rotate(9deg); }
 @keyframes heroEnter { from { opacity:.65; transform:scale(1.08); } to { opacity:1; transform:scale(1.025); } }
 
 .marquee { display:flex; align-items:center; justify-content:space-around; gap:20px; min-height:66px; padding:12px 4vw; overflow:hidden; background:var(--orange); color:#fff8f0; }
@@ -131,8 +131,8 @@
   .nav a { font-size:11px; }
   .headerActions { gap:15px; }
   .signUp { min-height:44px; padding-inline:17px; }
-  .hero { min-height:590px; padding-inline:7vw; }
-  .hero h1 { font-size:clamp(64px,8vw,88px); }
+  .hero { min-height:520px; padding:48px 7vw 54px; }
+  .hero h1 { font-size:clamp(58px,7vw,78px); }
   .heroSeal { right:6vw; width:94px; height:94px; }
   .promise { gap:36px; padding-inline:6vw; }
   .promiseVisual { min-height:270px; padding:30px; }
@@ -147,8 +147,8 @@
   .headerActions { gap:13px; }
   .signIn { font-size:11px; }
   .signUp { min-height:42px; padding-inline:14px; font-size:11px; }
-  .hero { min-height:560px; padding:78px 6vw 110px; }
-  .hero h1 { font-size:clamp(62px,9vw,82px); }
+  .hero { min-height:500px; padding:52px 6vw 76px; }
+  .hero h1 { font-size:clamp(56px,8vw,72px); }
   .heroSeal { right:6vw; bottom:82px; width:82px; height:82px; font-size:7px; }
   .heroEyebrow { right:6vw; bottom:28px; max-width:60%; font-size:8px; text-align:right; }
   .promise { grid-template-columns:1fr 1fr; padding-block:75px; }
@@ -174,13 +174,13 @@
   .headerActions { gap:12px; }
   .signIn { font-size:11px; }
   .signUp { min-height:40px; padding-inline:13px; font-size:10px; }
-  .hero { min-height:620px; align-items:flex-start; padding:76px 25px 125px; }
+  .hero { min-height:0; align-items:flex-start; padding:58px 25px 94px; }
   .hero:before { background-position:59% center; }
   .hero:after { background:linear-gradient(90deg,rgba(28,19,14,.9),rgba(32,22,16,.59)),linear-gradient(0deg,rgba(24,16,12,.7),transparent 58%); }
-  .hero h1 { font-size:clamp(58px,11vw,78px); letter-spacing:-2px; }
+  .hero h1 { font-size:clamp(54px,10vw,70px); letter-spacing:-2px; }
   .heroCopy>p { max-width:500px; font-size:16px; }
-  .heroActions { align-items:flex-start; flex-direction:column; gap:14px; margin-top:28px; }
-  .heroNote { max-width:390px; gap:8px; font-size:10px; }
+  .heroActions { align-items:flex-start; flex-direction:column; gap:12px; margin-top:23px; }
+  .heroNote { max-width:390px; gap:8px; margin-top:19px; font-size:10px; }
   .heroSeal { right:23px; bottom:28px; width:70px; height:70px; }
   .heroEyebrow { left:25px; right:110px; bottom:35px; text-align:left; font-size:7px; }
   .marquee { min-height:54px; gap:18px; justify-content:flex-start; }
@@ -220,8 +220,8 @@
   .headerActions { gap:9px; }
   .signIn { font-size:10px; }
   .signUp { min-height:37px; padding-inline:10px; font-size:9px; }
-  .hero { min-height:600px; padding:64px 20px 120px; }
-  .hero h1 { font-size:clamp(51px,12vw,64px); }
+  .hero { min-height:0; padding:48px 20px 86px; }
+  .hero h1 { font-size:clamp(48px,11vw,60px); }
   .heroCopy>p { font-size:14px; }
   .heroNote { font-size:9px; }
   .heroEyebrow { left:20px; right:100px; font-size:6px; letter-spacing:1px; }
