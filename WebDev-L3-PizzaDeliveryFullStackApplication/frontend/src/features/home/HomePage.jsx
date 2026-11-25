@@ -43,6 +43,8 @@ export default function HomePage() {
             <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=1500&q=90" alt="Freshly baked pizza with basil, melted cheese and tomato" fetchPriority="high"/>
           </div>
           <div className={styles.roundStamp}><span>FRESH</span><b>✳</b><span>FROM OUR OVEN</span></div>
+          <div className={styles.floatingNote}><span className={styles.floatingIcon}>✦</span><span><b>Made with patience</b><small>Slow dough · bold flavour</small></span></div>
+          <div className={styles.imageIndex}>01 <i/> 03</div>
           <span className={styles.artCaption}>A GOOD THING, ROUND.</span>
         </div>
         <div className={styles.heroBottom}><span>HAND-STRETCHED · OVEN-FINISHED · MADE WITH CARE</span><span>01 / 03</span></div>
