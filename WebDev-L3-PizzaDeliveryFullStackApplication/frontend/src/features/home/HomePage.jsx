@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import styles from "./HomePage.module.css";
 
 const menu = [
@@ -17,13 +18,13 @@ export default function HomePage() {
     <main className={styles.page}>
       <div className={styles.announcement}><span>THE GOOD STUFF STARTS WITH GOOD DOUGH</span><span>FRESHLY MADE. NEVER RUSHED.</span></div>
       <header className={styles.header}>
-        <a className={styles.logo} href="/" aria-label="Crust & Co home"><span className={styles.logoMark}>C</span> crust<span>&</span>co.</a>
+        <Link className={styles.logo} to="/" aria-label="Crust & Co home"><span className={styles.logoMark}>C</span> crust<span>&</span>co.</Link>
         <nav className={styles.nav} aria-label="Main navigation">
-          <a href="#menu">The menu</a><a href="#story">Our way</a><a href="#delivery">Delivery</a>
+          <Link to="#menu">The menu</Link><Link to="#story">Our way</Link><Link to="#delivery">Delivery</Link>
         </nav>
         <div className={styles.headerActions}>
-          <a className={styles.signIn} href="/signin">Sign in</a>
-          <a className={styles.signUp} href="/signup">Start an order</a>
+          <Link className={styles.signIn} to="/signin">Sign in</Link>
+          <Link className={styles.signUp} to="/signup">Start an order</Link>
         </div>
       </header>
 
@@ -34,8 +35,8 @@ export default function HomePage() {
           <h1>Pizza worth<br/>slowing <em>down</em><br/>for.</h1>
           <p>Long-fermented dough. Beautifully balanced toppings. A blistering-hot oven. We make the kind of pizza that turns an ordinary evening into the best part of your day.</p>
           <div className={styles.heroActions}>
-            <a className={styles.primaryButton} href="/signup">Explore the menu</a>
-            <a className={styles.textButton} href="#story">Our way of making pizza</a>
+            <Link className={styles.primaryButton} to="/signup">Explore the menu</Link>
+            <Link className={styles.textButton} to="#story">Our way of making pizza</Link>
           </div>
           <div className={styles.heroNote}><span className={styles.noteStars}>✳</span><span>Small-batch dough <i/> Fresh ingredients <i/> Big-hearted flavour</span></div>
         </div>
@@ -56,10 +57,10 @@ export default function HomePage() {
       </section>
 
       <section className={styles.menuSection} id="menu">
-        <div className={styles.sectionHeading}><div><span className={styles.sectionKicker}>STRAIGHT FROM OUR KITCHEN</span><h2>The <em>house favourites.</em></h2><p>Made with care. Remembered by the last bite.</p></div><a href="/signup" className={styles.menuLink}>View all pizzas</a></div>
+        <div className={styles.sectionHeading}><div><span className={styles.sectionKicker}>STRAIGHT FROM OUR KITCHEN</span><h2>The <em>house favourites.</em></h2><p>Made with care. Remembered by the last bite.</p></div><Link to="/signup" className={styles.menuLink}>View all pizzas</Link></div>
         <div className={styles.menuGrid}>
           {menu.map((item) => <article className={styles.menuCard} key={item.name}>
-            <a className={styles.menuImage} href="/signup" aria-label={`Order ${item.name}`}><img src={item.image} alt={item.name}/></a>
+            <Link className={styles.menuImage} to="/signup" aria-label={`Order ${item.name}`}><img src={item.image} alt={item.name}/></Link>
             <div className={styles.cardMeta}><span>{item.tag}</span><span>{item.price}</span></div>
             <h3>{item.name}</h3><p>{item.detail}</p>
           </article>)}
@@ -68,19 +69,19 @@ export default function HomePage() {
       </section>
 
       <section className={styles.process} id="delivery">
-        <div className={styles.processIntro}><span className={styles.sectionKicker}>FROM OUR KITCHEN TO YOUR DOOR</span><h2>Three little steps<br/>to a <em>good evening.</em></h2><a href="/signup" className={styles.lightButton}>Let’s get ordering</a></div>
+        <div className={styles.processIntro}><span className={styles.sectionKicker}>FROM OUR KITCHEN TO YOUR DOOR</span><h2>Three little steps<br/>to a <em>good evening.</em></h2><Link to="/signup" className={styles.lightButton}>Let’s get ordering</Link></div>
         <div className={styles.steps}>{steps.map(([number,title,description])=><article className={styles.step} key={number}><span>{number}</span><div><h3>{title}</h3><p>{description}</p></div></article>)}</div>
       </section>
 
       <section className={styles.lastCall}>
         <div className={styles.lastCallImage}><img src="https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=1200&q=85" alt="Pizza fresh from the oven"/></div>
-        <div><span className={styles.sectionKicker}>YOUR NEXT GOOD MEAL IS CLOSE</span><h2>Make tonight<br/>a <em>pizza night.</em></h2><p>Set up your account, find your usual or try something new. We’ll take it from there.</p><a className={styles.primaryButton} href="/signup">Create your account</a><small>Already one of us? <a href="/signin">Sign in here.</a></small></div>
+        <div><span className={styles.sectionKicker}>YOUR NEXT GOOD MEAL IS CLOSE</span><h2>Make tonight<br/>a <em>pizza night.</em></h2><p>Set up your account, find your usual or try something new. We’ll take it from there.</p><Link className={styles.primaryButton} to="/signup">Create your account</Link><small>Already one of us? <Link to="/signin">Sign in here.</Link></small></div>
       </section>
 
       <footer className={styles.footer}>
-        <a className={styles.logo} href="/"><span className={styles.logoMark}>C</span> crust<span>&</span>co.</a>
+        <Link className={styles.logo} to="/"><span className={styles.logoMark}>C</span> crust<span>&</span>co.</Link>
         <p>Good dough. Good people. Good pizza.</p>
-        <div><a href="#menu">Menu</a><a href="/signin">Sign in</a><a href="/signup">Create account</a></div>
+        <div><Link to="#menu">Menu</Link><Link to="/signin">Sign in</Link><Link to="/signup">Create account</Link></div>
         <small>© {new Date().getFullYear()} Crust & Co. Made with care.</small>
       </footer>
     </main>

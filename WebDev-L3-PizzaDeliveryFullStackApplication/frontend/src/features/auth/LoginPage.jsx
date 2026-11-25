@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import { signIn } from "./api/authApi.js";
 import styles from "./LoginPage.module.css";
@@ -65,10 +66,10 @@ export default function LoginPage() {
     <main className={styles["login-shell"]}>
       <section className={styles["login-visual"]} aria-label="Freshly baked pizza">
         <div className={styles["visual-topline"]}>
-          <a className={styles["brand"] + ' ' + styles["brand-light"]} href="/" aria-label="Pizza House home">
+          <Link className={styles["brand"] + ' ' + styles["brand-light"]} to="/" aria-label="Pizza House home">
             <span className={styles["brand-mark"]}>P</span>
             <span>pizza<span className={styles["brand-dot"]}>.</span>house</span>
-          </a>
+          </Link>
           <span className={styles["visual-note"]}>FRESH FROM OUR OVEN</span>
         </div>
 
@@ -96,11 +97,11 @@ export default function LoginPage() {
 
       <section className={styles["login-panel"]}>
         <header className={styles["panel-header"]}>
-          <a className={styles["brand"] + ' ' + styles["brand-dark"]} href="/" aria-label="Pizza House home">
+          <Link className={styles["brand"] + ' ' + styles["brand-dark"]} to="/" aria-label="Pizza House home">
             <span className={styles["brand-mark"]}>P</span>
             <span>pizza<span className={styles["brand-dot"]}>.</span>house</span>
-          </a>
-          <a className={styles["back-link"]} href="/">Back to home</a>
+          </Link>
+          <Link className={styles["back-link"]} to="/">Back to home</Link>
         </header>
 
         <div className={styles["form-wrap"]}>
@@ -143,7 +144,7 @@ export default function LoginPage() {
                 <div className={styles["field-group"]}>
                   <div className={styles["label-row"]}>
                     <label htmlFor="password">Password</label>
-                    <a className={styles["forgot-link"]} href="/forgot-password">Forgot password?</a>
+                    <Link className={styles["forgot-link"]} to="/forgot-password">Forgot password?</Link>
                   </div>
                   <div className={`${styles["password-control"]} ${errors.password ? styles["has-error"] : ""}`}>
                     <input
