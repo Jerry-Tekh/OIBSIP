@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import HomePage from "./features/home/HomePage.jsx";
 import LoginPage from "./features/auth/LoginPage.jsx";
 import SignupPage from "./features/auth/SignupPage.jsx";
+import VerifyEmailPage from "./features/auth/VerifyEmailPage.jsx";
 
 export default function App() {
   return (
@@ -11,6 +12,7 @@ export default function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/register" element={<SignupPage />} />
+      <Route path="/verify-email" element={<VerifyEmailPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
