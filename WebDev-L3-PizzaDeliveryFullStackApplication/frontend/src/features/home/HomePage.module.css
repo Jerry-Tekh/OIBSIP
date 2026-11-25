@@ -221,3 +221,100 @@
 @media(prefers-reduced-motion:reduce) {
   .page * { scroll-behavior:auto!important; transition:none!important; animation:none!important; }
 }
+
+
+/* Final typography and responsive consistency pass */
+.page { font-size:16px; }
+.logo { gap:11px; font-size:21px; letter-spacing:-1.15px; }
+.logoMark { width:40px; height:40px; border-radius:13px; font-size:21px; box-shadow:0 5px 13px #ef4b2330; }
+.logo>span:not(.logoMark) { color:var(--orange); }
+.signUp { min-height:48px; gap:15px; padding:0 19px; border-radius:12px; background:var(--orange); font-size:13px; box-shadow:0 7px 18px #ef4b2326; }
+.signUp:hover { background:var(--orange-deep); }
+.signUp span { color:#ffe0d2; }
+.nav a { padding:11px 18px; font-size:13px; }
+.signIn { font-size:13px; }
+.kicker,.sectionKicker { font-size:11px; letter-spacing:1.45px; }
+.heroCopy>p { font-size:17px; line-height:1.8; }
+.primaryButton { min-height:56px; padding-inline:22px; font-size:14px; }
+.textButton { font-size:14px; }
+.heroNote { font-size:13px; }
+.floatingNote b { font-size:12px; }
+.floatingNote small { font-size:10px; }
+.artCaption { font-size:10px; }
+.heroBottom { font-size:10px; }
+.promise>p { font-size:16px; line-height:1.9; }
+.menuLink,.lightButton { font-size:14px; }
+.cardMeta { font-size:11px; }
+.cardMeta span:last-child { font-size:15px; }
+.menuCard h3 { font-size:clamp(21px,2vw,26px); }
+.menuCard p { font-size:14px; line-height:1.75; }
+.menuDisclaimer { font-size:13px; }
+.step h3 { font-size:19px; }
+.step p { font-size:14px; line-height:1.85; }
+.lastCall>div:last-child>p { font-size:16px; }
+.lastCall small { font-size:13px; }
+.footer>p { font-size:14px; }
+.footer>div a,.footer>small { font-size:13px; }
+.cardNumber,.imageIndex { display:none!important; }
+
+@media(max-width:1050px) {
+  .header { gap:12px; }
+  .logo { font-size:18px; }
+  .logoMark { width:35px; height:35px; }
+  .nav a { padding:10px 12px; font-size:12px; }
+  .signIn { font-size:12px; }
+  .signUp { min-height:44px; padding-inline:14px; font-size:12px; }
+  .heroCopy>p { font-size:15px; }
+  .promise>p,.lastCall>div:last-child>p { font-size:15px; }
+}
+@media(max-width:900px) {
+  .header { display:flex; justify-content:space-between; width:calc(100% - 36px); }
+  .nav { display:none; }
+  .headerActions { margin-left:auto; }
+  .hero { grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:22px; padding-inline:34px; }
+  .hero h1 { font-size:clamp(47px,6.2vw,65px); }
+  .heroArt { min-height:330px; }
+  .heroBottom { left:34px; right:34px; }
+  .menuSection,.process { padding-inline:5vw; }
+  .promise,.lastCall { padding-inline:6vw; }
+}
+@media(max-width:760px) {
+  .header { width:calc(100% - 28px); min-height:70px; }
+  .logo { font-size:18px; }
+  .logoMark { width:34px; height:34px; }
+  .signIn { font-size:12px; }
+  .signUp { min-height:43px; padding-inline:13px; font-size:12px; }
+  .heroCopy>p { font-size:16px; }
+  .promise>p { font-size:15px; }
+  .menuCard h3 { font-size:20px; }
+  .menuCard p { font-size:13px; }
+  .step h3 { font-size:17px; }
+  .step p { font-size:13px; }
+  .lastCall>div:last-child>p { font-size:15px; }
+  .footer>div a,.footer>small { font-size:12px; }
+}
+@media(max-width:480px) {
+  .header { width:calc(100% - 22px); min-height:64px; }
+  .logo { gap:8px; font-size:16px; }
+  .logoMark { width:31px; height:31px; border-radius:10px; font-size:17px; }
+  .headerActions { gap:10px; }
+  .signIn { font-size:11px; }
+  .signUp { min-height:39px; gap:7px; padding-inline:10px; font-size:10px; border-radius:9px; }
+  .hero { padding-inline:19px; }
+  .kicker,.sectionKicker { font-size:10px; letter-spacing:1.1px; }
+  .heroCopy>p { font-size:15px; }
+  .heroBottom { left:19px; right:19px; font-size:7px; }
+  .promise>p { font-size:14px; }
+  .menuCard h3 { font-size:21px; }
+  .menuCard p { font-size:13px; }
+  .menuDisclaimer { font-size:12px; }
+  .step h3 { font-size:16px; }
+  .step p { font-size:12px; }
+  .lastCall>div:last-child>p { font-size:14px; }
+  .footer>div a,.footer>small { font-size:12px; }
+}
+@media(min-width:761px) and (max-width:1100px) {
+  .hero { min-height:470px; padding-top:30px; padding-bottom:58px; }
+  .heroArt { min-height:320px; }
+  .heroImageFrame { width:min(100%,390px); }
+}
