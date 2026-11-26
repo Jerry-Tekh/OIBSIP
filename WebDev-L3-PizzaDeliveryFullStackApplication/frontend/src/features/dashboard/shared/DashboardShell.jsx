@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { signOut } from "../../auth/api/authApi.js";
 import styles from "./DashboardShell.module.css";
 
 const icons = { Overview:"◫", Orders:"▤", Inventory:"▦", "Stock movements":"↕", "Low-stock alerts":"⚑", "My orders":"▤", "Saved addresses":"⌖", Profile:"◎", Settings:"⚙" };
@@ -7,7 +8,26 @@ const icons = { Overview:"◫", Orders:"▤", Inventory:"▦", "Stock movements"
 export default function DashboardShell({ role="admin", active="Overview", navigation=[], title, subtitle, children }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState("");
+  const navigate = useNavigate();
   const isAdmin = role === "admin";
+
+  async function handleLogout() {
+    if (loggingOut) return;
+
+    setLoggingOut(true);
+    setLogoutError("");
+
+    try {
+      await signOut();
+      navigate("/login", { replace: true });
+    } catch (error) {
+      setLogoutError(error.message || "We couldn't sign you out. Please try again.");
+    } finally {
+      setLoggingOut(false);
+    }
+  }
   return (
     <div className={`${styles.app} ${collapsed ? styles.collapsed : ""}`}>
       {mobileOpen && <button className={styles.scrim} aria-label="Close navigation" onClick={() => setMobileOpen(false)} />}
@@ -20,6 +40,18 @@ export default function DashboardShell({ role="admin", active="Overview", naviga
         </nav>
         <div className={styles.sidebarBottom}>
           <div className={styles.helpCard}><span className={styles.helpIcon}>✳</span><strong>{isAdmin ? "Need a hand?" : "Need a little help?"}</strong><small>{isAdmin ? "Your operations, all in one place." : "We're always happy to help."}</small></div>
+          <button
+            type="button"
+            className={styles.logoutButton}
+            onClick={handleLogout}
+            disabled={loggingOut}
+            title={collapsed ? "Sign out" : undefined}
+            aria-label={loggingOut ? "Signing out" : "Sign out"}
+          >
+            <span className={styles.logoutIcon} aria-hidden="true">↪</span>
+            <span className={styles.logoutText}>{loggingOut ? "Signing out…" : "Sign out"}</span>
+          </button>
+          {logoutError && <p className={styles.logoutError} role="alert">{logoutError}</p>}
           <Link to="/" className={styles.backHome}>↗ <span>Back to storefront</span></Link>
           <div className={styles.userMini}><span className={styles.avatar}>{isAdmin ? "AD" : "JC"}</span><span className={styles.userText}><strong>{isAdmin ? "Alex Morgan" : "Jordan Carter"}</strong><small>{isAdmin ? "Administrator" : "Customer"}</small></span><span className={styles.more}>···</span></div>
         </div>

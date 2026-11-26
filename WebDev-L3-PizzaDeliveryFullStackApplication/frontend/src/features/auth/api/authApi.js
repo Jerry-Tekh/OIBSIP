@@ -30,6 +30,15 @@ export async function signIn({ email, password }) {
   return data;
 }
 
+/**
+ * Revoke the current server-side session using its HttpOnly refresh cookie.
+ * Clear the in-memory access token only after the API confirms logout.
+ */
+export async function signOut() {
+  await authRequest("logout", {}, "We couldn't sign you out. Please try again.");
+  accessToken = null;
+}
+
 export function signUp({ name, email, password }) {
   return authRequest("register", { name, email, password }, "We couldn't create your account. Please try again.");
 }
