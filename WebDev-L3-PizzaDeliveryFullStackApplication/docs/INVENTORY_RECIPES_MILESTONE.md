@@ -101,3 +101,18 @@ All routes remain inside the existing protected admin dashboard shell.
 
 ## Not yet production-complete
 Persistent alert lifecycle/notifications, reservation allocation and release orchestration, recipe snapshotting at checkout, provider/catalog image uploads, storefront product-card integration, automated tests and frontend/API integration tests remain follow-up work. The admin overview now reads live inventory and product data; order/revenue reporting is deliberately shown as unavailable until the order lifecycle and reporting APIs exist. Inventory, low-stock and movement pages expose server-backed pagination. No checkout or payment behavior is changed by this milestone.
+
+## Admin audit correction pass (November 2026)
+
+The admin feature review corrections are being applied on the existing `feature/inventory-recipes-foundation` branch:
+
+- Product administration is connected to the dedicated PizzaProduct admin APIs; drafts can be edited, published, returned to draft, archived, and published products can be made temporarily unavailable.
+- Product and recipe ObjectId validation uses the standard 24-character hexadecimal pattern.
+- Recipe management selects PizzaProduct records rather than accepting manually entered product IDs/name snapshots. The API validates the product and active inventory dependencies and derives the product-name snapshot from the actual product record. Recipe selector searches include server pagination for products and ingredients.
+- Inventory, low-stock and movement views expose server pagination rather than silently limiting the administrator to a fixed first page.
+- Search expressions are escaped before use as MongoDB regular expressions. Blank SKU values are normalized to unset values during create/update, avoiding sparse-index collisions.
+- Unpublishing preserves the last publication timestamp and actor as audit metadata.
+- Admin overview uses server-side totals for inventory, low-stock items, and all product publication states, rather than calculating counts from a limited first page. Low-stock preview is a bounded list with the full total shown separately.
+- Order/revenue reporting is not represented as live until the order lifecycle and reporting APIs are implemented.
+
+These changes are source-level updates on the feature branch. Automated tests, a local build, database-backed integration tests, and browser validation still need to be run in the developer environment; this documentation does not claim those checks have passed.
