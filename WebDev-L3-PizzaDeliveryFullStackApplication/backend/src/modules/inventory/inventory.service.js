@@ -19,9 +19,10 @@ export async function createInventory(payload,userId) {
  const session=await mongoose.startSession();let created;
  try{await session.withTransaction(async()=>{
   const normalizedName=payload.name.toLowerCase().trim();
-  const [item]=await InventoryItem.create([{...payload,normalizedName,physicalStock:payload.initialStock,reservedStock:0,createdBy:userId,updatedBy:userId}],{session});
+  const {initialStock,...metadata}=payload;
+  const [item]=await InventoryItem.create([{...metadata,sku:metadata.sku||undefined,normalizedName,physicalStock:initialStock,reservedStock:0,createdBy:userId,updatedBy:userId}],{session});
   created=item;
-  await InventoryMovement.create([{inventoryItemId:item._id,movementType:"initial_stock",direction:"in",quantity:payload.initialStock,unit:item.unit,physicalStockBefore:0,physicalStockAfter:payload.initialStock,reason:"Initial stock recorded when ingredient was created",actorUserId:userId}],{session});
+  if(initialStock>0) await InventoryMovement.create([{inventoryItemId:item._id,movementType:"initial_stock",direction:"in",quantity:initialStock,unit:item.unit,physicalStockBefore:0,physicalStockAfter:initialStock,reason:"Initial stock recorded when ingredient was created",actorUserId:userId}],{session});
  });}catch(error){if(error.code===11000)throw new ApiError(409,"An ingredient with this name or SKU already exists.");throw error;}finally{await session.endSession();}
  return created;
 }
