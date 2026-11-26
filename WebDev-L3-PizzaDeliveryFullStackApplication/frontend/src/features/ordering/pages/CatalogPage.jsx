@@ -5,16 +5,9 @@ import styles from "./CatalogPage.module.css";
 export default function CatalogPage() {
   return (
     <main className={styles.page}>
-      <section className={styles.hero}>
-        <span className={styles.kicker}>THE CRUST & CO. MENU</span>
-        <h2>Find your next<br/><em>favourite.</em></h2>
-        <p>Made with care, finished in a hot oven, and ready for your table.</p>
-        <a href="#pizzas" className={styles.heroLink}>Explore the pizzas <span>↓</span></a>
-      </section>
-
       <section className={styles.menu} id="pizzas">
         <div className={styles.sectionHeading}>
-          <div><span className={styles.kicker}>A GOOD PLACE TO START</span><h2>House favourites</h2><p>Choose a pizza to make it your own.</p></div>
+          <div><span className={styles.kicker}>PICK YOUR PIZZA</span><h2>Browse the menu</h2><p>Choose a pizza. You’ll customize the ingredients and quantity on the next page.</p></div>
           <span className={styles.count}>{menuItems.length} favourites</span>
         </div>
         <div className={styles.grid}>
