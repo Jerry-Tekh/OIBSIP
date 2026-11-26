@@ -16,3 +16,5 @@
 .orderingSteps .completedStep>span{background:#edf7f0;color:#328c58}
 .stepDivider{height:1px;min-width:12px;flex:1;background:#eee8e2}
 @media(max-width:620px){.orderingWorkspace{gap:12px}.orderingSteps{gap:6px;padding:10px 8px;justify-content:space-between}.orderingSteps a,.futureStep{gap:5px}.orderingSteps b{font-size:8px}.orderingSteps a>span,.futureStep>span{width:21px;height:21px;font-size:8px}.stepDivider{min-width:5px}}
+
+.orderingWorkspace :global(.page){min-height:0}
