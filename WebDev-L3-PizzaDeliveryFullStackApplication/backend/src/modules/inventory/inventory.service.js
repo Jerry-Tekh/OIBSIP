@@ -3,7 +3,8 @@ import InventoryItem from "./inventory.model.js";
 import InventoryMovement from "./movement.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 
-const escapeRegex = value => value.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\import { ApiError } from "../../utils/ApiError.js";");
+const escapeRegex = value => value.replace(/[.*+?^${}()|[\\]\\]/g, "\\const escapeRegex = value => value.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\import { ApiError } from "../../utils/ApiError.js";");
+");
 
 export async function listInventory({page,limit,search,category,status}) {
  const filter={};
