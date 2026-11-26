@@ -11,6 +11,7 @@ import authRouter from "./modules/auth/auth.routes.js";
 import inventoryRouter from "./modules/inventory/inventory.routes.js";
 import recipeRouter from "./modules/recipes/recipe.routes.js";
 import catalogRouter from "./modules/catalog/catalog.routes.js";
+import productRouter from "./modules/products/product.routes.js";
 import healthRouter from "./routes/health.routes.js";
 import { notFoundHandler } from "./middleware/notFound.js";
 import { errorHandler } from "./middleware/errorHandler.js";
@@ -44,6 +45,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/v1/admin/inventory", inventoryRouter);
 app.use("/api/v1/admin/recipes", recipeRouter);
 app.use("/api/v1/pizza-options", catalogRouter);
+app.use("/api/v1/products", productRouter);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
