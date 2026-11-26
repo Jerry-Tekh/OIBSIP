@@ -36,7 +36,7 @@ export default function CustomerDashboard(){
    <i className={styles.stepDivider}/>
    {builderSlug ? <Link to={`/dashboard/order/${builderSlug}`} className={orderingView==="builder" ? styles.currentStep : styles.completedStep}><span>02</span><b>Customize</b></Link> : <span className={styles.futureStep}><span>02</span><b>Customize</b></span>}
    <i className={styles.stepDivider}/>
-   {orderingView==="preview" || orderingView==="checkout" ? <Link to="/dashboard/order/preview" className={orderingView==="preview" ? styles.currentStep : styles.completedStep}><span>03</span><b>Price preview</b></Link> : <span className={styles.futureStep}><span>03</span><b>Price preview</b></span>}
+   {orderingView==="preview" || orderingView==="checkout" || orderingView==="payment" ? <Link to="/dashboard/order/preview" className={orderingView==="preview" ? styles.currentStep : styles.completedStep}><span>03</span><b>Price preview</b></Link> : <span className={styles.futureStep}><span>03</span><b>Price preview</b></span>}
    <i className={styles.stepDivider}/>
    <Link to="/dashboard/checkout" className={orderingView==="checkout" ? styles.currentStep : orderingView==="payment" ? styles.completedStep : styles.futureStep}><span>04</span><b>Checkout</b></Link>
    <i className={styles.stepDivider}/>
