@@ -1,3 +1,10 @@
 import styles from "../AdminDashboard.module.css";
 import { inventoryItems } from "../../shared/demoData.js";
-export default function AdminLowStockPage(){return <section className={styles.panel}><div className={styles.panelHead}><div><h2>Low-stock alerts</h2><p>Ingredients at or below configured reorder thresholds.</p></div><span className={styles.alertPill}>Active alerts</span></div>{inventoryItems.filter(i=>i.physical-i.reserved<=i.threshold).map(i=><div className={styles.alertRow} key={i.name}><span className={styles.alertIcon}>!</span><div><b>{i.name}</b><small>{i.physical-i.reserved} {i.unit} available · reorder threshold {i.threshold} {i.unit}</small></div></div>)}</section>}
+export default function AdminLowStockPage(){
+  const lowItems=inventoryItems.filter(item=>item.physical-item.reserved<=item.threshold);
+  return <section className={styles.panel}>
+    <div className={styles.panelHead}><div><h2>Ingredients requiring attention</h2><p>Available quantities at or below configured reorder thresholds.</p></div><span className={styles.alertPill}>{lowItems.length} active alerts</span></div>
+    {lowItems.length ? lowItems.map(item=><article className={styles.alertRow} key={item.name}><span className={styles.alertIcon}>!</span><div><b>{item.name}</b><small>{item.physical-item.reserved} {item.unit} available · reorder threshold {item.threshold} {item.unit}</small></div><span className={styles.low}>Reorder needed</span></article>) : <div className={styles.emptyState}>No ingredients are currently below their reorder thresholds.</div>}
+    <p className={styles.demoNote}>These alerts are calculated from illustrative stock data. Live alerts will use backend inventory availability.</p>
+  </section>;
+}
