@@ -8,3 +8,5 @@
 .suggestionField{display:grid;flex:1;min-width:min(100%,220px);gap:7px;color:#71665e;font-size:10px;font-weight:700}
 .suggestionField .searchInput{width:100%}
 .suggestionField span,.suggestionField small{color:#a0968e;font-size:9px;font-weight:400}
+
+.productActions{display:flex;flex-wrap:wrap;gap:8px;min-width:150px}.productActions button{white-space:nowrap}.suggestionField textarea{min-height:88px;padding:10px 11px;resize:vertical;border:1px solid #eee8e2;border-radius:8px;background:#fff;color:#443b34;font:inherit;font-size:10px;outline:none}.suggestionField textarea:focus{border-color:#f1a17e;box-shadow:0 0 0 3px #fff0e9}
