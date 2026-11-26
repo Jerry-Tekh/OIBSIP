@@ -7,7 +7,7 @@ import CheckoutPage from "../../ordering/pages/CheckoutPage.jsx";
 import DashboardShell from "../shared/DashboardShell.jsx";
 import { customerOrders, money, statusLabel } from "../shared/demoData.js";
 import styles from "./CustomerDashboard.module.css";
-const nav=["Overview","My orders","Saved addresses","Profile","Browse menu"];
+const nav=["Overview","Browse menu","My orders","Saved addresses","Profile"];
 export default function CustomerDashboard(){
  const navigate = useNavigate();
  const location = useLocation();
