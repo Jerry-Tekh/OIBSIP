@@ -34,23 +34,30 @@ export async function signIn({ email, password }) {
 }
 
 export async function restoreAuthenticatedUser() {
-  if (currentUser && accessToken) return currentUser;
   if (restorePromise) return restorePromise;
   restorePromise = (async () => {
     try {
-      if (!accessToken) {
-        const response = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
+      async function refreshAccessToken() {
+        const refreshResponse = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
           method: "POST", credentials: "include",
           headers: { "Content-Type": "application/json", "X-Refresh-Request": "1" },
           body: "{}"
         });
-        const data = await readPayload(response, "Your session has expired. Please sign in again.");
-        accessToken = data?.accessToken ?? null;
+        const refreshed = await readPayload(refreshResponse, "Your session has expired. Please sign in again.");
+        accessToken = refreshed?.accessToken ?? null;
       }
+      if (!accessToken) await refreshAccessToken();
       if (!accessToken) throw new Error("No active access token.");
-      const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+      let response = await fetch(`${API_BASE_URL}/api/auth/me`, {
         credentials: "include", headers: { Authorization: `Bearer ${accessToken}` }
       });
+      if (response.status === 401) {
+        await refreshAccessToken();
+        if (!accessToken) throw new Error("No active access token.");
+        response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+          credentials: "include", headers: { Authorization: `Bearer ${accessToken}` }
+        });
+      }
       const data = await readPayload(response, "Your session is no longer valid. Please sign in again.");
       currentUser = data?.user ?? null;
       if (!currentUser?.role) throw new Error("The authenticated user role is missing.");
