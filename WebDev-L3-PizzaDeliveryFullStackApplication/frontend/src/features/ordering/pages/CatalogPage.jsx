@@ -10,6 +10,7 @@ export default function CatalogPage() {
           <div><span className={styles.kicker}>PICK YOUR PIZZA</span><h2>Browse the menu</h2><p>Choose a pizza. You’ll customize the ingredients and quantity on the next page.</p></div>
           <span className={styles.count}>{menuItems.length} favourites</span>
         </div>
+        <p className={styles.catalogDataNote}>Demo menu data: pizza names, descriptions and photography are currently frontend fixtures. Your engineering guide defines the ingredient-options API, but does not yet define a separate pizza-products/catalog endpoint. The builder loads its ingredient options from the documented endpoint.</p>
         <div className={styles.grid}>
           {menuItems.map((item) => (
             <article className={styles.card} key={item.slug}>
