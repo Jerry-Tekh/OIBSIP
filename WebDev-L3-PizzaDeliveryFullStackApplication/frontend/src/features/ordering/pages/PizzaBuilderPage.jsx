@@ -85,7 +85,7 @@ export default function PizzaBuilderPage() {
 
   return (
     <main className={styles.page}>
-      <header className={styles.header}><Link to="/dashboard/menu" className={styles.back}>← Back to menu</Link><Link to="/" className={styles.brand}><span>C</span> crust&co.</Link><span className={styles.step}>01 / 03 <b>MAKE IT YOURS</b></span></header>
+      <header className={styles.header}><Link to="/dashboard/menu" className={styles.back}>← Back to menu</Link><Link to="/" className={styles.brand}><span>C</span> crust&co.</Link><span className={styles.step}>02 / 05 <b>MAKE IT YOURS</b></span></header>
       <div className={styles.layout}>
         <section className={styles.product}>
           <img className={styles.productImage} src={pizza.image} alt={pizza.name}/>
