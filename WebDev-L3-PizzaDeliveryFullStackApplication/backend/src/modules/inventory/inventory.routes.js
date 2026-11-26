@@ -1,1 +1,14 @@
-// Inventory routes placeholder.
+import {Router} from "express";
+import {authenticate,authorize} from "../auth/auth.middleware.js";
+import {validate} from "../../middleware/validate.js";
+import * as controller from "./inventory.controller.js";
+import {listInventorySchema,createInventorySchema,updateInventorySchema,adjustmentSchema,movementSchema} from "./inventory.validation.js";
+const router=Router();
+router.use(authenticate,authorize("admin"));
+router.get("/",validate(listInventorySchema),controller.list);
+router.get("/movements",validate(movementSchema.omit({params:true})),controller.allMovements);
+router.post("/",validate(createInventorySchema),controller.create);
+router.patch("/:id",validate(updateInventorySchema),controller.update);
+router.post("/:id/adjustments",validate(adjustmentSchema),controller.adjust);
+router.get("/:id/movements",validate(movementSchema),controller.movements);
+export default router;

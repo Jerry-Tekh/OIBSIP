@@ -1,1 +1,15 @@
-// Catalog routes placeholder.
+import {Router} from "express";
+import {z} from "zod";
+import {authenticate,authorize} from "../auth/auth.middleware.js";
+import {validate} from "../../middleware/validate.js";
+import * as service from "./catalog.service.js";
+import {asyncHandler} from "../../utils/asyncHandler.js";
+import {ApiError} from "../../utils/ApiError.js";
+const router=Router();
+const id=z.string().regex(/^[a-f\d]{24}$/i);
+const option=z.object({name:z.string().trim().min(2).max(100),slug:z.string().trim().min(2).max(100).regex(/^[a-z0-9-]+$/),category:z.enum(["base","sauce","cheese","vegetable"]),description:z.string().trim().max(500).optional(),priceContributionMinor:z.number().int().min(0),currency:z.literal("NGN").default("NGN"),imageUrl:z.string().url().nullable().optional(),isAvailable:z.boolean().optional(),isPublished:z.boolean().optional()});
+router.get("/",asyncHandler(async(req,res)=>{const category=req.query.category;if(category&&!["base","sauce","cheese","vegetable"].includes(category))throw new ApiError(400,"Invalid pizza option category.");res.json({success:true,data:{options:await service.listPublicOptions(category)}});}));
+router.get("/admin",authenticate,authorize("admin"),asyncHandler(async(req,res)=>res.json({success:true,data:{options:await service.listAdminOptions()}})));
+router.post("/",authenticate,authorize("admin"),(req,res,next)=>{const result=option.safeParse(req.body);if(!result.success)return next(new ApiError(400,"Pizza option validation failed.",result.error.flatten()));req.validatedOption=result.data;next();},asyncHandler(async(req,res)=>res.status(201).json({success:true,data:{option:await service.createOption(req.validatedOption,req.user._id)}})));
+router.patch("/:id",authenticate,authorize("admin"),(req,res,next)=>{const params=id.safeParse(req.params.id);const body=option.partial().safeParse(req.body);if(!params.success||!body.success)return next(new ApiError(400,"Pizza option validation failed."));req.validatedId=params.data;req.validatedOption=body.data;next();},asyncHandler(async(req,res)=>res.json({success:true,data:{option:await service.updateOption(req.validatedId,req.validatedOption,req.user._id)}})));
+export default router;

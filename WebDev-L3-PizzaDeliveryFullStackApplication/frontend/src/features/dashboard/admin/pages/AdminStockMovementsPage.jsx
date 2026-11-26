@@ -1,13 +1,12 @@
+import {useEffect,useState} from "react";
+import {getAccessToken} from "../../../auth/api/authApi.js";
 import styles from "../AdminDashboard.module.css";
-const rows=[
-  ["Mozzarella cheese","Restock","+ 12 kg","Supplier delivery","Today, 10:42 AM"],
-  ["Pepperoni","Reservation","− 2 kg","Order allocation","Today, 10:18 AM"],
-  ["Pizza flour","Adjustment","+ 5 kg","Stock count correction","Yesterday"],
-  ["Fresh basil","Consumption","− 3 bunches","Kitchen preparation","Yesterday"]
-];
-const typeClass = type => ({Restock:styles.restock,Reservation:styles.reservation,Adjustment:styles.adjustment,Consumption:styles.consumption}[type] || "");
-export default function AdminStockMovementsPage(){return <section className={styles.panel}>
-  <div className={styles.panelHead}><div><h2>Movement history</h2><p>Review stock changes, their quantities and recorded reasons.</p></div><span className={styles.pageMeta}>{rows.length} sample movements</span></div>
-  <div className={styles.tableWrap}><table><thead><tr><th>Ingredient</th><th>Movement</th><th>Quantity</th><th>Reason</th><th>Recorded</th></tr></thead><tbody>{rows.map(row=><tr key={row.join()}><td><b>{row[0]}</b></td><td><span className={`${styles.movementType} ${typeClass(row[1])}`}>{row[1]}</span></td><td><b>{row[2]}</b></td><td>{row[3]}</td><td>{row[4]}</td></tr>)}</tbody></table></div>
-  <p className={styles.demoNote}>Illustrative audit history only. Actual stock movements must be read from the inventory movement ledger.</p>
-</section>}
+const labels={initial_stock:"Initial stock",restock:"Restock",waste:"Waste",correction:"Correction",reservation:"Reservation",consumption:"Consumption",release:"Release"};
+export default function AdminStockMovementsPage(){
+ const [rows,setRows]=useState([]),[loading,setLoading]=useState(true),[error,setError]=useState(""),[page,setPage]=useState(1),[pagination,setPagination]=useState({pages:1,total:0});
+ useEffect(()=>{let active=true;setLoading(true);(async()=>{try{const token=getAccessToken(),base=(import.meta.env.VITE_API_BASE_URL||"").replace(/\/$/,"");const response=await fetch(base+"/api/v1/admin/inventory/movements?page="+page+"&limit=20",{credentials:"include",headers:token?{Authorization:"Bearer "+token}:{}});const payload=await response.json();if(!response.ok||!payload.success)throw new Error(payload?.error?.message||payload?.message||"Unable to load stock movements.");if(active){setRows(payload.data.movements||[]);setPagination(payload.data.pagination||{pages:1,total:0});}}catch(e){if(active)setError(e.message);}finally{if(active)setLoading(false);}})();return()=>{active=false;};},[page]);
+ return <section className={styles.panel}><div className={styles.panelHead}><div><h2>Movement history</h2><p>Auditable record of initial stock, restocks, waste and corrections.</p></div><span className={styles.pageMeta}>{pagination.total} recorded movements</span></div>{error&&<p role="alert" className={styles.demoNote}>{error}</p>}
+ <div className={styles.tableWrap}><table><thead><tr><th>Ingredient</th><th>Movement</th><th>Quantity</th><th>Physical balance</th><th>Reason</th><th>Recorded by</th><th>Date</th></tr></thead><tbody>{rows.map(row=><tr key={row._id}><td><b>{row.inventoryItemId?.name||"Deleted ingredient"}</b></td><td><span className={styles.movementType}>{labels[row.movementType]||row.movementType}</span></td><td>{row.direction==="out"?"−":"+"}{row.quantity} {row.unit}</td><td>{row.physicalStockBefore} → {row.physicalStockAfter} {row.unit}</td><td>{row.reason}</td><td>{row.actorUserId?.name||row.actorUserId?.email||"System"}</td><td>{new Date(row.createdAt).toLocaleString()}</td></tr>)}</tbody></table>{loading&&<div className={styles.emptyState}>Loading movement history…</div>}{!loading&&!rows.length&&<div className={styles.emptyState}>No stock movements have been recorded yet.</div>}</div>
+ <div className={styles.filterBar}><span className={styles.pageMeta}>Page {page} of {Math.max(1,pagination.pages||1)}</span><div className={styles.filterGroup}><button type="button" className={styles.filterButton} disabled={page<=1} onClick={()=>setPage(p=>p-1)}>Previous</button><button type="button" className={styles.filterButton} disabled={page>=(pagination.pages||1)} onClick={()=>setPage(p=>p+1)}>Next</button></div></div>
+ </section>;
+}

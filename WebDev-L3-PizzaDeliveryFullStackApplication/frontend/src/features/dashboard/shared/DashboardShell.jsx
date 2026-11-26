@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { getCurrentUser, signOut } from "../../auth/api/authApi.js";
 import styles from "./DashboardShell.module.css";
 
-const icons = { "Browse menu":"＋", Overview:"◫", Orders:"▤", Inventory:"▦", "Stock movements":"↕", "Low-stock alerts":"⚑", "My orders":"▤", "Saved addresses":"⌖", Profile:"◎", Settings:"⚙" };
+const icons = { "Browse menu":"＋", Products:"◉", Overview:"◫", Orders:"▤", Inventory:"▦", "Stock movements":"↕", "Low-stock alerts":"⚑", "My orders":"▤", "Saved addresses":"⌖", Profile:"◎", Settings:"⚙" };
 
 export default function DashboardShell({ role="admin", active="Overview", navigation=[], title, subtitle, children }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -13,7 +13,7 @@ export default function DashboardShell({ role="admin", active="Overview", naviga
   const navigate = useNavigate();
   const isAdmin = role === "admin";
   const user = getCurrentUser();
-  const displayName = user?.name || user?.fullName || user?.email || (isAdmin ? "Administrator" : "Customer");
+  const displayName = user?.name || user?.fullName || user?.email || "Signed-in account";
   const initials = displayName.split(/[\s@._-]+/).filter(Boolean).slice(0, 2).map(part => part[0].toUpperCase()).join("") || (isAdmin ? "AD" : "CU");
 
   async function handleLogout() {
@@ -39,7 +39,7 @@ export default function DashboardShell({ role="admin", active="Overview", naviga
         <div className={styles.workspace}><span className={styles.workspaceDot}/><span>{isAdmin ? "Operations workspace" : "Your pizza account"}</span></div>
         <div className={styles.navLabel}>WORKSPACE</div>
         <nav className={styles.nav} aria-label={`${role} navigation`}>
-          {navigation.map(item => <Link key={item.path} to={item.path} title={collapsed ? item.label : undefined} className={`${styles.navItem} ${active === item.label ? styles.active : ""}`} aria-current={active === item.label ? "page" : undefined} onClick={() => setMobileOpen(false)}><span className={styles.navIcon}>{icons[item.label] || "•"}</span><span className={styles.navText}>{item.label}</span>{item.label==="Low-stock alerts" && isAdmin && <span className={styles.navCount}>3</span>}</Link>)}
+          {navigation.map(item => <Link key={item.path} to={item.path} title={collapsed ? item.label : undefined} className={`${styles.navItem} ${active === item.label ? styles.active : ""}`} aria-current={active === item.label ? "page" : undefined} onClick={() => setMobileOpen(false)}><span className={styles.navIcon}>{icons[item.label] || "•"}</span><span className={styles.navText}>{item.label}</span></Link>)}
         </nav>
         <div className={styles.sidebarBottom}>
           <div className={styles.helpCard}><span className={styles.helpIcon}>✳</span><strong>{isAdmin ? "Need a hand?" : "Need a little help?"}</strong><small>{isAdmin ? "Your operations, all in one place." : "We're always happy to help."}</small></div>
