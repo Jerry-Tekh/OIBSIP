@@ -4,6 +4,7 @@ import CatalogPage from "../../ordering/pages/CatalogPage.jsx";
 import PizzaBuilderPage from "../../ordering/pages/PizzaBuilderPage.jsx";
 import PreviewPage from "../../ordering/pages/PreviewPage.jsx";
 import CheckoutPage from "../../ordering/pages/CheckoutPage.jsx";
+import PaymentPage from "../../ordering/pages/PaymentPage.jsx";
 import DashboardShell from "../shared/DashboardShell.jsx";
 import { customerOrders, money, statusLabel } from "../shared/demoData.js";
 import styles from "./CustomerDashboard.module.css";
@@ -12,19 +13,20 @@ export default function CustomerDashboard(){
  const navigate = useNavigate();
  const location = useLocation();
  const orderingPath = location.pathname;
- const orderingView = orderingPath === "/dashboard/menu" ? "menu" : orderingPath === "/dashboard/order/preview" ? "preview" : orderingPath === "/dashboard/checkout" ? "checkout" : orderingPath.startsWith("/dashboard/order/") ? "builder" : null;
+ const orderingView = orderingPath === "/dashboard/menu" ? "menu" : orderingPath === "/dashboard/order/preview" ? "preview" : orderingPath === "/dashboard/checkout" ? "checkout" : orderingPath === "/dashboard/payment" ? "payment" : orderingPath.startsWith("/dashboard/order/") ? "builder" : null;
  const [selectedSection,setSelectedSection]=useState("Overview");
  const active = orderingView ? "Browse menu" : selectedSection;
  useEffect(()=>{const fn=e=>{setSelectedSection(e.detail);navigate("/dashboard");};window.addEventListener("dashboard:navigate",fn);return()=>window.removeEventListener("dashboard:navigate",fn)},[navigate]);
  const copy={"Browse menu":["Find your next favourite.","Explore the menu and make a pizza your own."],Overview:["Here's what's cooking, Jordan.","Your next favourite slice is never too far away."],"My orders":["Every order, all in one place.","A look at your recent pizza nights."],"Saved addresses":["A few details make delivery feel effortless.","Manage the places you'd like us to deliver."],"Profile":["Your account, your preferences.","Keep your details up to date."]};
  const [title,subtitle]=orderingView === "builder" ? ["Make it your own.","Choose your ingredients and build the pizza you want."]
   : orderingView === "preview" ? ["Review your pizza.","Check availability and the calculated price before checkout."]
-  : orderingView === "checkout" ? ["Delivery and payment.","Confirm where your order should go, then continue to payment."]
+  : orderingView === "checkout" ? ["Delivery details.","Confirm your delivery address and create your order."]
+  : orderingView === "payment" ? ["Complete your payment.","Your order is ready. Complete the payment step to finish checkout."]
   : copy[active]||copy.Overview;
- const orderingContent = orderingView === "menu" ? <CatalogPage /> : orderingView === "builder" ? <PizzaBuilderPage /> : orderingView === "preview" ? <PreviewPage /> : orderingView === "checkout" ? <CheckoutPage /> : null;
+ const orderingContent = orderingView === "menu" ? <CatalogPage /> : orderingView === "builder" ? <PizzaBuilderPage /> : orderingView === "preview" ? <PreviewPage /> : orderingView === "checkout" ? <CheckoutPage /> : orderingView === "payment" ? <PaymentPage /> : null;
  const builderSlug = orderingView === "builder"
   ? orderingPath.split("/").filter(Boolean).at(-1)
-  : orderingView === "preview" || orderingView === "checkout"
+  : orderingView === "preview" || orderingView === "checkout" || orderingView === "payment"
     ? (() => { try { return JSON.parse(sessionStorage.getItem("crust-order-draft") || "null")?.pizzaSlug || null; } catch { return null; } })()
     : null;
  return <DashboardShell role="customer" active={active} navigation={nav} title={title} subtitle={subtitle}>
@@ -36,7 +38,9 @@ export default function CustomerDashboard(){
    <i className={styles.stepDivider}/>
    {orderingView==="preview" || orderingView==="checkout" ? <Link to="/dashboard/order/preview" className={orderingView==="preview" ? styles.currentStep : styles.completedStep}><span>03</span><b>Price preview</b></Link> : <span className={styles.futureStep}><span>03</span><b>Price preview</b></span>}
    <i className={styles.stepDivider}/>
-   <span className={orderingView==="checkout" ? styles.currentStep : styles.futureStep}><span>04</span><b>Checkout</b></span>
+   <Link to="/dashboard/checkout" className={orderingView==="checkout" ? styles.currentStep : orderingView==="payment" ? styles.completedStep : styles.futureStep}><span>04</span><b>Checkout</b></Link>
+   <i className={styles.stepDivider}/>
+   <span className={orderingView==="payment" ? styles.currentStep : styles.futureStep}><span>05</span><b>Payment</b></span>
   </nav>
   {orderingContent}
  </div> : active==="Overview" && <div className={styles.page}>
