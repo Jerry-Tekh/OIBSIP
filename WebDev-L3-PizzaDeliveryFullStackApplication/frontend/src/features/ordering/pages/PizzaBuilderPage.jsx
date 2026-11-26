@@ -97,7 +97,7 @@ export default function PizzaBuilderPage() {
         <section className={styles.builder}>
           <div className={styles.builderHeading}><div><span className={styles.kicker}>YOUR PIZZA, YOUR WAY</span><h2>Build your pizza</h2><p>Choose the ingredients for your order.</p></div><span className={styles.required}>* Required choices</span></div>
           <ApiDataPanel title="Load pizza options" method="GET" endpoint="/api/v1/pizza-options" request={null} response={optionsResponse || { success: true, data: { options: "Loading demo catalog options…" } }} note="The backend returns available base, sauce, cheese and vegetable options. These mock records use the same field names and minor-unit pricing as the engineering guide." />
-          {loading && <div className={styles.notice}>Loading available ingredients…</div>
+          {loading && <div className={styles.notice}>Loading available ingredients…</div>}
           {error && <div className={styles.error} role="alert">{error}<p>The catalog options endpoint must be available before this builder can be used.</p><button type="button" onClick={() => window.location.reload()}>Try again</button></div>}
           {!loading && !error && options.length === 0 && <div className={styles.notice}>No pizza options are currently published. Please check back shortly.</div>}
 
