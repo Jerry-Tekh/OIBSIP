@@ -5,7 +5,7 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import * as service from "./product.service.js";
 import {
   createProductSchema, updateProductSchema, productParamsSchema,
-  publicProductParamsSchema, publicProductListSchema, adminProductListSchema
+  publicProductParamsSchema, publicProductListSchema, adminProductListSchema, productAvailabilitySchema
 } from "./product.validation.js";
 
 const router = Router();
@@ -25,6 +25,10 @@ admin.get("/:id", validate(productParamsSchema), asyncHandler(async (req, res) =
 }));
 admin.patch("/:id", validate(updateProductSchema), asyncHandler(async (req, res) => {
   const product = await service.updateProduct(req.validated.params.id, req.validated.body, req.user._id);
+  res.json({ success: true, data: { product } });
+}));
+admin.patch("/:id/availability", validate(productAvailabilitySchema), asyncHandler(async (req, res) => {
+  const product = await service.setProductAvailability(req.validated.params.id, req.validated.body.isAvailable, req.user._id);
   res.json({ success: true, data: { product } });
 }));
 admin.post("/:id/publish", validate(productParamsSchema), asyncHandler(async (req, res) => {
