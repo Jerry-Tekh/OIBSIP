@@ -15,7 +15,7 @@ export default function CustomerDashboard(){
  const orderingView = orderingPath === "/dashboard/menu" ? "menu" : orderingPath === "/dashboard/order/preview" ? "preview" : orderingPath === "/dashboard/checkout" ? "checkout" : orderingPath.startsWith("/dashboard/order/") ? "builder" : null;
  const [selectedSection,setSelectedSection]=useState("Overview");
  const active = orderingView ? "Browse menu" : selectedSection;
- useEffect(()=>{const fn=e=>setSelectedSection(e.detail);window.addEventListener("dashboard:navigate",fn);return()=>window.removeEventListener("dashboard:navigate",fn)},[]);
+ useEffect(()=>{const fn=e=>{setSelectedSection(e.detail);navigate("/dashboard");};window.addEventListener("dashboard:navigate",fn);return()=>window.removeEventListener("dashboard:navigate",fn)},[navigate]);
  const copy={"Browse menu":["Find your next favourite.","Explore the menu and make a pizza your own."],Overview:["Here's what's cooking, Jordan.","Your next favourite slice is never too far away."],"My orders":["Every order, all in one place.","A look at your recent pizza nights."],"Saved addresses":["A few details make delivery feel effortless.","Manage the places you'd like us to deliver."],"Profile":["Your account, your preferences.","Keep your details up to date."]};
  const [title,subtitle]=orderingView === "builder" ? ["Make it your own.","Choose your ingredients and build the pizza you want."]
   : orderingView === "preview" ? ["Review your pizza.","Check availability and the calculated price before checkout."]
