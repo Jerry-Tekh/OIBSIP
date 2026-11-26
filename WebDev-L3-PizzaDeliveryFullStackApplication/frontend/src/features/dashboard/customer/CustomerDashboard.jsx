@@ -1,18 +1,22 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import CatalogPage from "../../ordering/pages/CatalogPage.jsx";
+import PizzaBuilderPage from "../../ordering/pages/PizzaBuilderPage.jsx";
+import PreviewPage from "../../ordering/pages/PreviewPage.jsx";
+import CheckoutPage from "../../ordering/pages/CheckoutPage.jsx";
 import DashboardShell from "../shared/DashboardShell.jsx";
 import { customerOrders, money, statusLabel } from "../shared/demoData.js";
 import styles from "./CustomerDashboard.module.css";
 const nav=["Overview","My orders","Saved addresses","Profile","Browse menu"];
 export default function CustomerDashboard(){
- const navigate = useNavigate();
- const [active,setActive]=useState("Overview");
+ const navigate = useNavigate();\n const location = useLocation();\n const orderingPath = location.pathname;\n const orderingView = orderingPath === "/dashboard/menu" ? "menu" : orderingPath === "/dashboard/order/preview" ? "preview" : orderingPath === "/dashboard/checkout" ? "checkout" : orderingPath.startsWith("/dashboard/order/") ? "builder" : null;\n const activeFromPath = orderingView ? "Browse menu" : "Overview";
+ const [active,setActive]=useState("Overview");\n useEffect(()=>{ if(orderingView) setActive("Browse menu"); else setActive("Overview"); },[orderingView,location.pathname]);
  useEffect(()=>{const fn=e=>setActive(e.detail);window.addEventListener("dashboard:navigate",fn);return()=>window.removeEventListener("dashboard:navigate",fn)},[]);
  const copy={Overview:["Here's what's cooking, Jordan.","Your next favourite slice is never too far away."],"My orders":["Every order, all in one place.","A look at your recent pizza nights."],"Saved addresses":["A few details make delivery feel effortless.","Manage the places you'd like us to deliver."],"Profile":["Your account, your preferences.","Keep your details up to date."]};
- const [title,subtitle]=copy[active]||copy.Overview;
+ const [title,subtitle]=copy[active]||copy.Overview;\n const orderingContent = orderingView === "menu" ? <CatalogPage /> : orderingView === "builder" ? <PizzaBuilderPage /> : orderingView === "preview" ? <PreviewPage /> : orderingView === "checkout" ? <CheckoutPage /> : null;
  return <DashboardShell role="customer" active={active} navigation={nav} title={title} subtitle={subtitle}>
- {active==="Overview" && <div className={styles.page}>
-  <section className={styles.welcome}><div><span>GOOD FOOD IS A GOOD IDEA</span><h2>Something lovely<br/>is <em>on its way.</em></h2><p>Order your usual, or make room for a new favourite.</p><button onClick={()=>navigate("/menu")}>Order a pizza <b>↗</b></button></div><div className={styles.welcomeArt}><img src="https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=900&q=85" alt="Freshly baked pizza with herbs"/><span>MADE FRESH<br/>FOR YOU</span></div></section>
+ {orderingContent ? <div className={styles.orderingWorkspace}>{orderingContent}</div> : active==="Overview" && <div className={styles.page}>
+  <section className={styles.welcome}><div><span>GOOD FOOD IS A GOOD IDEA</span><h2>Something lovely<br/>is <em>on its way.</em></h2><p>Order your usual, or make room for a new favourite.</p><button onClick={()=>navigate("/dashboard/menu")}>Order a pizza <b>↗</b></button></div><div className={styles.welcomeArt}><img src="https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=900&q=85" alt="Freshly baked pizza with herbs"/><span>MADE FRESH<br/>FOR YOU</span></div></section>
   <div className={styles.statGrid}><article><span className={styles.statIcon}>▤</span><small>Total orders</small><strong>12</strong><span>Since you joined</span></article><article><span className={styles.statIcon}>♡</span><small>Favourite order</small><strong>Margherita</strong><span>Your go-to classic</span></article><article><span className={styles.statIcon}>✳</span><small>Pizza points</small><strong>240 pts</strong><span>Keep earning with every order</span></article></div>
   <section className={styles.panel}><div className={styles.panelHead}><div><h2>Your recent orders</h2><p>Good memories, delivered.</p></div><button onClick={()=>setActive("My orders")}>See all orders ↗</button></div><OrderList/></section>
   <section className={styles.tip}><span>✳</span><div><b>A little something for next time</b><p>Build your own pizza and make it exactly the way you like it.</p></div><button onClick={()=>navigate("/menu")}>Browse the menu</button></section>
