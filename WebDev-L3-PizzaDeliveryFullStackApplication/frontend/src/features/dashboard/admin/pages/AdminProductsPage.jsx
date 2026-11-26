@@ -1,7 +1,7 @@
 import {useCallback,useEffect,useState} from "react";
 import {getAccessToken} from "../../../auth/api/authApi.js";
 import styles from "../AdminDashboard.module.css";
-const API=(import.meta.env.VITE_API_BASE_URL||"").replace(/\\/$/,"");
+const rawApiBase=import.meta.env.VITE_API_BASE_URL||"";\nconst API=rawApiBase.endsWith("/")?rawApiBase.slice(0,-1):rawApiBase;
 const empty={name:"",slug:"",description:"",shortDescription:"",category:"classic",imageUrl:"",priceNaira:"",sortOrder:"0"};
 async function request(path,{method="GET",body}={}) {
  const token=getAccessToken();const response=await fetch(API+path,{method,credentials:"include",headers:{"Accept":"application/json",...(body?{"Content-Type":"application/json"}:{}),...(token?{Authorization:"Bearer "+token}:{})},body:body?JSON.stringify(body):undefined});
