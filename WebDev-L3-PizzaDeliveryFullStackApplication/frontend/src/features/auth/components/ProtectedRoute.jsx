@@ -8,6 +8,7 @@ export default function ProtectedRoute({ allowedRoles, children }) {
 
   useEffect(() => {
     let active = true;
+    setState({ status: "checking", user: null });
     restoreAuthenticatedUser()
       .then((user) => { if (active) setState({ status: "authenticated", user }); })
       .catch(() => { if (active) setState({ status: "anonymous", user: null }); });
