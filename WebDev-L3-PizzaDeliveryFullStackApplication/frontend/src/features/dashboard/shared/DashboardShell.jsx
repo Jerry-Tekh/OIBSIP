@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { signOut } from "../../auth/api/authApi.js";
 import styles from "./DashboardShell.module.css";
 
-const icons = { Overview:"◫", Orders:"▤", Inventory:"▦", "Stock movements":"↕", "Low-stock alerts":"⚑", "My orders":"▤", "Saved addresses":"⌖", Profile:"◎", Settings:"⚙" };
+const icons = { "Browse menu":"＋", Overview:"◫", Orders:"▤", Inventory:"▦", "Stock movements":"↕", "Low-stock alerts":"⚑", "My orders":"▤", "Saved addresses":"⌖", Profile:"◎", Settings:"⚙" };
 
 export default function DashboardShell({ role="admin", active="Overview", navigation=[], title, subtitle, children }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -36,7 +36,7 @@ export default function DashboardShell({ role="admin", active="Overview", naviga
         <div className={styles.workspace}><span className={styles.workspaceDot}/><span>{isAdmin ? "Operations workspace" : "Your pizza account"}</span></div>
         <div className={styles.navLabel}>WORKSPACE</div>
         <nav className={styles.nav} aria-label={`${role} navigation`}>
-          {navigation.map(item => <button key={item} type="button" title={collapsed ? item : undefined} className={`${styles.navItem} ${active===item ? styles.active : ""}`} onClick={() => { window.dispatchEvent(new CustomEvent("dashboard:navigate",{detail:item})); setMobileOpen(false); }}><span className={styles.navIcon}>{icons[item] || "•"}</span><span className={styles.navText}>{item}</span>{item==="Low-stock alerts" && isAdmin && <span className={styles.navCount}>3</span>}</button>)}
+          {navigation.map(item => item === "Browse menu" ? <Link key={item} to="/menu" title={collapsed ? item : undefined} className={styles.navItem} onClick={() => setMobileOpen(false)}><span className={styles.navIcon}>{icons[item]}</span><span className={styles.navText}>{item}</span></Link> : <button key={item} type="button" title={collapsed ? item : undefined} className={`${styles.navItem} ${active===item ? styles.active : ""}`} onClick={() => { window.dispatchEvent(new CustomEvent("dashboard:navigate",{detail:item})); setMobileOpen(false); }}><span className={styles.navIcon}>{icons[item] || "•"}</span><span className={styles.navText}>{item}</span>{item==="Low-stock alerts" && isAdmin && <span className={styles.navCount}>3</span>}</button>)}
         </nav>
         <div className={styles.sidebarBottom}>
           <div className={styles.helpCard}><span className={styles.helpIcon}>✳</span><strong>{isAdmin ? "Need a hand?" : "Need a little help?"}</strong><small>{isAdmin ? "Your operations, all in one place." : "We're always happy to help."}</small></div>
