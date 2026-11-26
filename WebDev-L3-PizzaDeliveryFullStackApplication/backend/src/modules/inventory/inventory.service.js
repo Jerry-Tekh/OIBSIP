@@ -3,7 +3,6 @@ import InventoryItem from "./inventory.model.js";
 import InventoryMovement from "./movement.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 
-const sessionOptions={readPreference:"primary",readConcern:{level:"snapshot"},writeConcern:{w:"majority"}};
 export async function listInventory({page,limit,search,category,status}) {
  const filter={};
  if(category) filter.category=category;
