@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { findMenuItem } from "../data/menu.js";
 import { previewConfiguration } from "../api/orderingApi.js";
 import styles from "./PreviewPage.module.css";
+import ApiDataPanel from "../components/ApiDataPanel.jsx";
 
 function formatMoney(minor, currency) {
   if (!Number.isFinite(minor) || !currency) return "—";
@@ -51,6 +52,7 @@ export default function PreviewPage() {
           <span className={styles.kicker}>ALMOST THERE</span>
           <h2>Price preview</h2>
           <p className={styles.intro}>We calculate your price on the server using the current catalog and availability.</p>
+          <ApiDataPanel title="Calculate authoritative price preview" method="POST" endpoint="/api/v1/checkout/preview" request={{ items: draft?.items || [] }} response={preview ? { success: true, data: { items: preview.items || [], subtotalMinor: totals?.subtotalMinor, deliveryFeeMinor: totals?.deliveryFeeMinor, discountMinor: totals?.discountMinor, taxMinor: totals?.taxMinor ?? 0, totalMinor: totals?.totalMinor, currency } } : { success: true, data: "Waiting for mock preview response…" }} note="Preview calculates current prices and ingredient requirements but does not reserve stock. Checkout recalculates everything again." />
           {loading && <div className={styles.status}>Calculating your price…</div>}
           {error && <div className={styles.error} role="alert"><strong>We couldn't confirm this configuration.</strong><p>{error}</p><button type="button" onClick={() => window.location.reload()}>Try again</button></div>}
           {preview && !error && <>
