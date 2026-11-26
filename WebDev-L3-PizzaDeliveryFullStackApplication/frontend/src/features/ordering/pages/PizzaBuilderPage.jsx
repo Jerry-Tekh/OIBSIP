@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { findMenuItem } from "../data/menu.js";
 import { getPizzaOptions } from "../api/orderingApi.js";
 import styles from "./PizzaBuilderPage.module.css";
+import ApiDataPanel from "../components/ApiDataPanel.jsx";
 
 const CATEGORIES = ["base", "sauce", "cheese", "vegetable"];
 
 export default function PizzaBuilderPage() {
-  const { slug } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const slug = location.pathname.split("/").filter(Boolean).at(-1);
   const pizza = findMenuItem(slug);
   const [options, setOptions] = useState([]);
   const [savedDraft] = useState(() => {
@@ -21,6 +23,7 @@ export default function PizzaBuilderPage() {
   const [quantity, setQuantity] = useState(() => Math.min(20, Math.max(1, Number(savedDraft?.items?.[0]?.quantity) || 1)));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [optionsResponse, setOptionsResponse] = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -29,6 +32,7 @@ export default function PizzaBuilderPage() {
         if (!active) return;
         const list = Array.isArray(data?.options) ? data.options : Array.isArray(data) ? data : [];
         setOptions(list);
+        setOptionsResponse({ success: true, data: { options: list } });
       })
       .catch((requestError) => {
         if (active) setError(requestError.message || "We couldn't load the pizza options.");
@@ -77,7 +81,7 @@ export default function PizzaBuilderPage() {
     navigate("/dashboard/order/preview");
   }
 
-  if (!pizza) return <main className={styles.statePage}><h1>We couldn't find that pizza.</h1><Link to="/dashboard/menu">Back to the menu</Link></main>;
+  if (!pizza) return <main className={styles.statePage}><h1>Choose a pizza from the menu</h1><p>This builder needs a valid menu selection.</p><Link to="/dashboard/menu">Back to the menu</Link></main>;
 
   return (
     <main className={styles.page}>
@@ -92,7 +96,8 @@ export default function PizzaBuilderPage() {
 
         <section className={styles.builder}>
           <div className={styles.builderHeading}><div><span className={styles.kicker}>YOUR PIZZA, YOUR WAY</span><h2>Build your pizza</h2><p>Choose the ingredients for your order.</p></div><span className={styles.required}>* Required choices</span></div>
-          {loading && <div className={styles.notice}>Loading available ingredients…</div>}
+          <ApiDataPanel title="Load pizza options" method="GET" endpoint="/api/v1/pizza-options" request={null} response={optionsResponse || { success: true, data: { options: "Loading demo catalog options…" } }} note="The backend returns available base, sauce, cheese and vegetable options. These mock records use the same field names and minor-unit pricing as the engineering guide." />
+          {loading && <div className={styles.notice}>Loading available ingredients…</div>
           {error && <div className={styles.error} role="alert">{error}<p>The catalog options endpoint must be available before this builder can be used.</p><button type="button" onClick={() => window.location.reload()}>Try again</button></div>}
           {!loading && !error && options.length === 0 && <div className={styles.notice}>No pizza options are currently published. Please check back shortly.</div>}
 
