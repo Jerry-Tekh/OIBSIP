@@ -21,7 +21,7 @@ export default function AdminOverviewPage(){
    {!loading&&!inventory.some(i=>i.isLowStock)&&<div className={styles.emptyState}>No low-stock items in the loaded inventory records.</div>}
    <p className={styles.demoNote}>Showing up to 100 inventory records. Low-stock count above is the server-reported total.</p>
   </section>
-  <section className={styles.panel}><div className={styles.panelHead}><div><h2>Product publishing</h2><p>Live PizzaProduct catalogue status</p></div><button className={styles.textButton} onClick={()=>navigate("/admin/products")}>Manage products ↗</button></div>
+  <section className={styles.panel}><div className={styles.panelHead}><div><h2>Product publishing</h2><p>Publishing status for the first 100 products loaded</p></div><button className={styles.textButton} onClick={()=>navigate("/admin/products")}>Manage products ↗</button></div>
    <div className={styles.stockRow}><div><strong>Published</strong><small>Visible or temporarily unavailable</small></div><b>{published}</b></div>
    <div className={styles.stockRow}><div><strong>Drafts</strong><small>Not visible to customers</small></div><b>{drafts}</b></div>
    <div className={styles.stockRow}><div><strong>Temporarily unavailable</strong><small>Published but hidden from storefront</small></div><b>{unavailable}</b></div>
