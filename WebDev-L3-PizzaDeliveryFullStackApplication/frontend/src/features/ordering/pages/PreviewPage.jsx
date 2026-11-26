@@ -35,11 +35,11 @@ export default function PreviewPage() {
   const currency = totals?.currency || preview?.currency;
   const items = preview?.items || totals?.items || [];
 
-  if (!draft || !pizza) return <main className={styles.state}><h1>Configuration not found</h1><Link to="/menu">Return to menu</Link></main>;
+  if (!draft || !pizza) return <main className={styles.state}><h1>Configuration not found</h1><Link to="/dashboard/menu">Return to menu</Link></main>;
 
   return (
     <main className={styles.page}>
-      <header className={styles.header}><Link to={`/order/${pizza.slug}`}>← Edit pizza</Link><Link to="/" className={styles.brand}><span>C</span> crust&co.</Link><span className={styles.step}>02 / 03 <b>PRICE PREVIEW</b></span></header>
+      <header className={styles.header}><Link to={`/dashboard/order/${pizza.slug}`}>← Edit pizza</Link><Link to="/" className={styles.brand}><span>C</span> crust&co.</Link><span className={styles.step}>02 / 03 <b>PRICE PREVIEW</b></span></header>
       <div className={styles.layout}>
         <section className={styles.product}>
           <img src={pizza.image} alt={pizza.name}/>
@@ -63,7 +63,7 @@ export default function PreviewPage() {
               <div className={styles.total}><span>Total</span><strong>{formatMoney(totals?.totalMinor, currency)}</strong></div>
             </div>
             <div className={styles.notice}>Availability and pricing are checked again during checkout. This preview does not reserve ingredients.</div>
-            <button type="button" className={styles.continue} onClick={() => navigate("/checkout")}>Continue to checkout <span>→</span></button>
+            <button type="button" className={styles.continue} onClick={() => navigate("/dashboard/checkout")}>Continue to checkout <span>→</span></button>
           </>}
           {!loading && !error && !preview && <div className={styles.error}>The server returned an empty price preview.</div>}
         </section>
