@@ -20,6 +20,7 @@ import AdminOverviewPage from "./features/dashboard/admin/pages/AdminOverviewPag
 import AdminOrdersPage from "./features/dashboard/admin/pages/AdminOrdersPage.jsx";
 import AdminInventoryPage from "./features/dashboard/admin/pages/AdminInventoryPage.jsx";
 import AdminRecipesPage from "./features/dashboard/admin/pages/AdminRecipesPage.jsx";
+import AdminProductsPage from "./features/dashboard/admin/pages/AdminProductsPage.jsx";
 import AdminStockMovementsPage from "./features/dashboard/admin/pages/AdminStockMovementsPage.jsx";
 import AdminLowStockPage from "./features/dashboard/admin/pages/AdminLowStockPage.jsx";
 
@@ -33,6 +34,7 @@ const customerNavigation = [
 const adminNavigation = [
   { label: "Overview", path: "/admin", title: "Operations overview", subtitle: "A clear view of what's happening across your kitchen." },
   { label: "Orders", path: "/admin/orders", title: "Orders", subtitle: "Review and manage customer orders." },
+  { label: "Products", path: "/admin/products", title: "Pizza products", subtitle: "Manage the sellable menu and storefront publishing." },
   { label: "Inventory", path: "/admin/inventory", title: "Inventory", subtitle: "Track ingredients, reservations and available stock." },
   { label: "Recipes", path: "/admin/recipes", title: "Recipes", subtitle: "Define the ingredient consumption for each product." },
   { label: "Stock movements", path: "/admin/stock-movements", title: "Stock movements", subtitle: "Review inventory movement history." },
@@ -69,6 +71,7 @@ export default function App() {
       <Route element={<ProtectedRoute allowedRoles={["admin"]}><DashboardBuilder role="admin" navigation={adminNavigation} /></ProtectedRoute>}>
         <Route path="/admin" element={<AdminOverviewPage />} />
         <Route path="/admin/orders" element={<AdminOrdersPage />} />
+        <Route path="/admin/products" element={<AdminProductsPage />} />
         <Route path="/admin/inventory" element={<AdminInventoryPage />} />
         <Route path="/admin/recipes" element={<AdminRecipesPage />} />
         <Route path="/admin/stock-movements" element={<AdminStockMovementsPage />} />
