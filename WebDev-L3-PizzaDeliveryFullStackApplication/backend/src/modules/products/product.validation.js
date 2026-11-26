@@ -22,6 +22,7 @@ const productFields = {
 export const createProductSchema = z.object({ body: z.object(productFields) });
 export const updateProductSchema = z.object({ params: z.object({ id }), body: z.object(productFields).partial().refine(value => Object.keys(value).length > 0, "Provide at least one field to update.") });
 export const productParamsSchema = z.object({ params: z.object({ id }) });
+export const productAvailabilitySchema = z.object({ params: z.object({ id }), body: z.object({ isAvailable: z.boolean() }) });
 export const publicProductParamsSchema = z.object({ params: z.object({ slug: z.string().trim().min(2).max(140) }) });
 export const publicProductListSchema = z.object({ query: z.object({
   category: z.enum(["classic", "signature", "vegetarian", "spicy", "specialty"]).optional(),
