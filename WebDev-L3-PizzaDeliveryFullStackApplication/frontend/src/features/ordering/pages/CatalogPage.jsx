@@ -5,15 +5,9 @@ import styles from "./CatalogPage.module.css";
 export default function CatalogPage() {
   return (
     <main className={styles.page}>
-      <header className={styles.header}>
-        <Link to="/" className={styles.brand}><span>C</span> crust&co.</Link>
-        <nav aria-label="Store navigation"><Link to="/">Home</Link><Link to="/login">My account</Link></nav>
-        <Link to="/login" className={styles.account}>Sign in</Link>
-      </header>
-
       <section className={styles.hero}>
         <span className={styles.kicker}>THE CRUST & CO. MENU</span>
-        <h1>Find your next<br/><em>favourite.</em></h1>
+        <h2>Find your next<br/><em>favourite.</em></h2>
         <p>Made with care, finished in a hot oven, and ready for your table.</p>
         <a href="#pizzas" className={styles.heroLink}>Explore the pizzas <span>↓</span></a>
       </section>
@@ -41,8 +35,6 @@ export default function CatalogPage() {
         </div>
         <p className={styles.note}>Menu photography and descriptions are storefront presentation content. Ingredient availability and all order prices are confirmed by the server during configuration preview.</p>
       </section>
-
-      <footer className={styles.footer}><Link to="/" className={styles.brand}><span>C</span> crust&co.</Link><p>Good dough. Good people. Good pizza.</p></footer>
     </main>
   );
 }
