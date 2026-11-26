@@ -22,7 +22,11 @@ export default function CustomerDashboard(){
   : orderingView === "checkout" ? ["Delivery and payment.","Confirm where your order should go, then continue to payment."]
   : copy[active]||copy.Overview;
  const orderingContent = orderingView === "menu" ? <CatalogPage /> : orderingView === "builder" ? <PizzaBuilderPage /> : orderingView === "preview" ? <PreviewPage /> : orderingView === "checkout" ? <CheckoutPage /> : null;
- const builderSlug = orderingView === "builder" ? orderingPath.split("/").filter(Boolean).at(-1) : null;
+ const builderSlug = orderingView === "builder"
+  ? orderingPath.split("/").filter(Boolean).at(-1)
+  : orderingView === "preview" || orderingView === "checkout"
+    ? (() => { try { return JSON.parse(sessionStorage.getItem("crust-order-draft") || "null")?.pizzaSlug || null; } catch { return null; } })()
+    : null;
  return <DashboardShell role="customer" active={active} navigation={nav} title={title} subtitle={subtitle}>
  {orderingContent ? <div className={styles.orderingWorkspace}>
   <nav className={styles.orderingSteps} aria-label="Pizza ordering steps">
