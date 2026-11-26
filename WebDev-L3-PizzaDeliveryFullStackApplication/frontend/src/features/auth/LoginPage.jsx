@@ -17,7 +17,7 @@ function validate(values) {
 
   if (!email) errors.email = "Enter your email address.";
   else if (email.length > EMAIL_MAX) errors.email = "Email must be 254 characters or fewer.";
-  else if (!/^[^\\s@<>]+@[^\\s@<>]+\\.[^\\s@<>]+$/.test(email)) errors.email = "Enter a valid email address.";
+  else if (!/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(email)) errors.email = "Enter a valid email address.";
 
   if (!values.password) errors.password = "Enter your password.";
   else if (values.password.length > PASSWORD_MAX) errors.password = "Password must be 128 characters or fewer.";
