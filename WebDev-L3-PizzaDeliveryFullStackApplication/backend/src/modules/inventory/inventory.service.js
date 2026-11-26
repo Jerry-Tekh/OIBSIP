@@ -51,3 +51,12 @@ export async function listMovements(id,{page,limit}) {
  const [movements,total]=await Promise.all([InventoryMovement.find({inventoryItemId:id}).sort({createdAt:-1}).skip((page-1)*limit).limit(limit).populate("actorUserId","name email").lean(),InventoryMovement.countDocuments({inventoryItemId:id})]);
  return {movements,pagination:{page,limit,total}};
 }
+
+export async function listAllMovements({page,limit}) {
+ const filter={};
+ const [movements,total]=await Promise.all([
+  InventoryMovement.find(filter).sort({createdAt:-1}).skip((page-1)*limit).limit(limit).populate("inventoryItemId","name unit").populate("actorUserId","name email").lean(),
+  InventoryMovement.countDocuments(filter)
+ ]);
+ return {movements,pagination:{page,limit,total}};
+}
