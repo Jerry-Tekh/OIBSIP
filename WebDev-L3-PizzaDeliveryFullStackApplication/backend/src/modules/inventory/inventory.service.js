@@ -9,11 +9,11 @@ export async function listInventory({page,limit,search,category,status}) {
  if(category) filter.category=category;
  if(status==="active") filter.isActive=true;
  if(status==="inactive") filter.isActive=false;
+ if(status==="low") filter.$expr={$lte:[{$subtract:["$physicalStock","$reservedStock"]},"$lowStockThreshold"]};
  if(search) filter.$or=[{name:{$regex:search,$options:"i"}},{sku:{$regex:search,$options:"i"}},{category:{$regex:search,$options:"i"}}];
  const [items,total]=await Promise.all([InventoryItem.find(filter).sort({name:1}).skip((page-1)*limit).limit(limit).lean(),InventoryItem.countDocuments(filter)]);
  const rows=items.map(item=>({...item,availableStock:item.physicalStock-item.reservedStock,isLowStock:item.physicalStock-item.reservedStock<=item.lowStockThreshold}));
- const filtered=status==="low"?rows.filter(item=>item.isLowStock):rows;
- return {items:filtered,pagination:{page,limit,total:status==="low"?filtered.length:total}};
+ return {items:rows,pagination:{page,limit,total}};
 }
 export async function createInventory(payload,userId) {
  const session=await mongoose.startSession();let created;
