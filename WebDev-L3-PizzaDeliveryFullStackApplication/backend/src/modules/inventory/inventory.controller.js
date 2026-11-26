@@ -5,3 +5,4 @@ export const create=asyncHandler(async(req,res)=>res.status(201).json({success:t
 export const update=asyncHandler(async(req,res)=>res.json({success:true,data:{item:await service.updateInventory(req.validated.params.id,req.validated.body,req.user._id)}}));
 export const adjust=asyncHandler(async(req,res)=>res.json({success:true,data:{item:await service.adjustInventory(req.validated.params.id,req.validated.body,req.user._id)}}));
 export const movements=asyncHandler(async(req,res)=>res.json({success:true,data:await service.listMovements(req.validated.params.id,req.validated.query)}));
+export const allMovements=asyncHandler(async(req,res)=>res.json({success:true,data:await service.listAllMovements(req.validated.query)}));
