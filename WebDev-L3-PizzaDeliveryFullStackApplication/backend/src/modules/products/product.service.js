@@ -1,11 +1,9 @@
-import mongoose from "mongoose";
 import PizzaProduct from "./product.model.js";
 import Recipe from "../recipes/recipe.model.js";
 import InventoryItem from "../inventory/inventory.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 
 const publicFields = "name slug description shortDescription category imageUrl basePriceMinor currency isAvailable sortOrder publishedAt";
-function safeProduct(product) { return product?.toObject ? product.toObject() : product; }
 
 export async function listAdminProducts({ status, search, page, limit }) {
   const filter = {};
