@@ -63,7 +63,7 @@ The named pizzas shown as storefront product cards are represented by a dedicate
 
 Products are created as drafts. An administrator can edit draft details, including the price and image URL. Publishing is rejected unless an active recipe exists, the recipe has at least one ingredient, all referenced inventory items are active, and recipe units still match each inventory item's canonical unit. Publishing does not reserve stock or promise live availability; order preview and checkout must later perform authoritative stock checks and reservations.
 
-Publication state and sellability are separate: a published product can be temporarily marked unavailable without deleting it. Unpublishing returns it to draft so it can be edited. Archiving is a terminal catalog state for this workflow.
+Publication state and sellability are separate: a published product can be temporarily marked unavailable without deleting it. Unpublishing returns it to draft so it can be edited while retaining `publishedAt` and `publishedBy` as the last-publication audit metadata. Publishing rechecks the recipe and inventory dependencies inside a MongoDB transaction. Archiving is a terminal catalog state for this workflow.
 
 ### Product APIs
 
