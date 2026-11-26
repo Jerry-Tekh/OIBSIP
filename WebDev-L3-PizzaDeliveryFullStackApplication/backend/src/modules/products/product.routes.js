@@ -10,14 +10,6 @@ import {
 
 const router = Router();
 
-// Public storefront endpoints expose published, available products only.
-router.get("/", validate(publicProductListSchema), asyncHandler(async (req, res) => {
-  res.json({ success: true, data: await service.listPublicProducts(req.validated.query) });
-}));
-router.get("/:slug", validate(publicProductParamsSchema), asyncHandler(async (req, res) => {
-  res.json({ success: true, data: { product: await service.getPublicProduct(req.validated.params.slug) } });
-}));
-
 // Admin product management is deliberately separate from PizzaOption management.
 const admin = Router();
 admin.use(authenticate, authorize("admin"));
@@ -49,4 +41,13 @@ admin.post("/:id/archive", validate(productParamsSchema), asyncHandler(async (re
 }));
 
 router.use("/admin", admin);
+
+// Public storefront endpoints expose published, available products only.
+router.get("/", validate(publicProductListSchema), asyncHandler(async (req, res) => {
+  res.json({ success: true, data: await service.listPublicProducts(req.validated.query) });
+}));
+router.get("/:slug", validate(publicProductParamsSchema), asyncHandler(async (req, res) => {
+  res.json({ success: true, data: { product: await service.getPublicProduct(req.validated.params.slug) } });
+}));
+
 export default router;
