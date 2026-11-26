@@ -26,7 +26,7 @@ export default function CatalogPage() {
         <div className={styles.grid}>
           {menuItems.map((item) => (
             <article className={styles.card} key={item.slug}>
-              <Link to={`/order/${item.slug}`} className={styles.imageLink} aria-label={`Customize ${item.name}`}>
+              <Link to={`/dashboard/order/${item.slug}`} className={styles.imageLink} aria-label={`Customize ${item.name}`}>
                 <img src={item.image} alt={item.name} loading="lazy"/>
                 <span className={styles.imageAction}>MAKE IT YOURS <b>↗</b></span>
               </Link>
@@ -34,7 +34,7 @@ export default function CatalogPage() {
                 <span className={styles.tag}>{item.tag}</span>
                 <h3>{item.name}</h3>
                 <p>{item.detail}</p>
-                <Link to={`/order/${item.slug}`} className={styles.customize}>Customize pizza <span>→</span></Link>
+                <Link to={`/dashboard/order/${item.slug}`} className={styles.customize}>Customize pizza <span>→</span></Link>
               </div>
             </article>
           ))}
