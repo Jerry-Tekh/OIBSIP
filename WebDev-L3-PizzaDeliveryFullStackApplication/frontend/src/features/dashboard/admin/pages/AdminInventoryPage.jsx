@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { getAccessToken } from "../../../auth/api/authApi.js";
 import styles from "../AdminDashboard.module.css";
 
-const API=import.meta.env.VITE_API_BASE_URL||"";
+const rawApiBase=import.meta.env.VITE_API_BASE_URL||"";\nconst API=rawApiBase.endsWith("/")?rawApiBase.slice(0,-1):rawApiBase;
 const units=["g","kg","ml","l","piece","bunch","pack","portion"];
 const emptyForm={name:"",sku:"",category:"",unit:"kg",initialStock:"",lowStockThreshold:"",notes:""};
 const commonCategories=["Dairy","Meat","Seafood","Vegetables","Fruits","Dry Goods","Flour & Grains","Sauces","Herbs & Spices","Oils","Packaging"];
