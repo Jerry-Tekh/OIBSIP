@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { signIn } from "./api/authApi.js";
 import styles from "./LoginPage.module.css";
@@ -6,13 +6,18 @@ import styles from "./LoginPage.module.css";
 const EMAIL_MAX = 254;
 const PASSWORD_MAX = 128;
 
+const DASHBOARD_BY_ROLE = Object.freeze({
+  admin: "/admin",
+  customer: "/dashboard",
+});
+
 function validate(values) {
   const errors = {};
   const email = values.email.trim();
 
   if (!email) errors.email = "Enter your email address.";
   else if (email.length > EMAIL_MAX) errors.email = "Email must be 254 characters or fewer.";
-  else if (!/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(email)) errors.email = "Enter a valid email address.";
+  else if (!/^[^\\s@<>]+@[^\\s@<>]+\\.[^\\s@<>]+$/.test(email)) errors.email = "Enter a valid email address.";
 
   if (!values.password) errors.password = "Enter your password.";
   else if (values.password.length > PASSWORD_MAX) errors.password = "Password must be 128 characters or fewer.";
@@ -21,12 +26,12 @@ function validate(values) {
 }
 
 export default function LoginPage() {
+  const navigate = useNavigate();
   const [values, setValues] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState("");
-  const [signedInUser, setSignedInUser] = useState(null);
 
   function updateField(event) {
     const { name, value } = event.target;
@@ -54,7 +59,15 @@ export default function LoginPage() {
         email: values.email.trim().toLowerCase(),
         password: values.password
       });
-      setSignedInUser(result?.user ?? null);
+
+      // The backend is the source of truth for the authenticated user's role.
+      const destination = DASHBOARD_BY_ROLE[result?.user?.role];
+
+      if (!destination) {
+        throw new Error("Your account role could not be verified. Please contact support.");
+      }
+
+      navigate(destination, { replace: true });
     } catch (error) {
       setServerError(error.message || "Sign in failed. Please try again.");
     } finally {
@@ -105,88 +118,77 @@ export default function LoginPage() {
         </header>
 
         <div className={styles["form-wrap"]}>
-          {signedInUser ? (
-            <div className={styles["success-state"]} role="status">
-              <div className={styles["success-icon"]}>✓</div>
-              <span className={styles["eyebrow"]}>YOU'RE SIGNED IN</span>
-              <h2>Welcome back{signedInUser.name ? `, ${signedInUser.name.split(" ")[0]}` : ""}.</h2>
-              <p>Your next favourite meal is just around the corner.</p>
+          <div className={styles["form-intro"]}>
+            <span className={styles["eyebrow"]}>YOUR TABLE IS WAITING</span>
+            <h2>Good to have<br />you <em>back.</em></h2>
+            <p>Sign in to pick up where your cravings left off.</p>
+          </div>
+
+          <form className={styles["login-form"]} onSubmit={handleSubmit} noValidate>
+            <div className={styles["field-group"]}>
+              <label htmlFor="email">Email address</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                inputMode="email"
+                maxLength={EMAIL_MAX}
+                placeholder="you@example.com"
+                value={values.email}
+                onChange={updateField}
+                onBlur={() => validateField("email")}
+                aria-invalid={Boolean(errors.email)}
+                aria-describedby={errors.email ? "email-error" : undefined}
+                required
+              />
+              {errors.email && <span className={styles["field-error"]} id="email-error">{errors.email}</span>}
             </div>
-          ) : (
-            <>
-              <div className={styles["form-intro"]}>
-                <span className={styles["eyebrow"]}>YOUR TABLE IS WAITING</span>
-                <h2>Good to have<br />you <em>back.</em></h2>
-                <p>Sign in to pick up where your cravings left off.</p>
+
+            <div className={styles["field-group"]}>
+              <div className={styles["label-row"]}>
+                <label htmlFor="password">Password</label>
+                <Link className={styles["forgot-link"]} to="/forgot-password">Forgot password?</Link>
               </div>
-
-              <form className={styles["login-form"]} onSubmit={handleSubmit} noValidate>
-                <div className={styles["field-group"]}>
-                  <label htmlFor="email">Email address</label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    inputMode="email"
-                    maxLength={EMAIL_MAX}
-                    placeholder="you@example.com"
-                    value={values.email}
-                    onChange={updateField}
-                    onBlur={() => validateField("email")}
-                    aria-invalid={Boolean(errors.email)}
-                    aria-describedby={errors.email ? "email-error" : undefined}
-                    required
-                  />
-                  {errors.email && <span className={styles["field-error"]} id="email-error">{errors.email}</span>}
-                </div>
-
-                <div className={styles["field-group"]}>
-                  <div className={styles["label-row"]}>
-                    <label htmlFor="password">Password</label>
-                    <Link className={styles["forgot-link"]} to="/forgot-password">Forgot password?</Link>
-                  </div>
-                  <div className={`${styles["password-control"]} ${errors.password ? styles["has-error"] : ""}`}>
-                    <input
-                      id="password"
-                      name="password"
-                      type={showPassword ? "text" : "password"}
-                      autoComplete="current-password"
-                      maxLength={PASSWORD_MAX}
-                      placeholder="Enter your password"
-                      value={values.password}
-                      onChange={updateField}
-                      onBlur={() => validateField("password")}
-                      aria-invalid={Boolean(errors.password)}
-                      aria-describedby={errors.password ? "password-error" : undefined}
-                      required
-                    />
-                    <button
-                      className={styles["visibility-toggle"]}
-                      type="button"
-                      onClick={() => setShowPassword(value => !value)}
-                      aria-label={showPassword ? "Hide password" : "Show password"}
-                      aria-pressed={showPassword}
-                    >
-                      {showPassword ? "Hide" : "Show"}
-                    </button>
-                  </div>
-                  {errors.password && <span className={styles["field-error"]} id="password-error">{errors.password}</span>}
-                </div>
-
-                {serverError && <div className={styles["form-alert"]} role="alert">{serverError}</div>}
-
-                <button className={styles["submit-button"]} type="submit" disabled={submitting}>
-                  <span>{submitting ? "Signing you in..." : "Sign in"}</span>
+              <div className={`${styles["password-control"]} ${errors.password ? styles["has-error"] : ""}`}>
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  maxLength={PASSWORD_MAX}
+                  placeholder="Enter your password"
+                  value={values.password}
+                  onChange={updateField}
+                  onBlur={() => validateField("password")}
+                  aria-invalid={Boolean(errors.password)}
+                  aria-describedby={errors.password ? "password-error" : undefined}
+                  required
+                />
+                <button
+                  className={styles["visibility-toggle"]}
+                  type="button"
+                  onClick={() => setShowPassword(value => !value)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  aria-pressed={showPassword}
+                >
+                  {showPassword ? "Hide" : "Show"}
                 </button>
-              </form>
-
-              <div className={styles["form-footnote"]}>
-                <span className={styles["footnote-icon"]}>✳</span>
-                <p>Your details stay private and secure. We only use them to make your experience better.</p>
               </div>
-            </>
-          )}
+              {errors.password && <span className={styles["field-error"]} id="password-error">{errors.password}</span>}
+            </div>
+
+            {serverError && <div className={styles["form-alert"]} role="alert">{serverError}</div>}
+
+            <button className={styles["submit-button"]} type="submit" disabled={submitting}>
+              <span>{submitting ? "Signing you in..." : "Sign in"}</span>
+            </button>
+          </form>
+
+          <div className={styles["form-footnote"]}>
+            <span className={styles["footnote-icon"]}>✳</span>
+            <p>Your details stay private and secure. We only use them to make your experience better.</p>
+          </div>
         </div>
 
         <footer className={styles["panel-footer"]}>
