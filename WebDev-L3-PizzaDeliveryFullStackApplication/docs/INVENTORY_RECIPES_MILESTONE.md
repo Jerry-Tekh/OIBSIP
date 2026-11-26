@@ -116,3 +116,11 @@ The admin feature review corrections are being applied on the existing `feature/
 - Order/revenue reporting is not represented as live until the order lifecycle and reporting APIs are implemented.
 
 These changes are source-level updates on the feature branch. Automated tests, a local build, database-backed integration tests, and browser validation still need to be run in the developer environment; this documentation does not claim those checks have passed.
+
+### Follow-up self-review fixes
+
+- Fixed the recipe selectors' pagination callbacks and search/page state. The controls now call explicit server-backed page handlers and update the displayed page count.
+- Low-stock and healthy-stock list filters now exclude inactive inventory items, preventing retired ingredients from appearing in active replenishment views.
+- Recipe edits are blocked for published products until they are unpublished, and archived products cannot have their recipes changed. This avoids silently changing the recipe attached to a currently published sellable product.
+
+These follow-up source changes also remain untested in a local runtime.
