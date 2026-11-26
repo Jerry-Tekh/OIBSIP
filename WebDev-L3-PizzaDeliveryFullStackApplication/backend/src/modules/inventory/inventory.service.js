@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import InventoryItem from "./inventory.model.js";
 import InventoryMovement from "./movement.model.js";
 import { ApiError } from "../../utils/ApiError.js";
-const escapeRegex = value => value.replace(/[|\\{}()[\]^$+*?.-]/g, "\\$&");
+const escapeRegex = value => value.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
 export async function listInventory({page,limit,search,category,status}) {
  const filter={};if(category)filter.category=category;if(status==="active")filter.isActive=true;if(status==="inactive")filter.isActive=false;
  if(status==="low")filter.$expr={$lte:[{$subtract:["$physicalStock","$reservedStock"]},"$lowStockThreshold"]};
