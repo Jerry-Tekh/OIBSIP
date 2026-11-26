@@ -2,7 +2,8 @@ import {useEffect,useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {getAccessToken} from "../../../auth/api/authApi.js";
 import styles from "../AdminDashboard.module.css";
-const rawApiBase=import.meta.env.VITE_API_BASE_URL||"";\nconst API=rawApiBase.endsWith("/")?rawApiBase.slice(0,-1):rawApiBase;
+const rawApiBase=import.meta.env.VITE_API_BASE_URL||"";
+const API=rawApiBase.endsWith("/")?rawApiBase.slice(0,-1):rawApiBase;
 async function get(path){const token=getAccessToken();const response=await fetch(API+path,{credentials:"include",headers:token?{Authorization:"Bearer "+token}:{}});const payload=await response.json().catch(()=>({}));if(!response.ok||payload.success!==true)throw new Error(payload?.error?.message||payload?.message||"Unable to load operations data.");return payload.data;}
 const money=minor=>new Intl.NumberFormat("en-NG",{style:"currency",currency:"NGN"}).format((minor||0)/100);
 export default function AdminOverviewPage(){
