@@ -66,7 +66,21 @@ export function createCheckout({items,deliveryAddress,idempotencyKey}) {
   }
   return request("/api/v1/checkout",{method:"POST",body:{items,deliveryAddress},idempotencyKey});
 }
-export function simulatePaymentSuccess(order) {
-  if(USE_ORDERING_MOCKS)return Promise.resolve({...order,paymentStatus:"paid",fulfilmentStatus:"order_received",payment:{...order.payment,status:"succeeded",verificationStatus:"verified"},demo:true});
+export function simulatePaymentSuccess(checkoutResult) {
+  if (USE_ORDERING_MOCKS) {
+    return Promise.resolve({
+      ...checkoutResult,
+      order: {
+        ...checkoutResult.order,
+        paymentStatus: "paid"
+      },
+      payment: {
+        ...checkoutResult.payment,
+        status: "succeeded",
+        verificationStatus: "verified"
+      },
+      demo: true
+    });
+  }
   return Promise.reject(new Error("Payment verification is not yet connected."));
 }
