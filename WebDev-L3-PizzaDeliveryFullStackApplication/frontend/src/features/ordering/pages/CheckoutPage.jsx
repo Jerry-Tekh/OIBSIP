@@ -47,17 +47,17 @@ export default function CheckoutPage() {
     }
   }
 
-  if (!draft?.items?.length) return <main className={styles.state}><h1>Your order details have expired.</h1><Link to="/menu">Return to menu</Link></main>;
+  if (!draft?.items?.length) return <main className={styles.state}><h1>Your order details have expired.</h1><Link to="/dashboard/menu">Return to menu</Link></main>;
 
   if (result) {
     const order = result.order || {};
     const payment = result.payment || {};
-    return <main className={styles.page}><header className={styles.header}><Link to="/menu" className={styles.brand}><span>C</span> crust&co.</Link></header><section className={styles.result}><span className={styles.kicker}>ORDER CREATED</span><div className={styles.check}>✓</div><h1>Your order is with us.</h1><p>We’ve received the checkout response. Payment is currently {order.paymentStatus || "pending"}.</p><div className={styles.orderCard}><div><small>ORDER NUMBER</small><strong>{order.orderNumber || "Pending confirmation"}</strong></div><div><small>ORDER TOTAL</small><strong>{Number.isFinite(order.totalMinor) && order.currency ? new Intl.NumberFormat(undefined,{style:"currency",currency:order.currency}).format(order.totalMinor/100) : "See order details"}</strong></div><div><small>PAYMENT PROVIDER</small><strong>{payment.provider || "Not supplied"}</strong></div></div><p className={styles.handoff}>Payment-provider checkout is the next integration step. This screen will not claim payment success until the provider confirms it and the backend verifies the result.</p><Link to="/dashboard" className={styles.button}>Go to my account</Link></section></main>;
+    return <main className={styles.page}><header className={styles.header}><Link to="/dashboard/menu" className={styles.brand}><span>C</span> crust&co.</Link></header><section className={styles.result}><span className={styles.kicker}>ORDER CREATED</span><div className={styles.check}>✓</div><h1>Your order is with us.</h1><p>We’ve received the checkout response. Payment is currently {order.paymentStatus || "pending"}.</p><div className={styles.orderCard}><div><small>ORDER NUMBER</small><strong>{order.orderNumber || "Pending confirmation"}</strong></div><div><small>ORDER TOTAL</small><strong>{Number.isFinite(order.totalMinor) && order.currency ? new Intl.NumberFormat(undefined,{style:"currency",currency:order.currency}).format(order.totalMinor/100) : "See order details"}</strong></div><div><small>PAYMENT PROVIDER</small><strong>{payment.provider || "Not supplied"}</strong></div></div><p className={styles.handoff}>Payment-provider checkout is the next integration step. This screen will not claim payment success until the provider confirms it and the backend verifies the result.</p><Link to="/dashboard" className={styles.button}>Go to my account</Link></section></main>;
   }
 
   return (
     <main className={styles.page}>
-      <header className={styles.header}><Link to="/menu" className={styles.back}>← Back to menu</Link><Link to="/" className={styles.brand}><span>C</span> crust&co.</Link><span className={styles.step}>03 / 03 <b>CHECKOUT</b></span></header>
+      <header className={styles.header}><Link to="/dashboard/menu" className={styles.back}>← Back to menu</Link><Link to="/" className={styles.brand}><span>C</span> crust&co.</Link><span className={styles.step}>03 / 03 <b>CHECKOUT</b></span></header>
       <div className={styles.layout}>
         <section className={styles.intro}><span className={styles.kicker}>ONE LAST THING</span><h1>Where should<br/>we bring the <em>good stuff?</em></h1><p>Add your delivery address. We’ll confirm the order and availability again before payment.</p><div className={styles.notice}>Your price preview is not a stock reservation. Checkout checks current prices and ingredient availability again.</div></section>
         <form className={styles.form} onSubmit={submit} noValidate>
