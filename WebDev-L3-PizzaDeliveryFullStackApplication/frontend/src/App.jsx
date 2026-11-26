@@ -7,7 +7,12 @@ import VerifyEmailPage from "./features/auth/VerifyEmailPage.jsx";
 import AdminDashboard from "./features/dashboard/admin/AdminDashboard.jsx";
 import CustomerDashboard from "./features/dashboard/customer/CustomerDashboard.jsx";
 
-function LegacyOrderRedirect() {\n  const { slug } = useParams();\n  return <Navigate to={`/dashboard/order/${slug}`} replace />;\n}\n\nexport default function App() {
+function LegacyOrderRedirect() {
+  const { slug } = useParams();
+  return <Navigate to={`/dashboard/order/${slug}`} replace />;
+}
+
+export default function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
