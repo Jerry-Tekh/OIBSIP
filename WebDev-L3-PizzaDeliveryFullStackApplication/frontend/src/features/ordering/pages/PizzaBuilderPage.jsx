@@ -11,8 +11,14 @@ export default function PizzaBuilderPage() {
   const navigate = useNavigate();
   const pizza = findMenuItem(slug);
   const [options, setOptions] = useState([]);
-  const [selection, setSelection] = useState({ baseId: "", sauceId: "", cheeseId: "", vegetableIds: [] });
-  const [quantity, setQuantity] = useState(1);
+  const [savedDraft] = useState(() => {
+    try {
+      const value = JSON.parse(sessionStorage.getItem("crust-order-draft") || "null");
+      return value?.pizzaSlug === slug ? value : null;
+    } catch { return null; }
+  });
+  const [selection, setSelection] = useState(() => savedDraft?.items?.[0]?.configuration || { baseId: "", sauceId: "", cheeseId: "", vegetableIds: [] });
+  const [quantity, setQuantity] = useState(() => Math.min(20, Math.max(1, Number(savedDraft?.items?.[0]?.quantity) || 1)));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -34,6 +40,14 @@ export default function PizzaBuilderPage() {
   const grouped = useMemo(() => Object.fromEntries(
     CATEGORIES.map((category) => [category, options.filter((option) => option.category === category)])
   ), [options]);
+
+  useEffect(() => {
+    if (!pizza) return;
+    sessionStorage.setItem("crust-order-draft", JSON.stringify({
+      pizzaSlug: slug,
+      items: [{ configuration: selection, quantity }]
+    }));
+  }, [pizza, slug, selection, quantity]);
 
   const requiredComplete = Boolean(selection.baseId && selection.sauceId && selection.cheeseId);
   const selectedOptions = useMemo(() => options.filter((option) =>
