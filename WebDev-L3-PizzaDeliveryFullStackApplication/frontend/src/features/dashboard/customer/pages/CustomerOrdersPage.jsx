@@ -1,0 +1,3 @@
+import styles from "../CustomerDashboard.module.css";
+import { customerOrders, money, statusLabel } from "../../shared/demoData.js";
+export default function CustomerOrdersPage(){return <section className={styles.panel}><div className={styles.panelHead}><div><h2>Order history</h2><p>Your recent orders and their latest status.</p></div></div><div className={styles.orders}>{customerOrders.map(o=><article className={styles.order} key={o.id}><div className={styles.orderIcon}>▧</div><div className={styles.orderInfo}><b>{o.id}</b><small>{o.date} · {o.items}</small></div><strong>{money(o.total)}</strong><span className={styles.status}>{statusLabel(o.status)}</span></article>)}</div></section>}
