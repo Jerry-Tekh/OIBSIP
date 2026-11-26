@@ -1,11 +1,10 @@
 import { useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { createCheckout, simulatePaymentSuccess } from "../api/orderingApi.js";
 import styles from "./CheckoutPage.module.css";
 import ApiDataPanel from "../components/ApiDataPanel.jsx";
 
 export default function CheckoutPage() {
-  const navigate = useNavigate();
   const [draft] = useState(() => {
     try { return JSON.parse(sessionStorage.getItem("crust-order-draft") || "null"); }
     catch { return null; }
