@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { createCheckout, simulatePaymentSuccess } from "../api/orderingApi.js";
 import styles from "./CheckoutPage.module.css";
@@ -15,7 +15,8 @@ export default function CheckoutPage() {
   const [error, setError] = useState("");
   const [result, setResult] = useState(null);
   const [paying, setPaying] = useState(false);
-  const [paymentError, setPaymentError] = useState("");\n  const [paying, setPaying] = useState(false);\n  const [paymentError, setPaymentError] = useState("");
+  const [paymentError, setPaymentError] = useState("");
+  const idempotencyKey = useRef(null);
 
   function update(event) {
     const { name, value } = event.target;
@@ -36,10 +37,12 @@ export default function CheckoutPage() {
     setSubmitting(true);
     setError("");
     try {
+      // Reuse the same key if the request is retried after a network failure.
+      idempotencyKey.current ||= crypto.randomUUID();
       const data = await createCheckout({
         items: draft.items,
         deliveryAddress: Object.fromEntries(Object.entries(address).map(([key, value]) => [key, value.trim()])),
-        idempotencyKey: crypto.randomUUID()
+        idempotencyKey: idempotencyKey.current
       });
       setResult(data);
     } catch (requestError) {
