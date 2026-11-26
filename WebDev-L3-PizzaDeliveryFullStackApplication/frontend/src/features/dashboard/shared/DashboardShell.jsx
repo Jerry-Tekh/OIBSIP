@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { signOut } from "../../auth/api/authApi.js";
+import { getCurrentUser, signOut } from "../../auth/api/authApi.js";
 import styles from "./DashboardShell.module.css";
 
 const icons = { "Browse menu":"＋", Overview:"◫", Orders:"▤", Inventory:"▦", "Stock movements":"↕", "Low-stock alerts":"⚑", "My orders":"▤", "Saved addresses":"⌖", Profile:"◎", Settings:"⚙" };
@@ -12,6 +12,9 @@ export default function DashboardShell({ role="admin", active="Overview", naviga
   const [logoutError, setLogoutError] = useState("");
   const navigate = useNavigate();
   const isAdmin = role === "admin";
+  const user = getCurrentUser();
+  const displayName = user?.name || user?.fullName || user?.email || (isAdmin ? "Administrator" : "Customer");
+  const initials = displayName.split(/[\\s@._-]+/).filter(Boolean).slice(0, 2).map(part => part[0].toUpperCase()).join("") || (isAdmin ? "AD" : "CU");
 
   async function handleLogout() {
     if (loggingOut) return;
@@ -53,13 +56,13 @@ export default function DashboardShell({ role="admin", active="Overview", naviga
           </button>
           {logoutError && <p className={styles.logoutError} role="alert">{logoutError}</p>}
           <Link to="/" className={styles.backHome}>↗ <span>Back to storefront</span></Link>
-          <div className={styles.userMini}><span className={styles.avatar}>{isAdmin ? "AD" : "JC"}</span><span className={styles.userText}><strong>{isAdmin ? "Alex Morgan" : "Jordan Carter"}</strong><small>{isAdmin ? "Administrator" : "Customer"}</small></span><span className={styles.more}>···</span></div>
+          <div className={styles.userMini}><span className={styles.avatar}>{initials}</span><span className={styles.userText}><strong>{displayName}</strong><small>{isAdmin ? "Administrator" : "Customer"}</small></span><span className={styles.more}>···</span></div>
         </div>
       </aside>
       <main className={styles.main}>
         <header className={styles.topbar}>
           <div className={styles.topLeft}><button className={styles.menuToggle} onClick={() => setMobileOpen(true)} aria-label="Open navigation">☰</button><button className={styles.collapseToggle} onClick={() => setCollapsed(v=>!v)} aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}>☷</button><span className={styles.crumb}>Workspace <b>/</b> {active}</span></div>
-          <div className={styles.topActions}><label className={styles.search}><span>⌕</span><input placeholder="Search anything..." aria-label="Search dashboard"/><kbd>⌘ K</kbd></label><button className={styles.iconButton} aria-label="Notifications">♧<i/></button><span className={styles.topAvatar}>{isAdmin ? "AM" : "JC"}</span></div>
+          <div className={styles.topActions}><label className={styles.search}><span>⌕</span><input placeholder="Search anything..." aria-label="Search dashboard"/><kbd>⌘ K</kbd></label><button className={styles.iconButton} aria-label="Notifications">♧<i/></button><span className={styles.topAvatar} aria-label={displayName}>{initials}</span></div>
         </header>
         <section className={styles.content}>
           <div className={styles.pageHeading}><div><div className={styles.eyebrow}>{isAdmin ? "CRUST & CO. / OPERATIONS" : "WELCOME BACK"}</div><h1>{title || active}</h1><p>{subtitle}</p></div><div className={styles.headingActions}>{children?.props?.actions}</div></div>
