@@ -248,20 +248,29 @@ export async function refreshSession(refreshCookie, request) {
 export async function revokeSession(refreshCookie) {
   const parsed = splitRefreshToken(refreshCookie);
   if (!parsed || !mongoose.isValidObjectId(parsed.sessionId)) return;
-  const session = await Session.findById(parsed.sessionId).select(
-    "+refreshTokenHash",
+
+  // Match the session and current refresh-token hash in one atomic operation.
+  // This prevents a stale cookie from revoking a session after token rotation.
+  await Session.updateOne(
+    {
+      _id: parsed.sessionId,
+      refreshTokenHash: hashToken(parsed.secret),
+      revokedAt: null,
+    },
+    {
+      $set: { revokedAt: new Date() },
+      $unset: { refreshTokenHash: "" },
+    },
   );
-  if (!session || session.revokedAt) return;
-  if (hashToken(parsed.secret) === session.refreshTokenHash) {
-    session.revokedAt = new Date();
-    await session.save();
-  }
 }
 
 export async function revokeAllSessions(userId) {
   await Session.updateMany(
     { userId, revokedAt: null },
-    { $set: { revokedAt: new Date() } },
+    {
+      $set: { revokedAt: new Date() },
+      $unset: { refreshTokenHash: "" },
+    },
   );
 }
 
@@ -349,7 +358,10 @@ export async function revokeOneSession(userId, sessionId) {
     throw new ApiError(404, "Session not found.");
   const result = await Session.updateOne(
     { _id: sessionId, userId, revokedAt: null },
-    { $set: { revokedAt: new Date() } },
+    {
+      $set: { revokedAt: new Date() },
+      $unset: { refreshTokenHash: "" },
+    },
   );
   if (!result.modifiedCount)
     throw new ApiError(404, "Session not found or already revoked.");
