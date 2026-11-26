@@ -22,12 +22,12 @@ async function api(path,{method="GET",body}={}){
  const payload=await response.json().catch(()=>({}));if(!response.ok||payload.success!==true)throw new Error(payload?.error?.message||payload?.message||"Inventory request failed.");return payload.data;
 }
 export default function AdminInventoryPage(){
- const [items,setItems]=useState([]);const [loading,setLoading]=useState(true);const [error,setError]=useState("");const [notice,setNotice]=useState("");
+ const [items,setItems]=useState([]);const [pagination,setPagination]=useState({page:1,pages:1,total:0});const [page,setPage]=useState(1);const [loading,setLoading]=useState(true);const [error,setError]=useState("");const [notice,setNotice]=useState("");
  const [query,setQuery]=useState("");const [health,setHealth]=useState("all");const [showCreate,setShowCreate]=useState(false);const [form,setForm]=useState(emptyForm);const [saving,setSaving]=useState(false);
  const [adjusting,setAdjusting]=useState(null);const [adjustment,setAdjustment]=useState({adjustmentType:"restock",quantity:"",reason:""});
- const load=useCallback(async()=>{setLoading(true);setError("");try{const data=await api("?page=1&limit=100");setItems(data.items||[]);}catch(e){setError(e.message);}finally{setLoading(false);}},[]);
+ const load=useCallback(async()=>{setLoading(true);setError("");try{const params=new URLSearchParams({page:String(page),limit:"20"});if(query.trim())params.set("search",query.trim());if(health==="low")params.set("status","low");const data=await api("?"+params);setItems(data.items||[]);setPagination(data.pagination||{page,pages:1,total:0});}catch(e){setError(e.message);}finally{setLoading(false);}},[]);
  useEffect(()=>{load();},[load]);
- const visible=useMemo(()=>items.filter(item=>(!query||[item.name,item.category,item.sku||""].some(v=>v.toLowerCase().includes(query.toLowerCase())))&&(health==="all"||(health==="low"?item.isLowStock:!item.isLowStock))),[items,query,health]);
+ const visible=useMemo(()=>items.filter(item=>health!=="healthy"||!item.isLowStock),[items,health]);
  const lowCount=items.filter(i=>i.isLowStock).length;
  const categorySuggestions=[...new Set([...commonCategories,...items.map(item=>item.category).filter(Boolean)])].sort((a,b)=>a.localeCompare(b));
  const ingredientSuggestions=[...new Set([...commonIngredients,...items.map(item=>item.name).filter(Boolean)])].sort((a,b)=>a.localeCompare(b));
@@ -36,7 +36,7 @@ export default function AdminInventoryPage(){
  async function saveAdjustment(event){event.preventDefault();setSaving(true);setError("");setNotice("");try{await api(`/${adjusting._id}/adjustments`,{method:"POST",body:{...adjustment,quantity:Number(adjustment.quantity)}});setAdjusting(null);setAdjustment({adjustmentType:"restock",quantity:"",reason:""});setNotice("Stock adjustment saved and added to the movement ledger.");await load();}catch(e){setError(e.message);}finally{setSaving(false);}}
  return <section className={styles.panel}>
   <div className={styles.panelHead}><div><h2>Ingredient stock</h2><p>Track physical stock, reservations and available quantities.</p></div><button type="button" className={styles.textButton} onClick={()=>setShowCreate(v=>!v)}>{showCreate?"Close":"＋ Add ingredient"}</button></div>
-  <div className={styles.filterBar}><div className={styles.filterGroup}>{[["all","All stock"],["low","Low stock"],["healthy","Healthy"]].map(([v,label])=><button key={v} type="button" aria-pressed={health===v} onClick={()=>setHealth(v)} className={`${styles.filterButton} ${health===v?styles.filterActive:""}`}>{label}</button>)}</div><input className={styles.searchInput} value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search ingredients…" aria-label="Search inventory"/></div>
+  <div className={styles.filterBar}><div className={styles.filterGroup}>{[["all","All stock"],["low","Low stock"],["healthy","Healthy"]].map(([v,label])=><button key={v} type="button" aria-pressed={health===v} onClick={()=>{setPage(1);setHealth(v);}} className={`${styles.filterButton} ${health===v?styles.filterActive:""}`}>{label}</button>)}</div><input className={styles.searchInput} value={query} onChange={e=>{setPage(1);setQuery(e.target.value);}} placeholder="Search ingredients…" aria-label="Search inventory"/></div>
   {error&&<p role="alert" className={styles.demoNote}>{error}</p>}{notice&&<p role="status" className={styles.demoNote}>{notice}</p>}
   {showCreate&&<form onSubmit={createItem} className={styles.panel} style={{marginBottom:18,background:"#fffaf6"}}>
    <div className={styles.panelHead}><div><h2>Add inventory ingredient</h2><p>Initial stock is recorded as an auditable movement.</p></div></div>
@@ -67,6 +67,6 @@ export default function AdminInventoryPage(){
   <div className={styles.tableWrap}><table><thead><tr><th>Ingredient</th><th>Category</th><th>Physical</th><th>Reserved</th><th>Available</th><th>Threshold</th><th>Health</th><th>Action</th></tr></thead><tbody>
   {visible.map(item=><tr key={item._id}><td><b>{item.name}</b><small>{item.sku||"No SKU"}</small></td><td>{item.category}</td><td>{item.physicalStock} {item.unit}</td><td>{item.reservedStock} {item.unit}</td><td><b>{item.availableStock} {item.unit}</b></td><td>{item.lowStockThreshold} {item.unit}</td><td><span className={item.isLowStock?styles.low:styles.healthy}>{item.isLowStock?"Low stock":"Healthy"}</span></td><td><button type="button" className={styles.textButton} onClick={()=>setAdjusting(item)}>Adjust</button></td></tr>)}
   </tbody></table>{loading&&<div className={styles.emptyState}>Loading inventory…</div>}{!loading&&!visible.length&&<div className={styles.emptyState}>No inventory items match those filters.</div>}</div>
-  <p className={styles.demoNote}>{loading?"":`${items.length} ingredients · ${lowCount} at or below reorder threshold. Data is loaded from the authenticated inventory API.`}</p>
+  <div className={styles.filterBar}><span className={styles.pageMeta}>{pagination.total||0} ingredients · {lowCount} low-stock items on this page · Page {pagination.page||page} of {Math.max(1,pagination.pages||1)}</span><div className={styles.filterGroup}><button type="button" className={styles.filterButton} disabled={page<=1} onClick={()=>setPage(p=>p-1)}>Previous</button><button type="button" className={styles.filterButton} disabled={page>=(pagination.pages||1)} onClick={()=>setPage(p=>p+1)}>Next</button></div></div>
  </section>;
 }
