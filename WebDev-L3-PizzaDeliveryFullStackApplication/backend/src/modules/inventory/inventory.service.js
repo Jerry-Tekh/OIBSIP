@@ -3,16 +3,18 @@ import InventoryItem from "./inventory.model.js";
 import InventoryMovement from "./movement.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 
+const escapeRegex = value => value.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\\\import { ApiError } from "../../utils/ApiError.js";");
+
 export async function listInventory({page,limit,search,category,status}) {
  const filter={};
  if(category) filter.category=category;
  if(status==="active") filter.isActive=true;
  if(status==="inactive") filter.isActive=false;
  if(status==="low") filter.$expr={$lte:[{$subtract:["$physicalStock","$reservedStock"]},"$lowStockThreshold"]};
- if(search) filter.$or=[{name:{$regex:search,$options:"i"}},{sku:{$regex:search,$options:"i"}},{category:{$regex:search,$options:"i"}}];
+ if(search) { const term=escapeRegex(search); filter.$or=[{name:{$regex:term,$options:"i"}},{sku:{$regex:term,$options:"i"}},{category:{$regex:term,$options:"i"}}]; }
  const [items,total]=await Promise.all([InventoryItem.find(filter).sort({name:1}).skip((page-1)*limit).limit(limit).lean(),InventoryItem.countDocuments(filter)]);
  const rows=items.map(item=>({...item,availableStock:item.physicalStock-item.reservedStock,isLowStock:item.physicalStock-item.reservedStock<=item.lowStockThreshold}));
- return {items:rows,pagination:{page,limit,total}};
+ return {items:rows,pagination:{page,limit,total,pages:Math.ceil(total/limit)}};
 }
 export async function createInventory(payload,userId) {
  const session=await mongoose.startSession();let created;
@@ -26,8 +28,8 @@ export async function createInventory(payload,userId) {
  return created;
 }
 export async function updateInventory(id,payload,userId) {
- const update={...payload,updatedBy:userId};if(payload.name)update.normalizedName=payload.name.toLowerCase().trim();
- try{const item=await InventoryItem.findByIdAndUpdate(id,update,{new:true,runValidators:true});if(!item)throw new ApiError(404,"Inventory item not found.");return item;}catch(error){if(error.code===11000)throw new ApiError(409,"An ingredient with this name or SKU already exists.");throw error;}
+ const update={...payload,updatedBy:userId};if(payload.name)update.normalizedName=payload.name.toLowerCase().trim();\n if(Object.prototype.hasOwnProperty.call(payload,"sku")){const normalizedSku=payload.sku?.trim().toUpperCase();if(normalizedSku)update.sku=normalizedSku;else delete update.sku;}
+ try{const item=await InventoryItem.findByIdAndUpdate(id,update,{new:true,runValidators:true,$unset: Object.prototype.hasOwnProperty.call(payload,"sku") && !payload.sku?.trim() ? {sku:1} : undefined});if(!item)throw new ApiError(404,"Inventory item not found.");return item;}catch(error){if(error.code===11000)throw new ApiError(409,"An ingredient with this name or SKU already exists.");throw error;}
 }
 export async function adjustInventory(id,{adjustmentType,quantity,reason},userId) {
  const session=await mongoose.startSession();let updated;
@@ -48,7 +50,7 @@ export async function adjustInventory(id,{adjustmentType,quantity,reason},userId
 export async function listMovements(id,{page,limit}) {
  const item=await InventoryItem.findById(id).select("_id").lean();if(!item)throw new ApiError(404,"Inventory item not found.");
  const [movements,total]=await Promise.all([InventoryMovement.find({inventoryItemId:id}).sort({createdAt:-1}).skip((page-1)*limit).limit(limit).populate("actorUserId","name email").lean(),InventoryMovement.countDocuments({inventoryItemId:id})]);
- return {movements,pagination:{page,limit,total}};
+ return {movements,pagination:{page,limit,total,pages:Math.ceil(total/limit)}};
 }
 
 export async function listAllMovements({page,limit}) {
