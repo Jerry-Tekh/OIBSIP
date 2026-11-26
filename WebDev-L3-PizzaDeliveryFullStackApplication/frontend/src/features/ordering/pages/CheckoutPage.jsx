@@ -13,7 +13,9 @@ export default function CheckoutPage() {
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [result, setResult] = useState(null);\n  const [paying, setPaying] = useState(false);\n  const [paymentError, setPaymentError] = useState("");
+  const [result, setResult] = useState(null);
+  const [paying, setPaying] = useState(false);
+  const [paymentError, setPaymentError] = useState("");\n  const [paying, setPaying] = useState(false);\n  const [paymentError, setPaymentError] = useState("");
 
   function update(event) {
     const { name, value } = event.target;
@@ -52,7 +54,15 @@ export default function CheckoutPage() {
   if (result) {
     const order = result.order || {};
     const payment = result.payment || {};
-    return <main className={styles.page}><header className={styles.header}><Link to="/dashboard/menu" className={styles.brand}><span>C</span> crust&co.</Link></header><section className={styles.result}><span className={styles.kicker}>ORDER CREATED</span><div className={styles.check}>✓</div><h1>Your order is with us.</h1><p>We’ve received the checkout response. Payment is currently {order.paymentStatus || "pending"}.</p><div className={styles.orderCard}><div><small>ORDER NUMBER</small><strong>{order.orderNumber || "Pending confirmation"}</strong></div><div><small>ORDER TOTAL</small><strong>{Number.isFinite(order.totalMinor) && order.currency ? new Intl.NumberFormat(undefined,{style:"currency",currency:order.currency}).format(order.totalMinor/100) : "See order details"}</strong></div><div><small>PAYMENT PROVIDER</small><strong>{payment.provider || "Not supplied"}</strong></div></div><p className={styles.handoff}>Payment-provider checkout is the next integration step. This screen will not claim payment success until the provider confirms it and the backend verifies the result.</p><Link to="/dashboard" className={styles.button}>Go to my account</Link></section></main>;
+    const paid = order.paymentStatus === "paid";
+    async function payDemo() {
+      setPaying(true);
+      setPaymentError("");
+      try { setResult(await simulatePaymentSuccess(result)); }
+      catch (e) { setPaymentError(e.message || "Payment simulation failed."); }
+      finally { setPaying(false); }
+    }
+    return <main className={styles.page}><header className={styles.header}><Link to="/dashboard/menu" className={styles.brand}><span>C</span> crust&co.</Link></header><section className={styles.result}><span className={styles.kicker}>{paid ? "DEMO PAYMENT COMPLETE" : "ORDER CREATED · DEMO MODE"}</span><div className={styles.check}>{paid ? "✓" : "◌"}</div><h1>{paid ? "Payment confirmed." : "Your order is ready for payment."}</h1><p>{paid ? "This simulated payment has been marked successful in the demo flow." : "The mock checkout created an order. Continue with the simulated payment below to preview the paid state."}</p><div className={styles.orderCard}><div><small>ORDER NUMBER</small><strong>{order.orderNumber || "Pending confirmation"}</strong></div><div><small>ORDER TOTAL</small><strong>{Number.isFinite(order.totalMinor) && order.currency ? new Intl.NumberFormat(undefined,{style:"currency",currency:order.currency}).format(order.totalMinor/100) : "See order details"}</strong></div><div><small>PAYMENT PROVIDER</small><strong>{payment.provider || "Demo payment simulator"}</strong></div><div><small>PAYMENT STATUS</small><strong>{order.paymentStatus || "pending"}</strong></div></div>{!paid && <><div className={styles.handoff}>DEMO ONLY: no real payment provider is contacted and no money is charged.</div>{paymentError && <div className={styles.error} role="alert">{paymentError}</div>}<button type="button" className={styles.submit} disabled={paying} onClick={payDemo}>{paying ? "Simulating payment…" : "Simulate successful payment"} <span>→</span></button></>}<Link to="/dashboard" className={styles.button}>Go to my account</Link><Link to="/dashboard/menu" className={styles.back}>Order another pizza</Link></section></main>;
   }
 
   return (
