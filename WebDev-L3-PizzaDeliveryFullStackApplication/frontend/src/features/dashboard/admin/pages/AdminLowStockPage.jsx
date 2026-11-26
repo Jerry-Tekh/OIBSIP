@@ -1,0 +1,3 @@
+import styles from "../AdminDashboard.module.css";
+import { inventoryItems } from "../../shared/demoData.js";
+export default function AdminLowStockPage(){return <section className={styles.panel}><div className={styles.panelHead}><div><h2>Low-stock alerts</h2><p>Ingredients at or below configured reorder thresholds.</p></div><span className={styles.alertPill}>Active alerts</span></div>{inventoryItems.filter(i=>i.physical-i.reserved<=i.threshold).map(i=><div className={styles.alertRow} key={i.name}><span className={styles.alertIcon}>!</span><div><b>{i.name}</b><small>{i.physical-i.reserved} {i.unit} available · reorder threshold {i.threshold} {i.unit}</small></div></div>)}</section>}
