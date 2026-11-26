@@ -75,6 +75,7 @@ Admin endpoints require authentication and `role=admin`:
 - `PATCH /api/v1/products/admin/:id` — update a draft
 - `POST /api/v1/products/admin/:id/publish` — validate recipe/inventory dependencies and publish
 - `POST /api/v1/products/admin/:id/unpublish` — return a published product to draft
+- `PATCH /api/v1/products/admin/:id/availability` — change `isAvailable` on a published product without unpublishing it
 - `POST /api/v1/products/admin/:id/archive` — archive and make unavailable
 
 Public storefront endpoints expose only published and available products, with a field allowlist that excludes recipe, inventory and audit details:
@@ -87,9 +88,10 @@ The product base price is stored as integer minor units in NGN. Builder option c
 Product images currently use validated HTTPS URLs. A managed upload provider is intentionally not assumed; provider-backed upload and image lifecycle can be added separately.
 
 ## Customer visibility clarification
-Inventory ingredients and recipes are operational data and must not be exposed as a customer menu. The documented `GET /api/v1/pizza-options` contract exposes published ingredient choices for the pizza builder. The PizzaProduct schema and admin publishing/public listing APIs are now implemented on this branch. The storefront's existing product cards are not yet connected to these endpoints; that frontend integration and the checkout/recipe snapshot work remain separate follow-up tasks.
+Inventory ingredients and recipes are operational data and must not be exposed as a customer menu. The documented `GET /api/v1/pizza-options` contract exposes published ingredient choices for the pizza builder. The PizzaProduct schema and admin publishing/public listing APIs are now implemented on this branch. The storefront's existing product cards are not yet connected to these endpoints; that frontend integration and the checkout/recipe snapshot work remain separate follow-up tasks. Recipe administration selects an existing PizzaProduct and the API verifies the referenced product; recipes cannot be attached to arbitrary IDs or PizzaOption records.
 
 ## Frontend routes
+- `/admin/products` — create/edit draft PizzaProducts, publish/unpublish/archive them, and toggle published-product storefront availability.
 - `/admin/inventory` — list/search/filter ingredients, create an ingredient and record restock/waste/correction.
 - `/admin/recipes` — create/update product recipes from active inventory items.
 - `/admin/stock-movements` — paginated movement ledger.
@@ -98,4 +100,4 @@ Inventory ingredients and recipes are operational data and must not be exposed a
 All routes remain inside the existing protected admin dashboard shell.
 
 ## Not yet production-complete
-Persistent alert lifecycle/notifications, reservation allocation and release orchestration, recipe snapshotting at checkout, provider/catalog image uploads, product catalog publishing, automated tests and frontend/API integration tests remain follow-up work. No checkout or payment behavior is changed by this milestone.
+Persistent alert lifecycle/notifications, reservation allocation and release orchestration, recipe snapshotting at checkout, provider/catalog image uploads, storefront product-card integration, automated tests and frontend/API integration tests remain follow-up work. The admin overview now reads live inventory and product data; order/revenue reporting is deliberately shown as unavailable until the order lifecycle and reporting APIs exist. Inventory, low-stock and movement pages expose server-backed pagination. No checkout or payment behavior is changed by this milestone.
