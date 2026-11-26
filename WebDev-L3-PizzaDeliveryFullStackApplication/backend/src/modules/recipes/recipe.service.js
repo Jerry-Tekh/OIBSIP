@@ -4,8 +4,8 @@ import PizzaProduct from "../products/product.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 export async function listRecipes(){return Recipe.find().sort({productNameSnapshot:1}).lean();}
 export async function saveRecipe(productId,payload,userId){
- const product=await PizzaProduct.findById(productId).select("_id name").lean();
- if(!product)throw new ApiError(404,"Pizza product not found. Create the product before defining its recipe.");\n const productStatus=await PizzaProduct.findById(productId).select("publicationStatus").lean();\n if(productStatus?.publicationStatus==="published")throw new ApiError(409,"Unpublish this product before modifying its recipe.");\n if(productStatus?.publicationStatus==="archived")throw new ApiError(409,"Archived products cannot have recipes changed.");
+ const product=await PizzaProduct.findById(productId).select("_id name publicationStatus").lean();
+ if(!product)throw new ApiError(404,"Pizza product not found. Create the product before defining its recipe.");\n if(product.publicationStatus==="published")throw new ApiError(409,"Unpublish this product before modifying its recipe.");\n if(product.publicationStatus==="archived")throw new ApiError(409,"Archived products cannot have recipes changed.");
  if(payload.productNameSnapshot!==product.name)payload={...payload,productNameSnapshot:product.name};
  const ids=payload.ingredients.map(item=>item.inventoryItemId);
  if(new Set(ids).size!==ids.length)throw new ApiError(400,"An ingredient can only appear once in a recipe. Combine duplicate quantities.");
