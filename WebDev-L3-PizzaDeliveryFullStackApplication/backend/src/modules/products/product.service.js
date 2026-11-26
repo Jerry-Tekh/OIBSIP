@@ -2,7 +2,7 @@ import PizzaProduct from "./product.model.js";
 import Recipe from "../recipes/recipe.model.js";
 import InventoryItem from "../inventory/inventory.model.js";
 import { ApiError } from "../../utils/ApiError.js";
-const escapeRegex = value => value.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
+const escapeRegex = value => value.split("").map(char => "\\^$.*+?()[]{}|".includes(char) ? "\\" + char : char).join("");
 const publicFields = "name slug description shortDescription category imageUrl basePriceMinor currency isAvailable sortOrder publishedAt";
 export async function listAdminProducts({status,search,page,limit}) {
  const filter={}; if(status)filter.publicationStatus=status;
