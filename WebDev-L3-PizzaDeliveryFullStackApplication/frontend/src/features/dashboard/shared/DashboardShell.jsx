@@ -13,7 +13,7 @@ export default function DashboardShell({ role="admin", active="Overview", naviga
   const navigate = useNavigate();
   const isAdmin = role === "admin";
   const user = getCurrentUser();
-  const displayName = user?.name || user?.fullName || user?.email || (isAdmin ? "Administrator" : "Customer");
+  const displayName = user?.name || user?.fullName || user?.email || "Signed-in account";
   const initials = displayName.split(/[\s@._-]+/).filter(Boolean).slice(0, 2).map(part => part[0].toUpperCase()).join("") || (isAdmin ? "AD" : "CU");
 
   async function handleLogout() {
