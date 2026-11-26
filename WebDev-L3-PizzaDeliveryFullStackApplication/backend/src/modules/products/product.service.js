@@ -9,7 +9,10 @@ export async function listAdminProducts({status,search,page,limit}) {
  const filter={}; if(status)filter.publicationStatus=status;
  if(search){const term=escapeRegex(search);filter.$or=[{name:{$regex:term,$options:"i"}},{slug:{$regex:term,$options:"i"}}];}
  const [products,total]=await Promise.all([PizzaProduct.find(filter).sort({updatedAt:-1}).skip((page-1)*limit).limit(limit).lean(),PizzaProduct.countDocuments(filter)]);
- return {products,pagination:{page,limit,total,pages:Math.ceil(total/limit)}};
+ const recipes=await Recipe.find({productId:{$in:products.map(product=>product._id)}}).select("productId isActive ingredients").lean();
+ const recipeByProduct=new Map(recipes.map(recipe=>[recipe.productId.toString(),{exists:true,isActive:recipe.isActive,ingredientCount:recipe.ingredients.length}]));
+ const enriched=products.map(product=>({...product,recipeStatus:recipeByProduct.get(product._id.toString())||{exists:false,isActive:false,ingredientCount:0}}));
+ return {products:enriched,pagination:{page,limit,total,pages:Math.ceil(total/limit)}};
 }
 export async function getAdminProduct(id) {
  const product=await PizzaProduct.findById(id).lean();if(!product)throw new ApiError(404,"Pizza product not found.");
