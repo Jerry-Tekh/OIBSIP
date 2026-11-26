@@ -40,7 +40,7 @@ export default function PreviewPage() {
 
   return (
     <main className={styles.page}>
-      <header className={styles.header}><Link to={`/dashboard/order/${pizza.slug}`}>← Edit pizza</Link><Link to="/" className={styles.brand}><span>C</span> crust&co.</Link><span className={styles.step}>02 / 03 <b>PRICE PREVIEW</b></span></header>
+      <header className={styles.header}><Link to={`/dashboard/order/${pizza.slug}`}>← Edit pizza</Link><Link to="/" className={styles.brand}><span>C</span> crust&co.</Link><span className={styles.step}>03 / 05 <b>PRICE PREVIEW</b></span></header>
       <div className={styles.layout}>
         <section className={styles.product}>
           <img src={pizza.image} alt={pizza.name}/>
