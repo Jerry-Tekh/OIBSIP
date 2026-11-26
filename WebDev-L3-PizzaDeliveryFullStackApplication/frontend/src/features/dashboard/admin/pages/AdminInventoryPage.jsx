@@ -1,29 +1,39 @@
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { getAccessToken } from "../../../auth/api/authApi.js";
 import styles from "../AdminDashboard.module.css";
-import { inventoryItems } from "../../shared/demoData.js";
 
-export default function AdminInventoryPage() {
-  const [query, setQuery] = useState("");
-  const [health, setHealth] = useState("all");
-  const items = useMemo(() => inventoryItems.filter(item => {
-    const available = item.physical - item.reserved;
-    const isLow = available <= item.threshold;
-    return (!query || [item.name, item.category].some(value => value.toLowerCase().includes(query.toLowerCase()))) &&
-      (health === "all" || (health === "low" ? isLow : !isLow));
-  }), [query, health]);
-  const lowCount = inventoryItems.filter(item => item.physical - item.reserved <= item.threshold).length;
-
-  return <section className={styles.panel}>
-    <div className={styles.panelHead}><div><h2>Ingredient stock</h2><p>Available quantity is physical stock less active reservations.</p></div><span className={styles.pageMeta}>{inventoryItems.length} demo ingredients · {lowCount} need attention</span></div>
-    <div className={styles.filterBar}>
-      <div className={styles.filterGroup}>
-        {[["all","All stock"],["low","Low stock"],["healthy","Healthy"]].map(([value,label])=><button key={value} type="button" aria-pressed={health===value} onClick={()=>setHealth(value)} className={`${styles.filterButton} ${health===value?styles.filterActive:""}`}>{label}</button>)}
-      </div>
-      <input className={styles.searchInput} value={query} onChange={event=>setQuery(event.target.value)} placeholder="Search ingredients…" aria-label="Search inventory"/>
-    </div>
-    <div className={styles.tableWrap}><table><thead><tr><th>Ingredient</th><th>Category</th><th>Physical</th><th>Reserved</th><th>Available</th><th>Threshold</th><th>Health</th></tr></thead><tbody>
-      {items.map(item => { const available = item.physical - item.reserved; const low = available <= item.threshold; return <tr key={item.name}><td><b>{item.name}</b></td><td>{item.category}</td><td>{item.physical} {item.unit}</td><td>{item.reserved} {item.unit}</td><td><b>{available} {item.unit}</b></td><td>{item.threshold} {item.unit}</td><td><span className={low?styles.low:styles.healthy}>{low?"Low stock":"Healthy"}</span></td></tr>; })}
-    </tbody></table>{items.length===0&&<div className={styles.emptyState}>No ingredients match those filters.</div>}</div>
-    <p className={styles.demoNote}>Illustrative inventory only. Stock adjustments, reservations and restocking will be connected to inventory APIs.</p>
-  </section>;
+const API=import.meta.env.VITE_API_BASE_URL||"";
+const units=["g","kg","ml","l","piece","bunch","pack","portion"];
+const emptyForm={name:"",sku:"",category:"",unit:"kg",initialStock:"",lowStockThreshold:"",notes:""};
+async function api(path,{method="GET",body}={}){
+ const token=getAccessToken();const response=await fetch(`${API}/api/v1/admin/inventory${path}`,{method,credentials:"include",headers:{"Accept":"application/json",...(body?{"Content-Type":"application/json"}:{}),...(token?{Authorization:`Bearer ${token}`}:{})},body:body?JSON.stringify(body):undefined});
+ const payload=await response.json().catch(()=>({}));if(!response.ok||payload.success!==true)throw new Error(payload?.error?.message||payload?.message||"Inventory request failed.");return payload.data;
+}
+export default function AdminInventoryPage(){
+ const [items,setItems]=useState([]);const [loading,setLoading]=useState(true);const [error,setError]=useState("");const [notice,setNotice]=useState("");
+ const [query,setQuery]=useState("");const [health,setHealth]=useState("all");const [showCreate,setShowCreate]=useState(false);const [form,setForm]=useState(emptyForm);const [saving,setSaving]=useState(false);
+ const [adjusting,setAdjusting]=useState(null);const [adjustment,setAdjustment]=useState({adjustmentType:"restock",quantity:"",reason:""});
+ const load=useCallback(async()=>{setLoading(true);setError("");try{const data=await api("?page=1&limit=100");setItems(data.items||[]);}catch(e){setError(e.message);}finally{setLoading(false);}},[]);
+ useEffect(()=>{load();},[load]);
+ const visible=useMemo(()=>items.filter(item=>(!query||[item.name,item.category,item.sku||""].some(v=>v.toLowerCase().includes(query.toLowerCase())))&&(health==="all"||(health==="low"?item.isLowStock:!item.isLowStock))),[items,query,health]);
+ const lowCount=items.filter(i=>i.isLowStock).length;
+ async function createItem(event){event.preventDefault();setSaving(true);setError("");setNotice("");try{await api("",{method:"POST",body:{...form,initialStock:Number(form.initialStock),lowStockThreshold:Number(form.lowStockThreshold)}});setForm(emptyForm);setShowCreate(false);setNotice("Ingredient created and initial stock movement recorded.");await load();}catch(e){setError(e.message);}finally{setSaving(false);}}
+ async function saveAdjustment(event){event.preventDefault();setSaving(true);setError("");setNotice("");try{await api(`/${adjusting._id}/adjustments`,{method:"POST",body:{...adjustment,quantity:Number(adjustment.quantity)}});setAdjusting(null);setAdjustment({adjustmentType:"restock",quantity:"",reason:""});setNotice("Stock adjustment saved and added to the movement ledger.");await load();}catch(e){setError(e.message);}finally{setSaving(false);}}
+ return <section className={styles.panel}>
+  <div className={styles.panelHead}><div><h2>Ingredient stock</h2><p>Track physical stock, reservations and available quantities.</p></div><button type="button" className={styles.textButton} onClick={()=>setShowCreate(v=>!v)}>{showCreate?"Close":"＋ Add ingredient"}</button></div>
+  <div className={styles.filterBar}><div className={styles.filterGroup}>{[["all","All stock"],["low","Low stock"],["healthy","Healthy"]].map(([v,label])=><button key={v} type="button" aria-pressed={health===v} onClick={()=>setHealth(v)} className={`${styles.filterButton} ${health===v?styles.filterActive:""}`}>{label}</button>)}</div><input className={styles.searchInput} value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search ingredients…" aria-label="Search inventory"/></div>
+  {error&&<p role="alert" className={styles.demoNote}>{error}</p>}{notice&&<p role="status" className={styles.demoNote}>{notice}</p>}
+  {showCreate&&<form onSubmit={createItem} className={styles.panel} style={{marginBottom:18,background:"#fffaf6"}}>
+   <div className={styles.panelHead}><div><h2>Add inventory ingredient</h2><p>Initial stock is recorded as an auditable movement.</p></div></div>
+   <div className={styles.filterBar}><input required minLength="2" maxLength="100" className={styles.searchInput} placeholder="Ingredient name" value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/><input maxLength="40" className={styles.searchInput} placeholder="SKU (optional)" value={form.sku} onChange={e=>setForm({...form,sku:e.target.value})}/></div>
+   <div className={styles.filterBar}><input required className={styles.searchInput} placeholder="Category (e.g. Dairy)" value={form.category} onChange={e=>setForm({...form,category:e.target.value})}/><select className={styles.searchInput} value={form.unit} onChange={e=>setForm({...form,unit:e.target.value})}>{units.map(u=><option key={u}>{u}</option>)}</select></div>
+   <div className={styles.filterBar}><input required type="number" min="0" step="0.001" className={styles.searchInput} placeholder="Initial physical stock" value={form.initialStock} onChange={e=>setForm({...form,initialStock:e.target.value})}/><input required type="number" min="0" step="0.001" className={styles.searchInput} placeholder="Low-stock threshold" value={form.lowStockThreshold} onChange={e=>setForm({...form,lowStockThreshold:e.target.value})}/></div>
+   <input maxLength="500" className={styles.searchInput} placeholder="Notes (optional)" value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})}/><button disabled={saving} className={styles.textButton}>{saving?"Saving…":"Save ingredient"}</button>
+  </form>}
+  {adjusting&&<form onSubmit={saveAdjustment} className={styles.panel} style={{marginBottom:18,background:"#fffaf6"}}><div className={styles.panelHead}><div><h2>Adjust {adjusting.name}</h2><p>Current physical stock: {adjusting.physicalStock} {adjusting.unit}. Reserved: {adjusting.reservedStock} {adjusting.unit}.</p></div><button type="button" className={styles.textButton} onClick={()=>setAdjusting(null)}>Close</button></div><div className={styles.filterBar}><select className={styles.searchInput} value={adjustment.adjustmentType} onChange={e=>setAdjustment({...adjustment,adjustmentType:e.target.value})}><option value="restock">Restock (+)</option><option value="waste">Waste (−)</option><option value="correction">Set physical count</option></select><input required type="number" min="0.001" step="0.001" className={styles.searchInput} placeholder={adjustment.adjustmentType==="correction"?"New physical stock":"Quantity"} value={adjustment.quantity} onChange={e=>setAdjustment({...adjustment,quantity:e.target.value})}/></div><input required minLength="3" maxLength="300" className={styles.searchInput} placeholder="Reason for this stock change" value={adjustment.reason} onChange={e=>setAdjustment({...adjustment,reason:e.target.value})}/><button disabled={saving} className={styles.textButton}>{saving?"Saving…":"Record adjustment"}</button></form>}
+  <div className={styles.tableWrap}><table><thead><tr><th>Ingredient</th><th>Category</th><th>Physical</th><th>Reserved</th><th>Available</th><th>Threshold</th><th>Health</th><th>Action</th></tr></thead><tbody>
+  {visible.map(item=><tr key={item._id}><td><b>{item.name}</b><small>{item.sku||"No SKU"}</small></td><td>{item.category}</td><td>{item.physicalStock} {item.unit}</td><td>{item.reservedStock} {item.unit}</td><td><b>{item.availableStock} {item.unit}</b></td><td>{item.lowStockThreshold} {item.unit}</td><td><span className={item.isLowStock?styles.low:styles.healthy}>{item.isLowStock?"Low stock":"Healthy"}</span></td><td><button type="button" className={styles.textButton} onClick={()=>setAdjusting(item)}>Adjust</button></td></tr>)}
+  </tbody></table>{loading&&<div className={styles.emptyState}>Loading inventory…</div>}{!loading&&!visible.length&&<div className={styles.emptyState}>No inventory items match those filters.</div>}</div>
+  <p className={styles.demoNote}>{loading?"":`${items.length} ingredients · ${lowCount} at or below reorder threshold. Data is loaded from the authenticated inventory API.`}</p>
+ </section>;
 }
