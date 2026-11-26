@@ -25,7 +25,7 @@ export default function AdminInventoryPage(){
  const [items,setItems]=useState([]);const [pagination,setPagination]=useState({page:1,pages:1,total:0});const [page,setPage]=useState(1);const [loading,setLoading]=useState(true);const [error,setError]=useState("");const [notice,setNotice]=useState("");
  const [query,setQuery]=useState("");const [health,setHealth]=useState("all");const [showCreate,setShowCreate]=useState(false);const [form,setForm]=useState(emptyForm);const [saving,setSaving]=useState(false);
  const [adjusting,setAdjusting]=useState(null);const [adjustment,setAdjustment]=useState({adjustmentType:"restock",quantity:"",reason:""});
- const load=useCallback(async()=>{setLoading(true);setError("");try{const params=new URLSearchParams({page:String(page),limit:"20"});if(query.trim())params.set("search",query.trim());if(health==="low")params.set("status","low");const data=await api("?"+params);setItems(data.items||[]);setPagination(data.pagination||{page,pages:1,total:0});}catch(e){setError(e.message);}finally{setLoading(false);}},[]);
+ const load=useCallback(async()=>{setLoading(true);setError("");try{const params=new URLSearchParams({page:String(page),limit:"20"});if(query.trim())params.set("search",query.trim());if(health==="low")params.set("status","low");const data=await api("?"+params);setItems(data.items||[]);setPagination(data.pagination||{page,pages:1,total:0});}catch(e){setError(e.message);}finally{setLoading(false);}},[page,query,health]);
  useEffect(()=>{load();},[load]);
  const visible=useMemo(()=>items.filter(item=>health!=="healthy"||!item.isLowStock),[items,health]);
  const lowCount=items.filter(i=>i.isLowStock).length;
