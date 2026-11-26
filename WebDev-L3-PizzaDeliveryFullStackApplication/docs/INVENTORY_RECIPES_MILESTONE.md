@@ -87,7 +87,7 @@ The product base price is stored as integer minor units in NGN. Builder option c
 Product images currently use validated HTTPS URLs. A managed upload provider is intentionally not assumed; provider-backed upload and image lifecycle can be added separately.
 
 ## Customer visibility clarification
-Inventory ingredients and recipes are operational data and must not be exposed as a customer menu. The documented `GET /api/v1/pizza-options` contract exposes published ingredient choices for the pizza builder. The engineering guide does not define a separate pizza-product listing/management contract for the storefront's named pizza cards. The current storefront product cards therefore remain explicitly labelled frontend demo fixtures; a dedicated PizzaProduct schema and admin product-publishing API should be designed as a separate catalog decision before claiming admin-uploaded product cards are live.
+Inventory ingredients and recipes are operational data and must not be exposed as a customer menu. The documented `GET /api/v1/pizza-options` contract exposes published ingredient choices for the pizza builder. The PizzaProduct schema and admin publishing/public listing APIs are now implemented on this branch. The storefront's existing product cards are not yet connected to these endpoints; that frontend integration and the checkout/recipe snapshot work remain separate follow-up tasks.
 
 ## Frontend routes
 - `/admin/inventory` — list/search/filter ingredients, create an ingredient and record restock/waste/correction.
