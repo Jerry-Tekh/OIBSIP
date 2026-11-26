@@ -1,1 +1,8 @@
-// Inventory validation placeholder.
+import { z } from "zod";
+const id=z.string().regex(/^[a-f\\d]{24}$/i,"A valid inventory ID is required.");
+const itemFields={name:z.string().trim().min(2).max(100),sku:z.string().trim().max(40).optional().or(z.literal("")),category:z.string().trim().min(2).max(60),unit:z.enum(["g","kg","ml","l","piece","bunch","pack","portion"]),lowStockThreshold:z.number().finite().min(0),notes:z.string().trim().max(500).optional()};
+export const listInventorySchema=z.object({query:z.object({page:z.coerce.number().int().min(1).default(1),limit:z.coerce.number().int().min(1).max(100).default(20),search:z.string().trim().max(100).optional(),category:z.string().trim().max(60).optional(),status:z.enum(["active","inactive","low"]).optional()})});
+export const createInventorySchema=z.object({body:z.object({...itemFields,initialStock:z.number().finite().min(0)})});
+export const updateInventorySchema=z.object({params:z.object({id}),body:z.object({name:itemFields.name.optional(),sku:itemFields.sku,category:itemFields.category.optional(),lowStockThreshold:itemFields.lowStockThreshold.optional(),notes:itemFields.notes,isActive:z.boolean().optional()}).refine(v=>Object.values(v).some(x=>x!==undefined),"At least one field is required.")});
+export const adjustmentSchema=z.object({params:z.object({id}),body:z.object({adjustmentType:z.enum(["restock","waste","correction"]),quantity:z.number().finite().positive().max(100000000),reason:z.string().trim().min(3).max(300)})});
+export const movementSchema=z.object({params:z.object({id}),query:z.object({page:z.coerce.number().int().min(1).default(1),limit:z.coerce.number().int().min(1).max(100).default(20)})});
