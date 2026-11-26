@@ -50,6 +50,42 @@ All endpoints require a valid bearer access token and `role=admin`.
 
 The stock-creation and adjustment flows use MongoDB transactions. The configured MongoDB deployment must support transactions (MongoDB Atlas replica-set/sharded deployment). A standalone MongoDB server is insufficient.
 
+## PizzaProduct catalog and publishing workflow
+
+The named pizzas shown as storefront product cards are represented by a dedicated `PizzaProduct` collection. This is separate from `InventoryItem`, `Recipe` and `PizzaOption`:
+
+- `PizzaProduct` is the sellable menu item: name, unique slug, descriptions, category, HTTPS image URL, base price in integer minor units, currency, publication state, availability and display order.
+- `Recipe` defines which inventory ingredients and quantities are consumed to make that product. It remains operational data and is not returned by public catalog endpoints.
+- `PizzaOption` remains the customer's configurable builder choices (base, sauce, cheese, vegetable) and their price contributions.
+- `InventoryItem` remains the physical ingredient stock record.
+
+### Publication rules
+
+Products are created as drafts. An administrator can edit draft details, including the price and image URL. Publishing is rejected unless an active recipe exists, the recipe has at least one ingredient, all referenced inventory items are active, and recipe units still match each inventory item's canonical unit. Publishing does not reserve stock or promise live availability; order preview and checkout must later perform authoritative stock checks and reservations.
+
+Publication state and sellability are separate: a published product can be temporarily marked unavailable without deleting it. Unpublishing returns it to draft so it can be edited. Archiving is a terminal catalog state for this workflow.
+
+### Product APIs
+
+Admin endpoints require authentication and `role=admin`:
+
+- `GET /api/v1/products/admin` — list products with optional status/search and pagination
+- `POST /api/v1/products/admin` — create a draft
+- `GET /api/v1/products/admin/:id` — product details plus its recipe for admin use
+- `PATCH /api/v1/products/admin/:id` — update a draft
+- `POST /api/v1/products/admin/:id/publish` — validate recipe/inventory dependencies and publish
+- `POST /api/v1/products/admin/:id/unpublish` — return a published product to draft
+- `POST /api/v1/products/admin/:id/archive` — archive and make unavailable
+
+Public storefront endpoints expose only published and available products, with a field allowlist that excludes recipe, inventory and audit details:
+
+- `GET /api/v1/products?category=&search=&page=1&limit=12`
+- `GET /api/v1/products/:slug`
+
+The product base price is stored as integer minor units in NGN. Builder option contributions remain separately priced; checkout must calculate the final amount on the server and must avoid double-counting a product's base price.
+
+Product images currently use validated HTTPS URLs. A managed upload provider is intentionally not assumed; provider-backed upload and image lifecycle can be added separately.
+
 ## Customer visibility clarification
 Inventory ingredients and recipes are operational data and must not be exposed as a customer menu. The documented `GET /api/v1/pizza-options` contract exposes published ingredient choices for the pizza builder. The engineering guide does not define a separate pizza-product listing/management contract for the storefront's named pizza cards. The current storefront product cards therefore remain explicitly labelled frontend demo fixtures; a dedicated PizzaProduct schema and admin product-publishing API should be designed as a separate catalog decision before claiming admin-uploaded product cards are live.
 
