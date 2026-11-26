@@ -5,6 +5,18 @@ import styles from "../AdminDashboard.module.css";
 const API=import.meta.env.VITE_API_BASE_URL||"";
 const units=["g","kg","ml","l","piece","bunch","pack","portion"];
 const emptyForm={name:"",sku:"",category:"",unit:"kg",initialStock:"",lowStockThreshold:"",notes:""};
+const commonCategories=["Dairy","Meat","Seafood","Vegetables","Fruits","Dry Goods","Flour & Grains","Sauces","Herbs & Spices","Oils","Packaging"];
+const commonIngredients=["Mozzarella cheese","Cheddar cheese","Parmesan cheese","Pizza flour","Tomato sauce","Pepperoni","Chicken breast","Beef","Red onions","Green bell pepper","Mushrooms","Black olives","Fresh basil","Oregano","Olive oil"];
+function skuSuggestions(name,items){
+ const stem=(name||"").normalize("NFKD").replace(/[\\u0300-\\u036f]/g,"").replace(/[^a-zA-Z0-9]/g,"").slice(0,3).toUpperCase()||"ING";
+ const used=new Set(items.map(item=>(item.sku||"").toUpperCase()));
+ const suggestions=[];
+ for(let suffix=1;suggestions.length<3&&suffix<=9999;suffix+=1){
+  const candidate=`${stem}-${String(suffix).padStart(3,"0")}`;
+  if(!used.has(candidate))suggestions.push(candidate);
+ }
+ return suggestions;
+}
 async function api(path,{method="GET",body}={}){
  const token=getAccessToken();const response=await fetch(`${API}/api/v1/admin/inventory${path}`,{method,credentials:"include",headers:{"Accept":"application/json",...(body?{"Content-Type":"application/json"}:{}),...(token?{Authorization:`Bearer ${token}`}:{})},body:body?JSON.stringify(body):undefined});
  const payload=await response.json().catch(()=>({}));if(!response.ok||payload.success!==true)throw new Error(payload?.error?.message||payload?.message||"Inventory request failed.");return payload.data;
@@ -17,6 +29,9 @@ export default function AdminInventoryPage(){
  useEffect(()=>{load();},[load]);
  const visible=useMemo(()=>items.filter(item=>(!query||[item.name,item.category,item.sku||""].some(v=>v.toLowerCase().includes(query.toLowerCase())))&&(health==="all"||(health==="low"?item.isLowStock:!item.isLowStock))),[items,query,health]);
  const lowCount=items.filter(i=>i.isLowStock).length;
+ const categorySuggestions=[...new Set([...commonCategories,...items.map(item=>item.category).filter(Boolean)])].sort((a,b)=>a.localeCompare(b));
+ const ingredientSuggestions=[...new Set([...commonIngredients,...items.map(item=>item.name).filter(Boolean)])].sort((a,b)=>a.localeCompare(b));
+ const suggestedSkus=skuSuggestions(form.name,items);
  async function createItem(event){event.preventDefault();setSaving(true);setError("");setNotice("");try{await api("",{method:"POST",body:{...form,initialStock:Number(form.initialStock),lowStockThreshold:Number(form.lowStockThreshold)}});setForm(emptyForm);setShowCreate(false);setNotice("Ingredient created and initial stock movement recorded.");await load();}catch(e){setError(e.message);}finally{setSaving(false);}}
  async function saveAdjustment(event){event.preventDefault();setSaving(true);setError("");setNotice("");try{await api(`/${adjusting._id}/adjustments`,{method:"POST",body:{...adjustment,quantity:Number(adjustment.quantity)}});setAdjusting(null);setAdjustment({adjustmentType:"restock",quantity:"",reason:""});setNotice("Stock adjustment saved and added to the movement ledger.");await load();}catch(e){setError(e.message);}finally{setSaving(false);}}
  return <section className={styles.panel}>
@@ -25,8 +40,26 @@ export default function AdminInventoryPage(){
   {error&&<p role="alert" className={styles.demoNote}>{error}</p>}{notice&&<p role="status" className={styles.demoNote}>{notice}</p>}
   {showCreate&&<form onSubmit={createItem} className={styles.panel} style={{marginBottom:18,background:"#fffaf6"}}>
    <div className={styles.panelHead}><div><h2>Add inventory ingredient</h2><p>Initial stock is recorded as an auditable movement.</p></div></div>
-   <div className={styles.filterBar}><input required minLength="2" maxLength="100" className={styles.searchInput} placeholder="Ingredient name" value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/><input maxLength="40" className={styles.searchInput} placeholder="SKU (optional)" value={form.sku} onChange={e=>setForm({...form,sku:e.target.value})}/></div>
-   <div className={styles.filterBar}><input required className={styles.searchInput} placeholder="Category (e.g. Dairy)" value={form.category} onChange={e=>setForm({...form,category:e.target.value})}/><select className={styles.searchInput} value={form.unit} onChange={e=>setForm({...form,unit:e.target.value})}>{units.map(u=><option key={u}>{u}</option>)}</select></div>
+   <div className={styles.filterBar}>
+    <label className={styles.suggestionField}>Ingredient name
+     <input required minLength="2" maxLength="100" list="inventory-ingredient-suggestions" autoComplete="off" className={styles.searchInput} placeholder="Start typing an ingredient…" value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/>
+     <datalist id="inventory-ingredient-suggestions">{ingredientSuggestions.map(name=><option key={name} value={name}/>)}</datalist>
+    </label>
+    <label className={styles.suggestionField}>SKU <span>(optional)</span>
+     <input maxLength="40" list="inventory-sku-suggestions" autoComplete="off" className={styles.searchInput} placeholder="e.g. MOZ-001" value={form.sku} onChange={e=>setForm({...form,sku:e.target.value.toUpperCase()})}/>
+     <datalist id="inventory-sku-suggestions">{suggestedSkus.map(sku=><option key={sku} value={sku}/>)}</datalist>
+     <small>Suggestions are based on the ingredient name. SKUs must be unique.</small>
+    </label>
+   </div>
+   <div className={styles.filterBar}>
+    <label className={styles.suggestionField}>Category
+     <input required minLength="2" maxLength="60" list="inventory-category-suggestions" autoComplete="off" className={styles.searchInput} placeholder="Choose or type a category…" value={form.category} onChange={e=>setForm({...form,category:e.target.value})}/>
+     <datalist id="inventory-category-suggestions">{categorySuggestions.map(category=><option key={category} value={category}/>)}</datalist>
+    </label>
+    <label className={styles.suggestionField}>Unit
+     <select className={styles.searchInput} value={form.unit} onChange={e=>setForm({...form,unit:e.target.value})}>{units.map(u=><option key={u}>{u}</option>)}</select>
+    </label>
+   </div>
    <div className={styles.filterBar}><input required type="number" min="0" step="0.001" className={styles.searchInput} placeholder="Initial physical stock" value={form.initialStock} onChange={e=>setForm({...form,initialStock:e.target.value})}/><input required type="number" min="0" step="0.001" className={styles.searchInput} placeholder="Low-stock threshold" value={form.lowStockThreshold} onChange={e=>setForm({...form,lowStockThreshold:e.target.value})}/></div>
    <input maxLength="500" className={styles.searchInput} placeholder="Notes (optional)" value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})}/><button disabled={saving} className={styles.textButton}>{saving?"Saving…":"Save ingredient"}</button>
   </form>}
