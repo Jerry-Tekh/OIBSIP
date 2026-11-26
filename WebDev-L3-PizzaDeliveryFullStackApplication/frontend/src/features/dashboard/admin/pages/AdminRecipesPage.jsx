@@ -1,7 +1,8 @@
 import {useEffect,useState} from "react";
 import {getAccessToken} from "../../../auth/api/authApi.js";
 import styles from "../AdminDashboard.module.css";
-const rawApiBase=import.meta.env.VITE_API_BASE_URL||"";\nconst API=rawApiBase.endsWith("/")?rawApiBase.slice(0,-1):rawApiBase;
+const rawApiBase=import.meta.env.VITE_API_BASE_URL||"";
+const API=rawApiBase.endsWith("/")?rawApiBase.slice(0,-1):rawApiBase;
 async function call(path,{method="GET",body}={}){const token=getAccessToken();const response=await fetch(API+path,{method,credentials:"include",headers:{"Accept":"application/json",...(body?{"Content-Type":"application/json"}:{}),...(token?{Authorization:"Bearer "+token}:{})},body:body?JSON.stringify(body):undefined});const payload=await response.json().catch(()=>({}));if(!response.ok||payload.success!==true)throw new Error(payload?.error?.message||payload?.message||"Recipe request failed.");return payload.data;}
 export default function AdminRecipesPage(){
  const [inventory,setInventory]=useState([]),[products,setProducts]=useState([]),[recipes,setRecipes]=useState([]),[productId,setProductId]=useState(""),[productSearch,setProductSearch]=useState(""),[ingredientSearch,setIngredientSearch]=useState(""),[ingredients,setIngredients]=useState([]),[selected,setSelected]=useState(""),[quantity,setQuantity]=useState(""),[notes,setNotes]=useState(""),[loading,setLoading]=useState(true),[saving,setSaving]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
