@@ -5,7 +5,8 @@ import { ApiError } from "../../utils/ApiError.js";
 const escapeRegex = value => value.split("").map(char => "\\^$.*+?()[]{}|".includes(char) ? "\\" + char : char).join("");
 export async function listInventory({page,limit,search,category,status}) {
  const filter={};if(category)filter.category=category;if(status==="active")filter.isActive=true;if(status==="inactive")filter.isActive=false;
- if(status==="low")filter.$expr={$lte:[{$subtract:["$physicalStock","$reservedStock"]},"$lowStockThreshold"]};\n if(status==="healthy")filter.$expr={$gt:[{$subtract:["$physicalStock","$reservedStock"]},"$lowStockThreshold"]};
+ if(status==="low")filter.$expr={$lte:[{$subtract:["$physicalStock","$reservedStock"]},"$lowStockThreshold"]};
+ if(status==="healthy")filter.$expr={$gt:[{$subtract:["$physicalStock","$reservedStock"]},"$lowStockThreshold"]};
  if(search){const term=escapeRegex(search);filter.$or=[{name:{$regex:term,$options:"i"}},{sku:{$regex:term,$options:"i"}},{category:{$regex:term,$options:"i"}}];}
  const [items,total]=await Promise.all([InventoryItem.find(filter).sort({name:1}).skip((page-1)*limit).limit(limit).lean(),InventoryItem.countDocuments(filter)]);
  const rows=items.map(item=>({...item,availableStock:item.physicalStock-item.reservedStock,isLowStock:item.physicalStock-item.reservedStock<=item.lowStockThreshold}));
