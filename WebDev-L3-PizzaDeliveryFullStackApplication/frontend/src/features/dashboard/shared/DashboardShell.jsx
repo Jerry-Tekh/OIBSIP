@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { getCurrentUser, signOut } from "../../auth/api/authApi.js";
 import styles from "./DashboardShell.module.css";
 
-const icons = { "Browse menu":"＋", Overview:"◫", Orders:"▤", Inventory:"▦", "Stock movements":"↕", "Low-stock alerts":"⚑", "My orders":"▤", "Saved addresses":"⌖", Profile:"◎", Settings:"⚙" };
+const icons = { "Browse menu":"＋", Products:"◉", Overview:"◫", Orders:"▤", Inventory:"▦", "Stock movements":"↕", "Low-stock alerts":"⚑", "My orders":"▤", "Saved addresses":"⌖", Profile:"◎", Settings:"⚙" };
 
 export default function DashboardShell({ role="admin", active="Overview", navigation=[], title, subtitle, children }) {
   const [collapsed, setCollapsed] = useState(false);
