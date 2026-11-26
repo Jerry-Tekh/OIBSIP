@@ -60,14 +60,14 @@ export default function PizzaBuilderPage() {
       pizzaSlug: slug,
       items: [{ configuration: selection, quantity }]
     }));
-    navigate("/order/preview");
+    navigate("/dashboard/order/preview");
   }
 
-  if (!pizza) return <main className={styles.statePage}><h1>We couldn't find that pizza.</h1><Link to="/menu">Back to the menu</Link></main>;
+  if (!pizza) return <main className={styles.statePage}><h1>We couldn't find that pizza.</h1><Link to="/dashboard/menu">Back to the menu</Link></main>;
 
   return (
     <main className={styles.page}>
-      <header className={styles.header}><Link to="/menu" className={styles.back}>← Back to menu</Link><Link to="/" className={styles.brand}><span>C</span> crust&co.</Link><span className={styles.step}>01 / 03 <b>MAKE IT YOURS</b></span></header>
+      <header className={styles.header}><Link to="/dashboard/menu" className={styles.back}>← Back to menu</Link><Link to="/" className={styles.brand}><span>C</span> crust&co.</Link><span className={styles.step}>01 / 03 <b>MAKE IT YOURS</b></span></header>
       <div className={styles.layout}>
         <section className={styles.product}>
           <img className={styles.productImage} src={pizza.image} alt={pizza.name}/>
