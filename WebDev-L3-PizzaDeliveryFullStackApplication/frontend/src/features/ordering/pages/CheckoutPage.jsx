@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { createCheckout } from "../api/orderingApi.js";
+import { createCheckout, simulatePaymentSuccess } from "../api/orderingApi.js";
 import styles from "./CheckoutPage.module.css";
 
 export default function CheckoutPage() {
@@ -13,7 +13,7 @@ export default function CheckoutPage() {
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState(null);\n  const [paying, setPaying] = useState(false);\n  const [paymentError, setPaymentError] = useState("");
 
   function update(event) {
     const { name, value } = event.target;
