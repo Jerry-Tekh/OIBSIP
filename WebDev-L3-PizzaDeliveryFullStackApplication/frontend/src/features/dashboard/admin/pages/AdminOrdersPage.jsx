@@ -1,0 +1,3 @@
+import styles from "../AdminDashboard.module.css";
+import { recentOrders, money, statusLabel } from "../../shared/demoData.js";
+export default function AdminOrdersPage(){return <section className={styles.panel}><div className={styles.panelHead}><div><h2>Orders</h2><p>Review and manage customer orders.</p></div></div><div className={styles.tableWrap}><table><thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Placed</th></tr></thead><tbody>{recentOrders.map(o=><tr key={o.id}><td><b>{o.id}</b></td><td>{o.customer}</td><td>{o.items}</td><td><b>{money(o.amount)}</b></td><td><span className={styles.status}>{statusLabel(o.status)}</span></td><td>{o.time}</td></tr>)}</tbody></table></div></section>}
