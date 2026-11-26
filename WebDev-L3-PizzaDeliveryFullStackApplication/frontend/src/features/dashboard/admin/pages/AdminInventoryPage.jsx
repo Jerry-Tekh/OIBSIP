@@ -9,7 +9,7 @@ const emptyForm={name:"",sku:"",category:"",unit:"kg",initialStock:"",lowStockTh
 const commonCategories=["Dairy","Meat","Seafood","Vegetables","Fruits","Dry Goods","Flour & Grains","Sauces","Herbs & Spices","Oils","Packaging"];
 const commonIngredients=["Mozzarella cheese","Cheddar cheese","Parmesan cheese","Pizza flour","Tomato sauce","Pepperoni","Chicken breast","Beef","Red onions","Green bell pepper","Mushrooms","Black olives","Fresh basil","Oregano","Olive oil"];
 function skuSuggestions(name,items){
- const stem=(name||"").normalize("NFKD").replace(/[\\u0300-\\u036f]/g,"").replace(/[^a-zA-Z0-9]/g,"").slice(0,3).toUpperCase()||"ING";
+ const stem=(name||"").normalize("NFKD").replace(/\p{Diacritic}/gu,"").replace(/[^a-zA-Z0-9]/g,"").slice(0,3).toUpperCase()||"ING";
  const used=new Set(items.map(item=>(item.sku||"").toUpperCase()));
  const suggestions=[];
  for(let suffix=1;suggestions.length<3&&suffix<=9999;suffix+=1){
