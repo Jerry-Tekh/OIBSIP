@@ -5,10 +5,11 @@ import { ApiError } from "../../utils/ApiError.js";
 export async function listProductBuilderOptions(slug) {
  const product = await PizzaProduct.findOne({ slug, publicationStatus: "published", isAvailable: true }).select("builderOptions").lean();
  if (!product) throw new ApiError(404, "Pizza product not found.");
- const ids = product.builderOptions.map(option => option.inventoryItemId);
+ const productOptions = product.builderOptions || [];
+ const ids = productOptions.map(option => option.inventoryItemId);
  const inventory = await InventoryItem.find({ _id: { $in: ids } }).select("name builderCategory builderDescription builderImageUrl physicalStock reservedStock isActive isBuilderEligible").lean();
  const byId = new Map(inventory.map(item => [item._id.toString(), item]));
- return product.builderOptions.map(option => {
+ return productOptions.map(option => {
   const item = byId.get(option.inventoryItemId.toString());
   if (!item) return null;
   return {
