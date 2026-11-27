@@ -70,33 +70,47 @@ export async function saveRecipe(productId, payload, userId) {
     }
   }
 
-  // A single upsert avoids the find-then-create race and guarantees one
-  // persisted recipe per product (enforced by the unique productId index).
-  const recipe = await Recipe.findOneAndUpdate(
-    { productId },
-    {
-      $set: {
-        productNameSnapshot: product.name,
-        ingredients: payload.ingredients,
-        notes: payload.notes || "",
-        isActive: payload.isActive ?? true,
-        updatedBy: userId
-      },
-      $setOnInsert: {
-        createdBy: userId,
-        version: 0
-      },
-      $inc: { version: 1 }
-    },
-    {
-      new: true,
-      upsert: true,
-      // Request payload and ingredient references are validated above.
-      setDefaultsOnInsert: false
-    }
-  );
+  const existing = await Recipe.findOne({ productId });
 
-  return recipe;
+  if (existing) {
+    existing.productNameSnapshot = product.name;
+    existing.ingredients = payload.ingredients;
+    existing.notes = payload.notes || "";
+    existing.isActive = payload.isActive ?? true;
+    existing.updatedBy = userId;
+    existing.version += 1;
+    await existing.save();
+    return existing;
+  }
+
+  try {
+    return await Recipe.create({
+      productId,
+      productNameSnapshot: product.name,
+      ingredients: payload.ingredients,
+      notes: payload.notes || "",
+      isActive: payload.isActive ?? true,
+      createdBy: userId,
+      updatedBy: userId,
+      version: 1
+    });
+  } catch (error) {
+    // The unique productId index protects against two admins creating
+    // the same product recipe at the same time. Retry as an update.
+    if (error?.code !== 11000) throw error;
+
+    const recipe = await Recipe.findOne({ productId });
+    if (!recipe) throw error;
+
+    recipe.productNameSnapshot = product.name;
+    recipe.ingredients = payload.ingredients;
+    recipe.notes = payload.notes || "";
+    recipe.isActive = payload.isActive ?? true;
+    recipe.updatedBy = userId;
+    recipe.version += 1;
+    await recipe.save();
+    return recipe;
+  }
 }
 
 export async function getRecipe(productId) {
