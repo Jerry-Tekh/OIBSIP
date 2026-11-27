@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { getPublicProduct } from "../api/productsApi.js";
 import { previewConfiguration } from "../api/orderingApi.js";
 import styles from "./PreviewPage.module.css";
@@ -12,7 +12,6 @@ function formatMoney(minor, currency) {
 }
 
 export default function PreviewPage() {
-  const navigate = useNavigate();
   const [draft] = useState(() => {
     try { return JSON.parse(sessionStorage.getItem("crust-order-draft") || "null"); }
     catch { return null; }
@@ -66,7 +65,7 @@ export default function PreviewPage() {
               <div className={styles.total}><span>Total</span><strong>{formatMoney(totals?.totalMinor, currency)}</strong></div>
             </div>
             <div className={styles.notice}>Availability and pricing are checked again during checkout. This preview does not reserve ingredients.</div>
-            <button type="button" className={styles.continue} onClick={() => navigate("/dashboard/checkout")}>Continue to checkout <span>→</span></button>
+            <button type="button" className={styles.continue} disabled>Checkout is not yet available</button>
           </>}
           {!loading && !error && !preview && <div className={styles.error}>The server returned an empty price preview.</div>}
         </section>
