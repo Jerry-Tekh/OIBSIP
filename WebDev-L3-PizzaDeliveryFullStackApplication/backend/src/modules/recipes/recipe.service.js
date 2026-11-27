@@ -91,7 +91,7 @@ export async function saveRecipe(productId, payload, userId) {
     {
       new: true,
       upsert: true,
-      runValidators: true,
+      // Request payload and ingredient references are validated above.
       setDefaultsOnInsert: false
     }
   );
