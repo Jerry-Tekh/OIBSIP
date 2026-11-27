@@ -31,7 +31,7 @@ export async function validateBuilderSelection(configuration, { session } = {}) 
     throw new ApiError(400, "Vegetable selections are invalid.");
   }
   const ids = [baseId, sauceId, cheeseId, ...vegetableIds];
-  if (ids.some(id => typeof id !== "string" || !/^[a-f\\d]{24}$/i.test(id))) {
+  if (ids.some(id => typeof id !== "string" || !/^[a-f\d]{24}$/i.test(id))) {
     throw new ApiError(400, "One or more ingredient IDs are invalid.");
   }
   const uniqueIds = [...new Set(ids)];
