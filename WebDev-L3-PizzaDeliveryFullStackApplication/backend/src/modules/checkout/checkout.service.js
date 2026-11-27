@@ -2,8 +2,6 @@ import PizzaProduct from "../products/product.model.js";
 import { validateBuilderSelection } from "../catalog/catalog.service.js";
 import { ApiError } from "../../utils/ApiError.js";
 
-const DELIVERY_FEE_MINOR = 150000;
-
 export async function previewOrder(items) {
   if (!Array.isArray(items) || items.length < 1 || items.length > 20) throw new ApiError(400, "An order must contain between 1 and 20 pizza items.");
   const lines = [];
@@ -30,7 +28,7 @@ export async function previewOrder(items) {
     });
   }
   const subtotalMinor = lines.reduce((sum, line) => sum + line.lineTotalMinor, 0);
-  const totalMinor = subtotalMinor + DELIVERY_FEE_MINOR;
+  const totalMinor = subtotalMinor;
   if (!Number.isSafeInteger(totalMinor)) throw new ApiError(400, "The calculated order amount is too large.");
-  return { items: lines, subtotalMinor, deliveryFeeMinor: DELIVERY_FEE_MINOR, discountMinor: 0, taxMinor: 0, totalMinor, currency: "NGN" };
+  return { items: lines, subtotalMinor, discountMinor: 0, taxMinor: 0, totalMinor, currency: "NGN" };
 }
