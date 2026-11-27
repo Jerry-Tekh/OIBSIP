@@ -6,7 +6,7 @@ import * as service from "./catalog.service.js";
 import {asyncHandler} from "../../utils/asyncHandler.js";
 import {ApiError} from "../../utils/ApiError.js";
 const router=Router();
-const id=z.string().regex(/^[a-f\\d]{24}$/i);
+const id=z.string().regex(/^[a-f\d]{24}$/i);
 const option=z.object({name:z.string().trim().min(2).max(100),slug:z.string().trim().min(2).max(100).regex(/^[a-z0-9-]+$/),category:z.enum(["base","sauce","cheese","vegetable"]),description:z.string().trim().max(500).optional(),priceContributionMinor:z.number().int().min(0),currency:z.literal("NGN").default("NGN"),imageUrl:z.string().url().nullable().optional(),isAvailable:z.boolean().optional(),isPublished:z.boolean().optional()});
 // Temporary legacy routes are retained during phased cleanup. Customer builder integration uses Inventory records below.
 router.get("/builder-options",asyncHandler(async(req,res)=>{const category=req.query.category;if(category&&!["base","sauce","cheese","vegetable"].includes(category))throw new ApiError(400,"Invalid builder category.");res.json({success:true,data:{options:await service.listBuilderInventoryOptions(category)}});}));
