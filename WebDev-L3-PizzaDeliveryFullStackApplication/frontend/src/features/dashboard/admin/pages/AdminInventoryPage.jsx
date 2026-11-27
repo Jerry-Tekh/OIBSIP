@@ -5,7 +5,7 @@ import styles from "../AdminDashboard.module.css";
 const rawApiBase=import.meta.env.VITE_API_BASE_URL||"";
 const API=rawApiBase.endsWith("/")?rawApiBase.slice(0,-1):rawApiBase;
 const units=["g","kg","ml","l","piece","bunch","pack","portion"];
-const emptyForm={name:"",sku:"",category:"",unit:"kg",initialStock:"",lowStockThreshold:"",notes:""};
+const emptyForm={name:"",sku:"",category:"",unit:"kg",initialStock:"",lowStockThreshold:"",notes:"",isBuilderEligible:false,builderCategory:"",builderPriceNaira:"0",builderDescription:"",builderImageUrl:"",builderSortOrder:"0"};
 const commonCategories=["Dairy","Meat","Seafood","Vegetables","Fruits","Dry Goods","Flour & Grains","Sauces","Herbs & Spices","Oils","Packaging"];
 const commonIngredients=["Mozzarella cheese","Cheddar cheese","Parmesan cheese","Pizza flour","Tomato sauce","Pepperoni","Chicken breast","Beef","Red onions","Green bell pepper","Mushrooms","Black olives","Fresh basil","Oregano","Olive oil"];
 function skuSuggestions(name,items){
