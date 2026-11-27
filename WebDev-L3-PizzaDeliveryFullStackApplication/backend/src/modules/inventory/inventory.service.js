@@ -29,12 +29,6 @@ export async function updateInventory(id,payload,userId) {
  for(const key of ["category","unit","lowStockThreshold","notes","isActive","isBuilderEligible","builderCategory","builderPriceContributionMinor","builderDescription","builderImageUrl","builderSortOrder"])if(payload[key]!==undefined)item[key]=payload[key];
  item.updatedBy=userId;try{await item.save();return item;}catch(error){if(error.code===11000)throw new ApiError(409,"An ingredient with this name or SKU already exists.");throw error;}
 }
-export async function listPublicBuilderOptions(category) {
- const filter={isBuilderEligible:true,isActive:true,builderCategory:{$in:["base","sauce","cheese","vegetable"]}};
- if(category)filter.builderCategory=category;
- const rows=await InventoryItem.find(filter).select("name builderCategory builderDescription builderPriceContributionMinor builderImageUrl builderSortOrder unit physicalStock reservedStock").sort({builderCategory:1,builderSortOrder:1,name:1}).lean();
- return rows.map(({_id,name,builderCategory,builderDescription,builderPriceContributionMinor,builderImageUrl,builderSortOrder,physicalStock,reservedStock})=>({id:_id.toString(),name,category:builderCategory,description:builderDescription,priceContributionMinor:builderPriceContributionMinor,currency:"NGN",imageUrl:builderImageUrl,sortOrder:builderSortOrder,isAvailable:physicalStock-reservedStock>0}));
-}
 export async function adjustInventory(id,{adjustmentType,quantity,reason},userId) {
  const session=await mongoose.startSession();let updated;
  try{await session.withTransaction(async()=>{
