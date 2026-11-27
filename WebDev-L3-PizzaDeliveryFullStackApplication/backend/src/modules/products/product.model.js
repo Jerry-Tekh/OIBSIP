@@ -15,7 +15,6 @@ const productSchema = new mongoose.Schema({
   shortDescription: { type: String, trim: true, maxlength: 180, default: "" },
   category: { type: String, required: true, enum: ["classic", "signature", "vegetarian", "spicy", "specialty"] },
   imageUrl: { type: String, trim: true, required: true, maxlength: 2048 },
-  basePriceMinor: { type: Number, default: 0, min: 0, validate: Number.isSafeInteger },
   builderOptions: { type: [productBuilderOptionSchema], default: [] },
   currency: { type: String, required: true, enum: ["NGN"], default: "NGN" },
   publicationStatus: { type: String, enum: ["draft", "published", "archived"], default: "draft", index: true },
