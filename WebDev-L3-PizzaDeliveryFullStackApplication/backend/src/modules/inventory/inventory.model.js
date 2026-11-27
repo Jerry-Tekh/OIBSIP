@@ -5,7 +5,7 @@ const inventoryItemSchema = new mongoose.Schema({
   normalizedName: { type: String, required: true, unique: true, lowercase: true, trim: true },
   sku: { type: String, trim: true, uppercase: true, maxlength: 40, sparse: true, unique: true },
   category: { type: String, required: true, trim: true, maxlength: 60 },
-  unit: { type: String, required: true, enum: ["g", "kg", "ml", "l", "piece", "bunch", "pack", "portion"] },
+  unit: { type: String, required: true, enum: ["g"], default: "g" },
   physicalStock: { type: Number, required: true, min: 0, default: 0 },
   reservedStock: { type: Number, required: true, min: 0, default: 0 },
   lowStockThreshold: { type: Number, required: true, min: 0, default: 0 },
@@ -13,7 +13,6 @@ const inventoryItemSchema = new mongoose.Schema({
   // Builder fields deliberately live on the inventory record: inventory remains the source of truth.
   isBuilderEligible: { type: Boolean, default: false },
   builderCategory: { type: String, enum: ["base", "sauce", "cheese", "vegetable", null], default: null },
-  builderPriceContributionMinor: { type: Number, min: 0, default: 0 },
   builderDescription: { type: String, trim: true, maxlength: 500, default: "" },
   builderImageUrl: { type: String, trim: true, maxlength: 2048, default: null },
   builderSortOrder: { type: Number, min: -100000, max: 100000, validate: Number.isSafeInteger, default: 0 },
@@ -30,7 +29,6 @@ inventoryItemSchema.virtual("availableStock").get(function () { return this.phys
 inventoryItemSchema.pre("validate", function (next) {
   if (!this.isBuilderEligible) {
     this.builderCategory = null;
-    this.builderPriceContributionMinor = 0;
     this.builderDescription = "";
     this.builderImageUrl = null;
     this.builderSortOrder = 0;
