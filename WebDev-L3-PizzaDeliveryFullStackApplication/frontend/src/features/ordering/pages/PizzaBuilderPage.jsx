@@ -150,7 +150,7 @@ export default function PizzaBuilderPage() {
                       const active = selected.includes(option.id);
                       return <button type="button" key={option.id} disabled={!option.isAvailable} aria-pressed={active} className={`${styles.option} ${active ? styles.selected : ""}`} onClick={() => multiple ? toggleVegetable(option.id) : chooseSingle(category, option.id)}>
                         {option.imageUrl ? <img src={option.imageUrl} alt="" loading="lazy"/> : <span className={styles.optionPlaceholder}>{category === "base" ? "◉" : category === "sauce" ? "◍" : category === "cheese" ? "✳" : "❋"}</span>}
-                        <span className={styles.optionText}><strong>{option.name}</strong>{option.description && <small>{option.description}</small>}</span>
+                        <span className={styles.optionText}><strong>{option.name}</strong>{option.description && <small>{option.description}</small>}<small>{formatNaira(option.priceContributionMinor || 0)}</small></span>
                         <span className={styles.optionStatus}>{!option.isAvailable ? "Unavailable" : active ? "Selected" : "Select"}</span>
                       </button>;
                     })}
