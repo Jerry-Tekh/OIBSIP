@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { getPublicProduct } from "../api/productsApi.js";
 import { getPizzaOptions } from "../api/orderingApi.js";
@@ -10,6 +10,8 @@ export default function PizzaBuilderPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const slug = location.pathname.split("/").filter(Boolean).at(-1);
+  const previousSlug = useRef(slug);
+  const skipDraftWrite = useRef(false);
   const [pizza, setPizza] = useState(null);
   const [productLoading, setProductLoading] = useState(true);
   const [productError, setProductError] = useState("");
@@ -26,12 +28,14 @@ export default function PizzaBuilderPage() {
   const [error, setError] = useState("");
   
   useEffect(() => {
-    if (savedDraft?.pizzaSlug !== slug) {
+    if (previousSlug.current !== slug) {
+      previousSlug.current = slug;
+      skipDraftWrite.current = true;
       setSelection({ baseId: "", sauceId: "", cheeseId: "", vegetableIds: [] });
       setQuantity(1);
       setError("");
     }
-  }, [slug, savedDraft]);
+  }, [slug]);
 
   useEffect(() => {
     let active = true;
@@ -70,6 +74,10 @@ export default function PizzaBuilderPage() {
   ), [options]);
 
   useEffect(() => {
+    if (skipDraftWrite.current) {
+      skipDraftWrite.current = false;
+      return;
+    }
     if (!pizza) return;
     sessionStorage.setItem("crust-order-draft", JSON.stringify({
       pizzaSlug: slug,
