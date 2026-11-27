@@ -56,7 +56,7 @@ export default function PizzaBuilderPage() {
 
   useEffect(() => {
     let active = true;
-    getPizzaOptions()
+    getPizzaOptions(slug)
       .then((data) => {
         if (!active) return;
         const list = Array.isArray(data?.options) ? data.options : Array.isArray(data) ? data : [];
@@ -67,7 +67,7 @@ export default function PizzaBuilderPage() {
       })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
-  }, []);
+  }, [slug]);
 
   const grouped = useMemo(() => Object.fromEntries(
     CATEGORIES.map((category) => [category, options.filter((option) => option.category === category)])
@@ -86,6 +86,9 @@ export default function PizzaBuilderPage() {
   }, [pizza, slug, selection, quantity]);
 
   const requiredComplete = Boolean(selection.baseId && selection.sauceId && selection.cheeseId);
+  const selectedPriceMinor = selectedOptions.reduce((sum, option) => sum + (Number(option.priceContributionMinor) || 0), 0);
+  const totalPriceMinor = selectedPriceMinor * quantity;
+  const formatNaira = minor => new Intl.NumberFormat("en-NG",{style:"currency",currency:"NGN"}).format(minor/100);
   const selectedOptions = useMemo(() => options.filter((option) =>
     [selection.baseId, selection.sauceId, selection.cheeseId, ...selection.vegetableIds].includes(option.id)
   ), [options, selection]);
@@ -159,6 +162,7 @@ export default function PizzaBuilderPage() {
 
           <div className={styles.quantity}><div><strong>Quantity</strong><small>How many of this pizza?</small></div><div className={styles.quantityControl}><button type="button" aria-label="Decrease quantity" disabled={quantity <= 1} onClick={() => setQuantity((value) => Math.max(1, value - 1))}>−</button><output>{quantity}</output><button type="button" aria-label="Increase quantity" onClick={() => setQuantity((value) => Math.min(20, value + 1))}>+</button></div></div>
           <div className={styles.selectionSummary}><strong>Your selections</strong><p>{selectedOptions.length ? selectedOptions.map((option) => option.name).join(" · ") : "Your selected ingredients will appear here."}</p></div>
+          <div className={styles.selectionSummary}><strong>Estimated total</strong><p>{formatNaira(totalPriceMinor)} · {quantity} pizza{quantity===1?"":"s"}</p></div>
           <button className={styles.continue} type="button" disabled={loading || Boolean(error) || !requiredComplete} onClick={continueToPreview}>Review configuration <span>→</span></button>
           <p className={styles.helper}>The server confirms current ingredient availability and calculates your price on the next step.</p>
         </section>
