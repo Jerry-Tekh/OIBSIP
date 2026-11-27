@@ -3,7 +3,6 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { getPublicProduct } from "../api/productsApi.js";
 import { getPizzaOptions } from "../api/orderingApi.js";
 import styles from "./PizzaBuilderPage.module.css";
-import ApiDataPanel from "../components/ApiDataPanel.jsx";
 
 const CATEGORIES = ["base", "sauce", "cheese", "vegetable"];
 
@@ -25,8 +24,7 @@ export default function PizzaBuilderPage() {
   const [quantity, setQuantity] = useState(() => Math.min(20, Math.max(1, Number(savedDraft?.items?.[0]?.quantity) || 1)));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [optionsResponse, setOptionsResponse] = useState(null);
-
+  
   useEffect(() => {
     let active = true;
     setProductLoading(true);
@@ -51,7 +49,6 @@ export default function PizzaBuilderPage() {
         if (!active) return;
         const list = Array.isArray(data?.options) ? data.options : Array.isArray(data) ? data : [];
         setOptions(list);
-        setOptionsResponse({ success: true, data: { options: list } });
       })
       .catch((requestError) => {
         if (active) setError(requestError.message || "We couldn't load the pizza options.");
@@ -68,7 +65,7 @@ export default function PizzaBuilderPage() {
     if (!pizza) return;
     sessionStorage.setItem("crust-order-draft", JSON.stringify({
       pizzaSlug: slug,
-      items: [{ configuration: selection, quantity }]
+      items: [{ productSlug: slug, configuration: selection, quantity }]
     }));
   }, [pizza, slug, selection, quantity]);
 
@@ -116,7 +113,7 @@ export default function PizzaBuilderPage() {
 
         <section className={styles.builder}>
           <div className={styles.builderHeading}><div><span className={styles.kicker}>YOUR PIZZA, YOUR WAY</span><h2>Build your pizza</h2><p>Choose the ingredients for your order.</p></div><span className={styles.required}>* Required choices</span></div>
-          <ApiDataPanel title="Load pizza options" method="GET" endpoint="/api/v1/pizza-options" request={null} response={optionsResponse || { success: true, data: { options: "Loading demo catalog options…" } }} note="The backend returns available base, sauce, cheese and vegetable options. These mock records use the same field names and minor-unit pricing as the engineering guide." />
+          
           {loading && <div className={styles.notice}>Loading available ingredients…</div>}
           {error && <div className={styles.error} role="alert">{error}<p>The catalog options endpoint must be available before this builder can be used.</p><button type="button" onClick={() => window.location.reload()}>Try again</button></div>}
           {!loading && !error && options.length === 0 && <div className={styles.notice}>No pizza options are currently published. Please check back shortly.</div>}
@@ -147,7 +144,7 @@ export default function PizzaBuilderPage() {
           <div className={styles.quantity}><div><strong>Quantity</strong><small>How many of this pizza?</small></div><div className={styles.quantityControl}><button type="button" aria-label="Decrease quantity" disabled={quantity <= 1} onClick={() => setQuantity((value) => Math.max(1, value - 1))}>−</button><output>{quantity}</output><button type="button" aria-label="Increase quantity" onClick={() => setQuantity((value) => Math.min(20, value + 1))}>+</button></div></div>
           <div className={styles.selectionSummary}><strong>Your selections</strong><p>{selectedOptions.length ? selectedOptions.map((option) => option.name).join(" · ") : "Your selected ingredients will appear here."}</p></div>
           <button className={styles.continue} type="button" disabled={loading || Boolean(error) || !requiredComplete} onClick={continueToPreview}>Review configuration <span>→</span></button>
-          <p className={styles.helper}>Prices and ingredient availability are confirmed by our server on the next step.</p>
+          <p className={styles.helper}>The server confirms current ingredient availability and calculates your price on the next step.</p>
         </section>
       </div>
     </main>
