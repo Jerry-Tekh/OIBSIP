@@ -39,6 +39,10 @@ admin.post("/:id/unpublish", validate(productParamsSchema), asyncHandler(async (
   const product = await service.unpublishProduct(req.validated.params.id, req.user._id);
   res.json({ success: true, data: { product } });
 }));
+admin.delete("/:id", validate(productParamsSchema), asyncHandler(async (req, res) => {
+  const result = await service.deleteProduct(req.validated.params.id);
+  res.json({ success: true, data: result });
+}));
 admin.post("/:id/archive", validate(productParamsSchema), asyncHandler(async (req, res) => {
   const product = await service.archiveProduct(req.validated.params.id, req.user._id);
   res.json({ success: true, data: { product } });
