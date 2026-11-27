@@ -5,7 +5,7 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 import { preview } from "./checkout.controller.js";
 
 const router = Router();
-const objectId = z.string().regex(/^[a-f\\d]{24}$/i);
+const objectId = z.string().regex(/^[a-f\d]{24}$/i);
 const line = z.object({
   productSlug: z.string().trim().min(2).max(140).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
   quantity: z.number().int().min(1).max(20),
