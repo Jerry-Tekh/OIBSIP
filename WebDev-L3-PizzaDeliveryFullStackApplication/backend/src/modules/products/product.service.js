@@ -42,6 +42,7 @@ export async function updateProduct(id,payload,userId) {
 export async function publishProduct(id,userId) {
  const product=await PizzaProduct.findById(id);
  if(!product)throw new ApiError(404,"Pizza product not found.");
+ if(product.publicationStatus==="archived")throw new ApiError(409,"Archived products cannot be published.");
  if(product.publicationStatus==="published")return product;
  await validateProductBuilderOptions(product.builderOptions || []);
  product.publicationStatus="published";product.publishedAt=new Date();product.publishedBy=userId;product.updatedBy=userId;
@@ -49,6 +50,7 @@ export async function publishProduct(id,userId) {
 }
 export async function unpublishProduct(id,userId) {
  const product=await PizzaProduct.findById(id);if(!product)throw new ApiError(404,"Pizza product not found.");
+ if(product.publicationStatus==="archived")throw new ApiError(409,"Archived products cannot be changed.");
  product.publicationStatus="draft";product.updatedBy=userId;await product.save();return product;
 }
 export async function setProductAvailability(id,isAvailable,userId) {
