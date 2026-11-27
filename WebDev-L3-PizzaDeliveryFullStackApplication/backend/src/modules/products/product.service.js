@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import PizzaProduct from "./product.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 const escapeRegex = value => value.split("").map(char => "\\^$.*+?()[]{}|".includes(char) ? "\\" + char : char).join("");
