@@ -2,7 +2,7 @@ import PizzaProduct from "./product.model.js";
 import InventoryItem from "../inventory/inventory.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 const escapeRegex = value => value.split("").map(char => "\\^$.*+?()[]{}|".includes(char) ? "\\" + char : char).join("");
-const publicFields = "name slug description shortDescription category imageUrl basePriceMinor currency isAvailable sortOrder publishedAt";
+const publicFields = "name slug description shortDescription category imageUrl currency isAvailable sortOrder publishedAt";
 export async function listAdminProducts({status,search,page,limit}) {
  const filter={}; if(status)filter.publicationStatus=status;
  if(search){const term=escapeRegex(search);filter.$or=[{name:{$regex:term,$options:"i"}},{slug:{$regex:term,$options:"i"}}];}
@@ -42,7 +42,6 @@ export async function updateProduct(id,payload,userId) {
 export async function publishProduct(id,userId) {
  const product=await PizzaProduct.findById(id);
  if(!product)throw new ApiError(404,"Pizza product not found.");
- if(product.publicationStatus==="archived")throw new ApiError(409,"Archived products cannot be published. Create a new product instead.");
  if(product.publicationStatus==="published")return product;
  await validateProductBuilderOptions(product.builderOptions || []);
  product.publicationStatus="published";product.publishedAt=new Date();product.publishedBy=userId;product.updatedBy=userId;
@@ -50,12 +49,7 @@ export async function publishProduct(id,userId) {
 }
 export async function unpublishProduct(id,userId) {
  const product=await PizzaProduct.findById(id);if(!product)throw new ApiError(404,"Pizza product not found.");
- if(product.publicationStatus==="archived")throw new ApiError(409,"Archived products cannot be changed.");
  product.publicationStatus="draft";product.updatedBy=userId;await product.save();return product;
-}
-export async function archiveProduct(id,userId) {
- const product=await PizzaProduct.findById(id);if(!product)throw new ApiError(404,"Pizza product not found.");
- product.publicationStatus="archived";product.isAvailable=false;product.updatedBy=userId;await product.save();return product;
 }
 export async function setProductAvailability(id,isAvailable,userId) {
  const product=await PizzaProduct.findById(id);if(!product)throw new ApiError(404,"Pizza product not found.");
