@@ -26,6 +26,14 @@ export default function PizzaBuilderPage() {
   const [error, setError] = useState("");
   
   useEffect(() => {
+    if (savedDraft?.pizzaSlug !== slug) {
+      setSelection({ baseId: "", sauceId: "", cheeseId: "", vegetableIds: [] });
+      setQuantity(1);
+      setError("");
+    }
+  }, [slug, savedDraft]);
+
+  useEffect(() => {
     let active = true;
     setProductLoading(true);
     setProductError("");
