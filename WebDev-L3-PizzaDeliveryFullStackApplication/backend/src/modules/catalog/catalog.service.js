@@ -60,17 +60,17 @@ export async function listProductBuilderOptions(slug) {
  const product = await PizzaProduct.findOne({ slug, publicationStatus: "published", isAvailable: true }).select("builderOptions").lean();
  if (!product) throw new ApiError(404, "Pizza product not found.");
  const ids = product.builderOptions.map(option => option.inventoryItemId);
- const inventory = await InventoryItem.find({ _id: { $in: ids }, isActive: true, isBuilderEligible: true }).select("name builderCategory builderDescription builderImageUrl physicalStock reservedStock").lean();
+ const inventory = await InventoryItem.find({ _id: { $in: ids } }).select("name builderCategory builderDescription builderImageUrl physicalStock reservedStock isActive isBuilderEligible").lean();
  const byId = new Map(inventory.map(item => [item._id.toString(), item]));
  return product.builderOptions.map(option => {
   const item = byId.get(option.inventoryItemId.toString());
-  if (!item || item.builderCategory !== option.category) return null;
+  if (!item) return null;
   return {
    id: item._id.toString(), name: item.name, category: option.category,
    description: option.customerDescription || item.builderDescription || "",
    imageUrl: item.builderImageUrl || null, priceContributionMinor: option.priceContributionMinor,
    currency: "NGN", sortOrder: option.sortOrder || 0,
-   isAvailable: item.physicalStock - item.reservedStock > 0
+   isAvailable: Boolean(item.isActive && item.isBuilderEligible && item.builderCategory === option.category && item.physicalStock - item.reservedStock > 0)
   };
  }).filter(Boolean).sort((a,b) => a.category.localeCompare(b.category) || a.sortOrder-b.sortOrder || a.name.localeCompare(b.name));
 }
