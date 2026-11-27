@@ -2,34 +2,6 @@ import InventoryItem from "../inventory/inventory.model.js";
 import PizzaProduct from "../products/product.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 
-const categories = ["base", "sauce", "cheese", "vegetable"];
-
-export async function listBuilderInventoryOptions(category) {
-  const filter = {
-    isBuilderEligible: true,
-    isActive: true,
-    builderCategory: { $in: categories },
-    $expr: { $gt: [{ $subtract: ["$physicalStock", "$reservedStock"] }, 0] }
-  };
-  if (category) filter.builderCategory = category;
-  const rows = await InventoryItem.find(filter)
-    .select("name builderCategory builderDescription builderPriceContributionMinor builderImageUrl builderSortOrder physicalStock reservedStock")
-    .sort({ builderCategory: 1, builderSortOrder: 1, name: 1 }).lean();
-  const categoryCounts = { base: 0, sauce: 0 };
-  const visibleRows = rows.filter(item => {
-    if (item.builderCategory !== "base" && item.builderCategory !== "sauce") return true;
-    if (categoryCounts[item.builderCategory] >= 5) return false;
-    categoryCounts[item.builderCategory] += 1;
-    return true;
-  });
-  return visibleRows.map(({ _id, name, builderCategory, builderDescription, builderPriceContributionMinor, builderImageUrl, builderSortOrder, physicalStock, reservedStock }) => ({
-    id: _id.toString(), name, category: builderCategory, description: builderDescription,
-    priceContributionMinor: builderPriceContributionMinor, currency: "NGN",
-    imageUrl: builderImageUrl, sortOrder: builderSortOrder,
-    isAvailable: physicalStock - reservedStock > 0
-  }));
-}
-
 export async function validateBuilderSelection(configuration, { session } = {}) {
   const { baseId, sauceId, cheeseId, vegetableIds = [] } = configuration || {};
   if (!baseId || !sauceId || !cheeseId || !Array.isArray(vegetableIds)) {
