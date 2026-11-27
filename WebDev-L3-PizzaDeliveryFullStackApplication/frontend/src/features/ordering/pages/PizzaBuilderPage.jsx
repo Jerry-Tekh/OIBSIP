@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { findMenuItem } from "../data/menu.js";
+import { getPublicProduct } from "../api/productsApi.js";
 import { getPizzaOptions } from "../api/orderingApi.js";
 import styles from "./PizzaBuilderPage.module.css";
 import ApiDataPanel from "../components/ApiDataPanel.jsx";
@@ -11,7 +11,9 @@ export default function PizzaBuilderPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const slug = location.pathname.split("/").filter(Boolean).at(-1);
-  const pizza = findMenuItem(slug);
+  const [pizza, setPizza] = useState(null);
+  const [productLoading, setProductLoading] = useState(true);
+  const [productError, setProductError] = useState("");
   const [options, setOptions] = useState([]);
   const [savedDraft] = useState(() => {
     try {
@@ -24,6 +26,23 @@ export default function PizzaBuilderPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [optionsResponse, setOptionsResponse] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+    setProductLoading(true);
+    setProductError("");
+    getPublicProduct(slug)
+      .then((data) => {
+        if (active) setPizza(data?.product || null);
+      })
+      .catch((requestError) => {
+        if (active) setProductError(requestError.message || "This pizza is not currently available.");
+      })
+      .finally(() => {
+        if (active) setProductLoading(false);
+      });
+    return () => { active = false; };
+  }, [slug]);
 
   useEffect(() => {
     let active = true;
@@ -81,7 +100,8 @@ export default function PizzaBuilderPage() {
     navigate("/dashboard/order/preview");
   }
 
-  if (!pizza) return <main className={styles.statePage}><h1>Choose a pizza from the menu</h1><p>This builder needs a valid menu selection.</p><Link to="/dashboard/menu">Back to the menu</Link></main>;
+  if (productLoading) return <main className={styles.statePage}><h1>Loading your pizza…</h1><p>Checking the latest menu availability.</p></main>;
+  if (!pizza) return <main className={styles.statePage}><h1>Pizza unavailable</h1><p>{productError || "This pizza could not be found or is no longer available to order."}</p><Link to="/dashboard/menu">Back to the menu</Link></main>;
 
   return (
     <main className={styles.page}>
