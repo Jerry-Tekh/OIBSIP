@@ -16,7 +16,7 @@ async function request(path, { method = "GET", body, idempotencyKey } = {}) {
   }
   return payload.data;
 }
-export function getPizzaOptions() { return request("/api/v1/catalog/builder-options"); }
+export function getPizzaOptions(productSlug) { return request("/api/v1/catalog/builder-options/" + encodeURIComponent(productSlug)); }
 export function previewConfiguration(items) { return request("/api/v1/checkout/preview", { method: "POST", body: { items } }); }
 export function createCheckout({ items, deliveryAddress, idempotencyKey }) { return request("/api/v1/checkout", { method: "POST", body: { items, deliveryAddress }, idempotencyKey }); }
 export function simulatePaymentSuccess() { return Promise.reject(new Error("Demo payment is disabled. Complete the configured payment-provider integration before accepting payments.")); }
