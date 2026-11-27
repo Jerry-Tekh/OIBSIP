@@ -5,7 +5,7 @@ import { ApiError } from "../../utils/ApiError.js";
 const escapeRegex = value => value.split("").map(char => "\\^$.*+?()[]{}|".includes(char) ? "\\" + char : char).join("");
 const restrictedBuilderCategories = new Set(["base", "sauce"]);
 async function enforceBuilderCategoryLimit(payload, currentId = null) {
-  const enabled = payload.isBuilderEligible === undefined ? true : payload.isBuilderEligible;
+  const enabled = payload.isBuilderEligible === true;
   const category = payload.builderCategory;
   if (!enabled || !category || !restrictedBuilderCategories.has(category)) return;
   const filter = { isBuilderEligible: true, builderCategory: category, isActive: true };
