@@ -5,7 +5,7 @@ const inventoryItemSchema = new mongoose.Schema({
   normalizedName: { type: String, required: true, unique: true, lowercase: true, trim: true },
   sku: { type: String, trim: true, uppercase: true, maxlength: 40, sparse: true, unique: true },
   category: { type: String, required: true, trim: true, maxlength: 60 },
-  unit: { type: String, required: true, enum: ["g"], default: "g" },
+  unit: { type: String, required: true, enum: ["g", "kg", "ml", "l", "piece", "bunch", "pack", "portion"], default: "g" },
   physicalStock: { type: Number, required: true, min: 0, default: 0 },
   reservedStock: { type: Number, required: true, min: 0, default: 0 },
   lowStockThreshold: { type: Number, required: true, min: 0, default: 0 },
