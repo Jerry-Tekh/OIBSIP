@@ -23,6 +23,7 @@ export async function previewOrder(items) {
 
     const ingredients = await validateProductBuilderSelection(product, entry.configuration);
     const unitPriceMinor = ingredients.reduce((sum, item) => sum + item.productPriceContributionMinor, 0);
+    if (!Number.isSafeInteger(unitPriceMinor)) throw new ApiError(400, "The calculated pizza price is too large.");
     const lineTotalMinor = unitPriceMinor * quantity;
     if (!Number.isSafeInteger(lineTotalMinor)) throw new ApiError(400, "The calculated order amount is too large.");
 
@@ -42,7 +43,6 @@ export async function previewOrder(items) {
         category: item.builderCategory,
         priceContributionMinor: item.productPriceContributionMinor
       })),
-      basePriceMinor: 0,
       unitPriceMinor,
       lineTotalMinor
     });
