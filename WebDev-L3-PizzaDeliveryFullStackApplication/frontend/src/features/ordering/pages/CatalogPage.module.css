@@ -31,3 +31,13 @@
 @media(max-width:620px){.hero{min-height:250px;padding:38px 21px;border-radius:11px}.hero h2{font-size:47px}.menu{padding:34px 0 15px}.sectionHeading{align-items:flex-start;flex-direction:column}.grid{grid-template-columns:1fr;gap:17px}.imageLink{aspect-ratio:1.4}.cardBody{padding:16px}}
 
 .catalogDataNote{margin:0 0 20px;padding:12px 14px;border:1px solid #f0dfd1;border-radius:7px;background:#fffaf5;color:#82756b;font-size:10px;line-height:1.65}
+
+.catalogState{display:flex;min-height:190px;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:28px;text-align:center;border:1px solid #eee4da;border-radius:12px;background:#fffdf9;color:var(--muted)}
+.catalogState h3{margin:0;color:var(--ink);font-family:Georgia,serif;font-size:22px}
+.catalogState p{margin:0;font-size:12px;line-height:1.7}
+.loader{width:28px;height:28px;border:3px solid #f0dfd1;border-top-color:var(--orange);border-radius:50%;animation:catalogSpin .8s linear infinite}
+@keyframes catalogSpin{to{transform:rotate(360deg)}}
+.retryButton{min-height:40px;padding:0 18px;border:0;border-radius:6px;background:var(--orange);color:#fff;font:inherit;font-size:11px;font-weight:700;cursor:pointer}
+.retryButton:disabled{opacity:.65;cursor:wait}
+.productPrice{margin-top:13px;color:#34271e;font-size:15px;font-weight:800}
+.loadMoreWrap{display:flex;justify-content:center;margin-top:26px}
