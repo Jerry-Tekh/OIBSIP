@@ -3,9 +3,6 @@ import { Link } from "react-router-dom";
 import { getPublicProducts } from "../api/productsApi.js";
 import styles from "./CatalogPage.module.css";
 
-const formatPrice = (minor, currency = "NGN") =>
-  new Intl.NumberFormat("en-NG", { style: "currency", currency }).format((minor || 0) / 100);
-
 const categoryLabels = {
   classic: "THE CLASSIC",
   signature: "SIGNATURE",
@@ -93,7 +90,7 @@ export default function CatalogPage() {
                   <span className={styles.tag}>{categoryLabels[product.category] || "MADE FRESH"}</span>
                   <h3>{product.name}</h3>
                   <p>{product.shortDescription || product.description}</p>
-                  <div className={styles.productPrice}>{formatPrice(product.basePriceMinor, product.currency)}</div>
+                  <div className={styles.productPrice}>Build your pizza to see price</div>
                   <Link to={`/dashboard/order/${encodeURIComponent(product.slug)}`} className={styles.customize}>
                     Customize pizza <span>→</span>
                   </Link>
@@ -111,7 +108,7 @@ export default function CatalogPage() {
           </div>
         )}
 
-        <p className={styles.note}>Menu items and base prices are supplied by our live product catalogue. Final configuration pricing and ingredient availability are confirmed by the server before checkout.</p>
+        <p className={styles.note}>Choose a pizza first. Its available builder options and final price are based on your selections and confirmed by the server.</p>
       </section>
     </main>
   );
