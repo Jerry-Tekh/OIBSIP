@@ -80,7 +80,7 @@ export async function validateProductBuilderSelection(product, configuration, { 
  if (!baseId || !sauceId || !cheeseId || !Array.isArray(vegetableIds)) throw new ApiError(400, "Choose one base, one sauce and one cheese. Vegetables are optional.");
  if (vegetableIds.length > 20 || new Set(vegetableIds).size !== vegetableIds.length) throw new ApiError(400, "Vegetable selections are invalid.");
  const selected = [baseId, sauceId, cheeseId, ...vegetableIds];
- if (selected.some(id => typeof id !== "string" || !/^[a-f\\d]{24}$/i.test(id))) throw new ApiError(400, "One or more ingredient IDs are invalid.");
+ if (selected.some(id => typeof id !== "string" || !/^[a-f\d]{24}$/i.test(id))) throw new ApiError(400, "One or more ingredient IDs are invalid.");
  const configured = new Map((product.builderOptions || []).map(option => [option.inventoryItemId.toString(), option]));
  const selectedOptions = selected.map(id => configured.get(id));
  if (selectedOptions.some(option => !option)) throw new ApiError(400, "A selected ingredient is not configured for this pizza.");
