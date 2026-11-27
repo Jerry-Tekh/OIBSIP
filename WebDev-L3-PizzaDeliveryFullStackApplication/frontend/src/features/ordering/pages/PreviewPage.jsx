@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { getPublicProduct } from "../api/productsApi.js";
 import { previewConfiguration } from "../api/orderingApi.js";
 import styles from "./PreviewPage.module.css";
-import ApiDataPanel from "../components/ApiDataPanel.jsx";
 
 function formatMoney(minor, currency) {
   if (!Number.isFinite(minor) || !currency) return "—";
@@ -52,7 +51,6 @@ export default function PreviewPage() {
           <span className={styles.kicker}>ALMOST THERE</span>
           <h2>Price preview</h2>
           <p className={styles.intro}>We calculate your price on the server using the current catalog and availability.</p>
-          <ApiDataPanel title="Calculate authoritative price preview" method="POST" endpoint="/api/v1/checkout/preview" request={{ items: draft?.items || [] }} response={preview ? { success: true, data: { items: preview.items || [], subtotalMinor: totals?.subtotalMinor, deliveryFeeMinor: totals?.deliveryFeeMinor, discountMinor: totals?.discountMinor, taxMinor: totals?.taxMinor ?? 0, totalMinor: totals?.totalMinor, currency } } : { success: true, data: "Waiting for the server-calculated price preview…" }} note="Preview calculates current prices and ingredient requirements but does not reserve stock. Checkout recalculates everything again." />
           {loading && <div className={styles.status}>Calculating your price…</div>}
           {error && <div className={styles.error} role="alert"><strong>We couldn't confirm this configuration.</strong><p>{error}</p><button type="button" onClick={() => window.location.reload()}>Try again</button></div>}
           {preview && !error && <>
@@ -60,11 +58,10 @@ export default function PreviewPage() {
             <div className={styles.lines}>
               {items.map((item, index) => <div className={styles.line} key={item.id || index}><span>{item.name || pizza?.name || "Pizza"} × {item.quantity}</span><strong>{formatMoney(item.lineTotalMinor, currency)}</strong></div>)}
               <div className={styles.line}><span>Subtotal</span><strong>{formatMoney(totals?.subtotalMinor, currency)}</strong></div>
-              <div className={styles.line}><span>Delivery fee</span><strong>{formatMoney(totals?.deliveryFeeMinor, currency)}</strong></div>
               <div className={styles.line}><span>Discount</span><strong>−{formatMoney(totals?.discountMinor, currency)}</strong></div>
               <div className={styles.total}><span>Total</span><strong>{formatMoney(totals?.totalMinor, currency)}</strong></div>
             </div>
-            <div className={styles.notice}>Availability and pricing are checked again during checkout. This preview does not reserve ingredients.</div>
+            <div className={styles.notice}>Delivery charges, if applicable, will be calculated after your delivery location is provided. This preview does not reserve ingredients or create an order.</div>
             <button type="button" className={styles.continue} disabled>Checkout is not yet available</button>
           </>}
           {!loading && !error && !preview && <div className={styles.error}>The server returned an empty price preview.</div>}
