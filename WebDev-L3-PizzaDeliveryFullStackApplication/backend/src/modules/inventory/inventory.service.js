@@ -3,6 +3,16 @@ import InventoryItem from "./inventory.model.js";
 import InventoryMovement from "./movement.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 const escapeRegex = value => value.split("").map(char => "\\^$.*+?()[]{}|".includes(char) ? "\\" + char : char).join("");
+const restrictedBuilderCategories = new Set(["base", "sauce"]);
+async function enforceBuilderCategoryLimit(payload, currentId = null) {
+  const enabled = payload.isBuilderEligible === undefined ? true : payload.isBuilderEligible;
+  const category = payload.builderCategory;
+  if (!enabled || !category || !restrictedBuilderCategories.has(category)) return;
+  const filter = { isBuilderEligible: true, builderCategory: category, isActive: true };
+  if (currentId) filter._id = { $ne: currentId };
+  const count = await InventoryItem.countDocuments(filter);
+  if (count >= 5) throw new ApiError(409, `Only five active builder choices are allowed in the ${category} category. Disable or remove builder eligibility from an existing choice first.`);
+}
 export async function listInventory({page,limit,search,category,status}) {
  const filter={};if(category)filter.category=category;if(status==="active")filter.isActive=true;if(status==="inactive")filter.isActive=false;
  if(status==="low"){filter.isActive=true;filter.$expr={$lte:[{$subtract:["$physicalStock","$reservedStock"]},"$lowStockThreshold"]};}
@@ -13,6 +23,7 @@ export async function listInventory({page,limit,search,category,status}) {
  return {items:rows,pagination:{page,limit,total,pages:Math.ceil(total/limit)}};
 }
 export async function createInventory(payload,userId) {
+ await enforceBuilderCategoryLimit(payload);
  const session=await mongoose.startSession();let created;
  try{await session.withTransaction(async()=>{
   const normalizedName=payload.name.toLowerCase().trim();const {initialStock,...metadata}=payload;
@@ -22,10 +33,17 @@ export async function createInventory(payload,userId) {
 }
 export async function updateInventory(id,payload,userId) {
  const item=await InventoryItem.findById(id);if(!item)throw new ApiError(404,"Inventory item not found.");
+ await enforceBuilderCategoryLimit({...item.toObject(),...payload},id);
  if(payload.name){item.name=payload.name;item.normalizedName=payload.name.toLowerCase().trim();}
  if(Object.prototype.hasOwnProperty.call(payload,"sku"))item.sku=payload.sku?.trim().toUpperCase()||undefined;
- for(const key of ["category","lowStockThreshold","notes","isActive"])if(payload[key]!==undefined)item[key]=payload[key];
+ for(const key of ["category","unit","lowStockThreshold","notes","isActive","isBuilderEligible","builderCategory","builderPriceContributionMinor","builderDescription","builderImageUrl","builderSortOrder"])if(payload[key]!==undefined)item[key]=payload[key];
  item.updatedBy=userId;try{await item.save();return item;}catch(error){if(error.code===11000)throw new ApiError(409,"An ingredient with this name or SKU already exists.");throw error;}
+}
+export async function listPublicBuilderOptions(category) {
+ const filter={isBuilderEligible:true,isActive:true,builderCategory:{$in:["base","sauce","cheese","vegetable"]}};
+ if(category)filter.builderCategory=category;
+ const rows=await InventoryItem.find(filter).select("name builderCategory builderDescription builderPriceContributionMinor builderImageUrl builderSortOrder unit physicalStock reservedStock").sort({builderCategory:1,builderSortOrder:1,name:1}).lean();
+ return rows.map(({_id,name,builderCategory,builderDescription,builderPriceContributionMinor,builderImageUrl,builderSortOrder,physicalStock,reservedStock})=>({id:_id.toString(),name,category:builderCategory,description:builderDescription,priceContributionMinor:builderPriceContributionMinor,currency:"NGN",imageUrl:builderImageUrl,sortOrder:builderSortOrder,isAvailable:physicalStock-reservedStock>0}));
 }
 export async function adjustInventory(id,{adjustmentType,quantity,reason},userId) {
  const session=await mongoose.startSession();let updated;
