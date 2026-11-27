@@ -5,7 +5,7 @@ const builderFields = {
   builderCategory: z.enum(["base", "sauce", "cheese", "vegetable"]).nullable().optional(),
   builderPriceContributionMinor: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER).optional(),
   builderDescription: z.string().trim().max(500).optional(),
-  builderImageUrl: z.string().trim().max(2048).nullable().optional(),
+  builderImageUrl: z.string().trim().url().max(2048).nullable().optional(),
   builderSortOrder: z.number().int().min(-100000).max(100000).optional()
 };
 const itemFields = {
