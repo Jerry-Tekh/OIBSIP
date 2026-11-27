@@ -16,7 +16,7 @@ const inventoryItemSchema = new mongoose.Schema({
   builderPriceContributionMinor: { type: Number, min: 0, default: 0 },
   builderDescription: { type: String, trim: true, maxlength: 500, default: "" },
   builderImageUrl: { type: String, trim: true, maxlength: 2048, default: null },
-  builderSortOrder: { type: Number, int: true, default: 0 },
+  builderSortOrder: { type: Number, min: -100000, max: 100000, validate: Number.isSafeInteger, default: 0 },
   notes: { type: String, trim: true, maxlength: 500, default: "" },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }
@@ -34,6 +34,8 @@ inventoryItemSchema.pre("validate", function (next) {
     this.builderDescription = "";
     this.builderImageUrl = null;
     this.builderSortOrder = 0;
+  } else if (this.unit !== "g") {
+    this.invalidate("unit", "Pizza builder ingredients must use grams (g).");
   } else if (!this.builderCategory) {
     this.invalidate("builderCategory", "A builder category is required when an item is builder-eligible.");
   }
