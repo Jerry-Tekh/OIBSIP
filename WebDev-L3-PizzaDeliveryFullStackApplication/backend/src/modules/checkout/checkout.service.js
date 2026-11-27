@@ -1,5 +1,5 @@
 import PizzaProduct from "../products/product.model.js";
-import { validateBuilderSelection } from "../catalog/catalog.service.js";
+import { validateProductBuilderSelection } from "../catalog/catalog.service.js";
 import { ApiError } from "../../utils/ApiError.js";
 
 export async function previewOrder(items) {
@@ -10,7 +10,7 @@ export async function previewOrder(items) {
     const quantity = Number(entry.quantity);
     if (typeof slug !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) throw new ApiError(400, "A valid product slug is required for each pizza.");
     if (!Number.isInteger(quantity) || quantity < 1 || quantity > 20) throw new ApiError(400, "Pizza quantity must be between 1 and 20.");
-    const product = await PizzaProduct.findOne({ slug, publicationStatus: "published", isAvailable: true }).select("name slug basePriceMinor currency").lean();
+    const product = await PizzaProduct.findOne({ slug, publicationStatus: "published", isAvailable: true }).select("name slug builderOptions currency").lean();
     if (!product) throw new ApiError(409, "A selected pizza product is no longer available.");
     const ingredients = await validateBuilderSelection(entry.configuration);
     const additions = ingredients.reduce((sum, item) => sum + item.builderPriceContributionMinor, 0);
@@ -23,8 +23,8 @@ export async function previewOrder(items) {
         baseId: entry.configuration.baseId, sauceId: entry.configuration.sauceId,
         cheeseId: entry.configuration.cheeseId, vegetableIds: entry.configuration.vegetableIds || []
       },
-      ingredientSnapshots: ingredients.map(item => ({ inventoryItemId: item._id, name: item.name, category: item.builderCategory, priceContributionMinor: item.builderPriceContributionMinor })),
-      basePriceMinor: product.basePriceMinor, unitPriceMinor, lineTotalMinor
+      ingredientSnapshots: ingredients.map(item => ({ inventoryItemId: item._id, name: item.name, category: item.builderCategory, priceContributionMinor: item.productPriceContributionMinor })),
+      basePriceMinor: 0, unitPriceMinor, lineTotalMinor
     });
   }
   const subtotalMinor = lines.reduce((sum, line) => sum + line.lineTotalMinor, 0);
