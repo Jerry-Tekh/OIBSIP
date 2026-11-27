@@ -19,9 +19,7 @@ import PaymentPage from "./features/ordering/pages/PaymentPage.jsx";
 import AdminOverviewPage from "./features/dashboard/admin/pages/AdminOverviewPage.jsx";
 import AdminOrdersPage from "./features/dashboard/admin/pages/AdminOrdersPage.jsx";
 import AdminInventoryPage from "./features/dashboard/admin/pages/AdminInventoryPage.jsx";
-import AdminRecipesPage from "./features/dashboard/admin/pages/AdminRecipesPage.jsx";
 import AdminProductsPage from "./features/dashboard/admin/pages/AdminProductsPage.jsx";
-import AdminPizzaOptionsPage from "./features/dashboard/admin/pages/AdminPizzaOptionsPage.jsx";
 import AdminStockMovementsPage from "./features/dashboard/admin/pages/AdminStockMovementsPage.jsx";
 import AdminLowStockPage from "./features/dashboard/admin/pages/AdminLowStockPage.jsx";
 
@@ -36,9 +34,7 @@ const adminNavigation = [
   { label: "Overview", path: "/admin", title: "Operations overview", subtitle: "A clear view of what's happening across your kitchen." },
   { label: "Orders", path: "/admin/orders", title: "Orders", subtitle: "Review and manage customer orders." },
   { label: "Products", path: "/admin/products", title: "Pizza products", subtitle: "Manage the sellable menu and storefront publishing." },
-  { label: "Pizza options", path: "/admin/pizza-options", title: "Pizza options", subtitle: "Manage crusts, sauces, cheese and toppings customers can choose." },
   { label: "Inventory", path: "/admin/inventory", title: "Inventory", subtitle: "Track ingredients, reservations and available stock." },
-  { label: "Recipes", path: "/admin/recipes", title: "Recipes", subtitle: "Define the ingredient consumption for each product." },
   { label: "Stock movements", path: "/admin/stock-movements", title: "Stock movements", subtitle: "Review inventory movement history." },
   { label: "Low-stock alerts", path: "/admin/low-stock", title: "Low-stock alerts", subtitle: "Ingredients that need replenishment." }
 ];
@@ -74,9 +70,7 @@ export default function App() {
         <Route path="/admin" element={<AdminOverviewPage />} />
         <Route path="/admin/orders" element={<AdminOrdersPage />} />
         <Route path="/admin/products" element={<AdminProductsPage />} />
-        <Route path="/admin/pizza-options" element={<AdminPizzaOptionsPage />} />
         <Route path="/admin/inventory" element={<AdminInventoryPage />} />
-        <Route path="/admin/recipes" element={<AdminRecipesPage />} />
         <Route path="/admin/stock-movements" element={<AdminStockMovementsPage />} />
         <Route path="/admin/low-stock" element={<AdminLowStockPage />} />
       </Route>
