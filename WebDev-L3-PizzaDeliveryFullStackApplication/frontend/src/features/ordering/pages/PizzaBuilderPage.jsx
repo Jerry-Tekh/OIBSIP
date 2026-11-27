@@ -78,6 +78,17 @@ export default function PizzaBuilderPage() {
   ), [options]);
 
   useEffect(() => {
+    if (loading) return;
+    const byId = new Map(options.map(option => [option.id, option]));
+    setSelection(current => ({
+      baseId: byId.get(current.baseId)?.category === "base" && byId.get(current.baseId)?.isAvailable ? current.baseId : "",
+      sauceId: byId.get(current.sauceId)?.category === "sauce" && byId.get(current.sauceId)?.isAvailable ? current.sauceId : "",
+      cheeseId: byId.get(current.cheeseId)?.category === "cheese" && byId.get(current.cheeseId)?.isAvailable ? current.cheeseId : "",
+      vegetableIds: current.vegetableIds.filter(id => byId.get(id)?.category === "vegetable" && byId.get(id)?.isAvailable)
+    }));
+  }, [options, loading]);
+
+  useEffect(() => {
     if (skipDraftWrite.current) {
       skipDraftWrite.current = false;
       return;
