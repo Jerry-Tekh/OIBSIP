@@ -92,7 +92,7 @@ export default function PizzaBuilderPage() {
     if (!requiredComplete) return;
     sessionStorage.setItem("crust-order-draft", JSON.stringify({
       pizzaSlug: slug,
-      items: [{ configuration: selection, quantity }]
+      items: [{ productSlug: slug, configuration: selection, quantity }]
     }));
     navigate("/dashboard/order/preview");
   }
