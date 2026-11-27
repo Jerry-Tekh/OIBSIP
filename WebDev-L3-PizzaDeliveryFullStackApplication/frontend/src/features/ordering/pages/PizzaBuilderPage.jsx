@@ -86,12 +86,12 @@ export default function PizzaBuilderPage() {
   }, [pizza, slug, selection, quantity]);
 
   const requiredComplete = Boolean(selection.baseId && selection.sauceId && selection.cheeseId);
-  const selectedPriceMinor = selectedOptions.reduce((sum, option) => sum + (Number(option.priceContributionMinor) || 0), 0);
-  const totalPriceMinor = selectedPriceMinor * quantity;
-  const formatNaira = minor => new Intl.NumberFormat("en-NG",{style:"currency",currency:"NGN"}).format(minor/100);
   const selectedOptions = useMemo(() => options.filter((option) =>
     [selection.baseId, selection.sauceId, selection.cheeseId, ...selection.vegetableIds].includes(option.id)
   ), [options, selection]);
+  const selectedPriceMinor = selectedOptions.reduce((sum, option) => sum + (Number(option.priceContributionMinor) || 0), 0);
+  const totalPriceMinor = selectedPriceMinor * quantity;
+  const formatNaira = minor => new Intl.NumberFormat("en-NG",{style:"currency",currency:"NGN"}).format(minor/100);
 
   function chooseSingle(category, id) {
     const field = category === "base" ? "baseId" : category === "sauce" ? "sauceId" : "cheeseId";
