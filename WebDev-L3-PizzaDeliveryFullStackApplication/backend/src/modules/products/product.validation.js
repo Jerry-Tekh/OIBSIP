@@ -23,7 +23,7 @@ const builderOptions = z.array(builderOption).max(100).superRefine((options,ctx)
 });
 const productFields = {
  name:z.string().trim().min(2).max(120),slug,description:z.string().trim().min(10).max(1200),shortDescription:z.string().trim().max(180).optional(),
- category:z.enum(["classic","signature","vegetarian","spicy","specialty"]),imageUrl:httpsImage,basePriceMinor:z.number().int().safe().min(0).optional(),builderOptions,currency:z.literal("NGN").default("NGN"),
+ category:z.enum(["classic","signature","vegetarian","spicy","specialty"]),imageUrl:httpsImage,builderOptions,currency:z.literal("NGN").default("NGN"),
  isAvailable:z.boolean().optional(),sortOrder:z.number().int().min(0).max(100000).optional()
 };
 export const createProductSchema=z.object({body:z.object(productFields)});
