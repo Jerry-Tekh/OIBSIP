@@ -41,6 +41,7 @@ export default function PizzaBuilderPage() {
     let active = true;
     setProductLoading(true);
     setProductError("");
+    setPizza(null);
     getPublicProduct(slug)
       .then((data) => {
         if (active) setPizza(data?.product || null);
@@ -56,6 +57,9 @@ export default function PizzaBuilderPage() {
 
   useEffect(() => {
     let active = true;
+    setLoading(true);
+    setError("");
+    setOptions([]);
     getPizzaOptions(slug)
       .then((data) => {
         if (!active) return;
@@ -85,10 +89,19 @@ export default function PizzaBuilderPage() {
     }));
   }, [pizza, slug, selection, quantity]);
 
-  const requiredComplete = Boolean(selection.baseId && selection.sauceId && selection.cheeseId);
   const selectedOptions = useMemo(() => options.filter((option) =>
     [selection.baseId, selection.sauceId, selection.cheeseId, ...selection.vegetableIds].includes(option.id)
   ), [options, selection]);
+  const selectedById = useMemo(() => new Map(selectedOptions.map(option => [option.id, option])), [selectedOptions]);
+  const requiredComplete = Boolean(
+    selection.baseId && selection.sauceId && selection.cheeseId &&
+    ["base", "sauce", "cheese"].every(category => {
+      const id = category === "base" ? selection.baseId : category === "sauce" ? selection.sauceId : selection.cheeseId;
+      const option = selectedById.get(id);
+      return option?.category === category && option.isAvailable;
+    }) &&
+    selection.vegetableIds.every(id => selectedById.get(id)?.category === "vegetable" && selectedById.get(id)?.isAvailable)
+  );
   const selectedPriceMinor = selectedOptions.reduce((sum, option) => sum + (Number(option.priceContributionMinor) || 0), 0);
   const totalPriceMinor = selectedPriceMinor * quantity;
   const formatNaira = minor => new Intl.NumberFormat("en-NG",{style:"currency",currency:"NGN"}).format(minor/100);
@@ -108,7 +121,10 @@ export default function PizzaBuilderPage() {
   }
 
   function continueToPreview() {
-    if (!requiredComplete) return;
+    if (!requiredComplete) {
+      setError("Choose one available base, one available sauce and one available cheese before continuing.");
+      return;
+    }
     sessionStorage.setItem("crust-order-draft", JSON.stringify({
       pizzaSlug: slug,
       items: [{ productSlug: slug, configuration: selection, quantity }]
@@ -134,7 +150,7 @@ export default function PizzaBuilderPage() {
           <div className={styles.builderHeading}><div><span className={styles.kicker}>YOUR PIZZA, YOUR WAY</span><h2>Build your pizza</h2><p>Choose the ingredients for your order.</p></div><span className={styles.required}>* Required choices</span></div>
           
           {loading && <div className={styles.notice}>Loading available ingredients…</div>}
-          {error && <div className={styles.error} role="alert">{error}<p>The catalog options endpoint must be available before this builder can be used.</p><button type="button" onClick={() => window.location.reload()}>Try again</button></div>}
+          {error && <div className={styles.error} role="alert">{error}<p>Check the product's configured ingredients and inventory availability, then try again.</p><button type="button" onClick={() => window.location.reload()}>Try again</button></div>}
           {!loading && !error && options.length === 0 && <div className={styles.notice}>No pizza options are currently published. Please check back shortly.</div>}
 
           {!loading && !error && CATEGORIES.map((category) => {
