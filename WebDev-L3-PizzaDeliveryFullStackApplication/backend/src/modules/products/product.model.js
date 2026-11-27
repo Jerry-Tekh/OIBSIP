@@ -1,5 +1,13 @@
 import mongoose from "mongoose";
 
+const productBuilderOptionSchema = new mongoose.Schema({
+  inventoryItemId: { type: mongoose.Schema.Types.ObjectId, ref: "InventoryItem", required: true },
+  category: { type: String, enum: ["base", "sauce", "cheese", "vegetable"], required: true },
+  priceContributionMinor: { type: Number, required: true, min: 0, validate: Number.isSafeInteger },
+  customerDescription: { type: String, trim: true, maxlength: 500, default: "" },
+  sortOrder: { type: Number, min: 0, max: 100000, default: 0 }
+}, { _id: false });
+
 const productSchema = new mongoose.Schema({
   name: { type: String, required: true, trim: true, minlength: 2, maxlength: 120 },
   slug: { type: String, required: true, trim: true, lowercase: true, maxlength: 140 },
@@ -7,7 +15,8 @@ const productSchema = new mongoose.Schema({
   shortDescription: { type: String, trim: true, maxlength: 180, default: "" },
   category: { type: String, required: true, enum: ["classic", "signature", "vegetarian", "spicy", "specialty"] },
   imageUrl: { type: String, trim: true, required: true, maxlength: 2048 },
-  basePriceMinor: { type: Number, required: true, min: 0, validate: Number.isSafeInteger },
+  basePriceMinor: { type: Number, default: 0, min: 0, validate: Number.isSafeInteger },
+  builderOptions: { type: [productBuilderOptionSchema], default: [] },
   currency: { type: String, required: true, enum: ["NGN"], default: "NGN" },
   publicationStatus: { type: String, enum: ["draft", "published", "archived"], default: "draft", index: true },
   isAvailable: { type: Boolean, default: true },
