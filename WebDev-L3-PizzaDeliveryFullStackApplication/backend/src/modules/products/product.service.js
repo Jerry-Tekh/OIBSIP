@@ -54,3 +54,10 @@ export async function getPublicProduct(slug) {
  const product=await PizzaProduct.findOne({slug,publicationStatus:"published",isAvailable:true}).select(publicFields).lean();
  if(!product)throw new ApiError(404,"Pizza product not found.");return product;
 }
+
+export async function deleteProduct(id) {
+  const product = await PizzaProduct.findById(id);
+  if (!product) throw new ApiError(404, "Pizza product not found.");
+  await PizzaProduct.deleteOne({ _id: product._id });
+  return { id: product._id.toString(), deleted: true };
+}
