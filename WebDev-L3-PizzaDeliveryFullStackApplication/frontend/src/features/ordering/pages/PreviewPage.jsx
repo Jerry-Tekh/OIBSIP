@@ -56,7 +56,12 @@ export default function PreviewPage() {
           {preview && !error && <>
             <div className={styles.confirmed}><span>✓</span><div><strong>Preview received</strong><small>This is the server-calculated preview for your current selection.</small></div></div>
             <div className={styles.lines}>
-              {items.map((item, index) => <div className={styles.line} key={item.id || index}><span>{item.name || pizza?.name || "Pizza"} × {item.quantity}</span><strong>{formatMoney(item.lineTotalMinor, currency)}</strong></div>)}
+              {items.map((item, index) => <div className={styles.line} key={item.id || index}>
+                <div className={styles.itemDetails}><strong>{item.name || pizza?.name || "Pizza"} × {item.quantity}</strong>
+                  <ul className={styles.ingredients}>{(item.ingredientSnapshots || []).map(ingredient => <li key={String(ingredient.inventoryItemId)}><span>{ingredient.name} · {ingredient.category}</span><small>{formatMoney(ingredient.priceContributionMinor, currency)} each</small></li>)}</ul>
+                </div>
+                <strong>{formatMoney(item.lineTotalMinor, currency)}</strong>
+              </div>)}
               <div className={styles.line}><span>Subtotal</span><strong>{formatMoney(totals?.subtotalMinor, currency)}</strong></div>
               <div className={styles.line}><span>Discount</span><strong>−{formatMoney(totals?.discountMinor, currency)}</strong></div>
               <div className={styles.total}><span>Total</span><strong>{formatMoney(totals?.totalMinor, currency)}</strong></div>
