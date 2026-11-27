@@ -26,7 +26,7 @@ export async function updateInventory(id,payload,userId) {
 
  if(payload.name){item.name=payload.name;item.normalizedName=payload.name.toLowerCase().trim();}
  if(Object.prototype.hasOwnProperty.call(payload,"sku"))item.sku=payload.sku?.trim().toUpperCase()||undefined;
- for(const key of ["category","unit","lowStockThreshold","notes","isActive","isBuilderEligible","builderCategory","builderDescription","builderImageUrl","builderSortOrder"])if(payload[key]!==undefined)item[key]=payload[key];
+ for(const key of ["category","lowStockThreshold","notes","isActive","isBuilderEligible","builderCategory","builderDescription","builderImageUrl","builderSortOrder"])if(payload[key]!==undefined)item[key]=payload[key];
  item.updatedBy=userId;try{await item.save();return item;}catch(error){if(error.code===11000)throw new ApiError(409,"An ingredient with this name or SKU already exists.");throw error;}
 }
 export async function adjustInventory(id,{adjustmentType,quantity,reason},userId) {
